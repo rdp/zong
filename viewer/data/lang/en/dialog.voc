@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Dialog">
+	<voc key="Details" value="Details"/>
+	<voc key="DocumentFormatError" value="Document error"/>
+	<voc key="Error" value="Error!"/>
+	<voc key="FatalError" value="Fatal error!"/>
+	<voc key="FrameOptions" value="Frame options"/>
+	<voc key="Instrumentation" value="Select instrumentation"/>
+	<voc key="OpenDocument" value="Open document"/>
+	<voc key="Warning" value="Warning"/>
+</vocabulary>

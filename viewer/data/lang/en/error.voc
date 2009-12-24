@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Error">
+	<voc key="CommandFailed" value="Could not perform the action."/>
+	<voc key="CouldNotCreateTexture" value="Could not create the images."/>
+	<voc key="CouldNotInitApp" value="An error ocurred while starting the program."/>
+	<voc key="CouldNotLoadSymbolPool" value="Could not load the music symbols."/>
+	<voc key="CouldNotLoadTexture" value="Could not load the images."/>
+	<voc key="CouldNotSaveDocument" value="An error occurred while saving the document."/>	
+	<voc key="Download" value="An error occurred while downloading the file."/>	
+	<voc key="InputError" value="Input error."/>
+	<voc key="InvalidGUIFile" value="The configuration of the graphical user interface is corrupt."/>
+	<voc key="MidiNotAvailable" value="The MIDI device is not available. Playback will not work."/>
+	<voc key="OpenFileInvalidFormat" value="Could not open the document, since its format is not supported by {app.name}."/>
+	<voc key="OpenFileIOError" value="Could not open the document, since the file could not be read."/>
+	<voc key="OpenFileNotFound" value="Could not open the document, since the file does not exist."/>
+	<voc key="PrintFailed" value="Error while printing."/>
+	<voc key="SaveFileUnknownOrigin" value="Could not download the document, since its origin is unknown."/>
+	<voc key="Security" value="The current security settings don't allow performing this action."/>
+	<voc key="Unknown" value="Unknown error."/>
+</vocabulary>

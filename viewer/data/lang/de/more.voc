@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary>
+  <voc key="ButtonPanel_PrintDocument" value="Dokument drucken"/>
+  <voc key="Error_MidiNotAvailable" value="Das Midi-Gerät ist nicht verfügbar. Die Noten können nicht abgespielt werden."/>
+  <voc key="Menu_Language" value="Sprache"/>
+  <voc key="ButtonPanel_OpenDocument" value="Dokument öffnen"/>
+  <voc key="ButtonPanel_SaveDocumentAsMidi" value="Dokument speichern als Midi"/>
+  <voc key="Menu_Readme_" value="Readme..."/>
+  <voc key="Menu_Playback" value="Wiedergabe"/>
+  <voc key="Menu_Print_" value="Drucken..."/>  
+  <voc key="Menu_ErrorReportOrFeatureRequest_" value="Fehler berichten oder Idee melden..."/>
+  <voc key="Menu_Play" value="Start"/>
+  <voc key="Menu_Blog_" value="Blog..."/>
+  <voc key="Menu_Website_" value="Website..."/>
+  <voc key="Menu_About_" value="Über..."/>
+  <voc key="Menu_Audio_" value="Audio..."/>
+  <voc key="Menu_Stop" value="Stop"/>
+  <voc key="Menu_Document" value="Dokument"/>  
+  <voc key="Menu_SaveAsMidi_" value="Speichern als Midi..."/>
+  <voc key="ButtonPanel_DownloadDocument" value="Dokument herunterladen"/>
+  <voc key="ButtonPanel_Playback" value="Wiedergabe"/>
+  <voc key="Menu_Beta" value="Beta"/>
+  <voc key="Menu_Open_" value="Öffnen..."/>
+</vocabulary>

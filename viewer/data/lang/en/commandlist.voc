@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="CommandList">
+	<voc key="ChangeFrameOptions" value="Change frame properties"/>
+</vocabulary>

@@ -1,0 +1,3 @@
+proxymusic is released under the GNU Lesser Public License.
+
+For details, see the website: http://proxymusic.kenai.com/

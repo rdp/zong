@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Error">
+	<voc key="CommandFailed" value="Die Aktion konnte nicht ausgeführt werden."/>
+	<voc key="CouldNotCreateTexture" value="Die notwendigen Grafiken konnten nicht erstellt werden."/>
+	<voc key="CouldNotInitApp" value="Beim Starten des Programms ist ein Fehler aufgetreten."/>
+	<voc key="CouldNotLoadSymbolPool" value="Die Musiksymbole konnten nicht geladen werden."/>
+	<voc key="CouldNotLoadTexture" value="Die notwendigen Grafiken konnten nicht geladen werden."/>
+	<voc key="CouldNotSaveDocument" value="Beim Speichern des Dokuments ist ein Fehler aufgetreten."/>
+	<voc key="Download" value="Beim Herunterladen der Datei ist ein Fehler aufgetreten."/>	
+	<voc key="InputError" value="Fehler bei der Eingabe."/>
+	<voc key="InvalidGUIFile" value="Die Einstellung der grafischen Benutzeroberfläche ist fehlerhaft."/>
+	<voc key="OpenFileInvalidFormat" value="Das Dokument kann nicht geöffnet werden, da es ein von {app.name} nicht unterstütztes Format besitzt."/>
+	<voc key="OpenFileIOError" value="Das Dokument kann nicht geöffnet werden, da die Datei nicht korrekt gelesen werden kann."/>
+	<voc key="OpenFileNotFound" value="Das Dokument kann nicht geöffnet werden, da die angegebene Datei nicht existiert."/>
+	<voc key="PrintFailed" value="Beim Drucken ist ein Fehler aufgetreten."/>
+	<voc key="SaveFileUnknownOrigin" value="Das Dokument kann nicht heruntergeladen werden, da seine Quelle unbekannt ist."/>
+	<voc key="Security" value="Die aktuellen Sicherheitseinstellungen erlauben die Durchführung dieser Aktion nicht."/>
+	<voc key="Unknown" value="Unbekannter Fehler."/>
+</vocabulary>

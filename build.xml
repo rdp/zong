@@ -1,0 +1,482 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Ant scripts for all Zong! projects.
+
+@author Andreas Wenger
+-->
+<project basedir="." default="build" name="Zong!">
+	<defaultexcludes add="**/*.gitignore"/>
+
+	<property name="zong-version" value="i48"/>
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<property name="sourcefilter" value="**/*.java, **/*.clj"/>
+	
+	<property name="fileset.license" value="license.txt"/>
+	
+	
+	<!-- ********************************* -->
+	<!-- * main targets                  * -->
+	<!-- ********************************* -->
+	
+	<target name="clean" depends="util-clean,core-clean,musicxml-in-clean,player-clean,viewer-clean,editor-clean">
+		<delete dir="dist"/>
+	</target>
+	
+	<target name="dist" depends="player-dist,viewer-dist"/> <!-- ,editor-dist -->
+	
+	<!-- copy file="player/launcher/dist/linux-i586/zongplayer.sh" todir="dist/player"/>
+		<chmod file="dist/player/zongplayer.sh" perm="+x"/>
+		<copy file="player/launcher/dist/windows-i586/zongplayer.bat" todir="dist/player"/>
+		<copy todir="dist/viewer/lib">
+			<fileset dir="lib">
+				<include name="linux-i586/**"/>
+				<include name="solaris-i586/**"/>
+				<include name="solaris-sparc/**"/>
+				<include name="windows-i586/**"/>
+			</fileset>
+		</copy>-->
+		
+	
+	<!-- create the player and pack it for all OSes -->
+	<target name="player-dist" depends="clean,util-jar,core-jar,midi-out-jar,musicxml-in-jar,player-jar">
+		<!-- *** shared files *** -->
+		<mkdir dir="dist/share/player"/>
+		<copy file="player/readme.txt" todir="dist/share/player"/>
+		<copy file="player/license.txt" todir="dist/share/player"/>
+		<copy file="player/gpl.txt" todir="dist/share/player"/>
+		<copy file="player/zongplayer.html" todir="dist/share/player"/>
+		<copy file="player/zongplayer.jnlp" todir="dist/share/player"/>
+		<copy todir="dist/share/player/files">
+			<fileset dir="player/files" includes="**"/>
+		</copy>
+		<copy file="lib/gervill.jar" todir="dist/share/player/lib"/>
+		<copy file="lib/gervill-license.txt" todir="dist/share/player/lib"/>
+		<copy file="lib/proxymusic-2.0.jar" todir="dist/share/player/lib"/>
+		<copy file="lib/proxymusic-2.0-license.txt" todir="dist/share/player/lib"/>
+		<copy todir="dist/share/player">
+			<fileset dir="player">
+				<include name="data/**"/>
+				<exclude name="data/*.log"/>
+			</fileset>
+		</copy>
+		<!-- playerdata.jar -->
+		<jar destfile="dist/share/player/lib/playerdata.jar">
+			<fileset dir="player">
+				<include name="data/**"/>
+				<exclude name="data/*.log"/>
+			</fileset>
+		</jar>
+		<exec executable="jar" output="dist/share/player/.filelist">
+			<arg line="tf dist/share/player/lib/playerdata.jar"/>
+		</exec>
+		<jar destfile="dist/share/player/lib/playerdata.jar" update="true">
+			<fileset file="dist/share/player/.filelist"/>
+		</jar>
+		<delete file="dist/share/player/.filelist"/>
+		<!-- skin.jar -->
+		<jar destfile="dist/share/player/lib/skin.jar">
+			<fileset dir="player/skin">
+				<include name="**"/>
+			</fileset>
+		</jar>
+		<!-- combine contents of util.jar, core.jar, midi-out.jar, musicxml-in.jar and player.jar to the single file player.jar
+		     (because it is nicer and because the security manager seems not to accept classes in the same package but in different jars) -->
+		<mkdir dir="dist/share/player/temp"/>
+		<unzip src="util/dist/util.jar" dest="dist/share/player/temp"/>
+		<unzip src="core/dist/core.jar" dest="dist/share/player/temp"/>
+		<unzip src="midi-out/dist/midi-out.jar" dest="dist/share/player/temp"/>
+		<unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/player/temp"/>
+		<unzip src="player/dist/player.jar" dest="dist/share/player/temp"/>
+		<delete dir="dist/share/player/temp/META-INF"/>
+		<jar destfile="dist/share/player/lib/player.jar">
+			<fileset dir="dist/share/player/temp"/>
+		</jar>
+		<delete dir="dist/share/player/temp"/>
+		<!-- sign the jar (only working on systems were a certificate named "Xenoage" is there, pwd is "123456") -->
+		<signjar jar="dist/share/player/lib/player.jar" alias="Xenoage" storepass="123456"/>
+		<!-- *** OS specific files *** -->
+		<antcall target="project-dist-all-os"><param name="project" value="player"/></antcall>
+	</target>
+	
+	
+	<!-- create the viewer and pack it for all OSes -->
+	<target name="viewer-dist" depends="clean,util-jar,core-jar,midi-out-jar,musicxml-in-jar,player-jar,viewer-jar">
+		<!-- *** shared files *** -->
+		<mkdir dir="dist/share/viewer"/>
+		<copy file="viewer/readme.txt" todir="dist/share/viewer"/>
+		<copy file="viewer/license.txt" todir="dist/share/viewer"/>
+		<copy file="viewer/gpl.txt" todir="dist/share/viewer"/>
+		<copy file="viewer/applet/zongviewer.html" todir="dist/share/viewer"/>
+		<copy file="viewer/applet/zongviewer.jnlp" todir="dist/share/viewer"/>
+		<copy todir="dist/share/viewer/files">
+			<fileset dir="viewer/files" includes="**"/>
+		</copy>
+		<mkdir dir="dist/share/viewer/lib"/>
+		<copy file="lib/gervill.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/gervill-license.txt" todir="dist/share/viewer/lib"/>
+		<copy file="lib/gluegen-rt.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/jogl.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/jogl-license.txt" todir="dist/share/viewer/lib"/>
+		<copy file="lib/proxymusic-2.0.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/proxymusic-2.0-license.txt" todir="dist/share/viewer/lib"/>
+		<copy file="lib/tablelayout.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/tablelayout-license.txt" todir="dist/share/viewer/lib"/>
+		<copy todir="dist/share/viewer">
+			<fileset dir="viewer">
+				<include name="data/**"/>
+				<exclude name="data/test/**"/>
+				<exclude name="data/*.log"/>
+			</fileset>
+		</copy>
+		<!-- viewerdata.jar -->
+		<jar destfile="dist/share/viewer/lib/viewerdata.jar">
+			<fileset dir="viewer">
+				<include name="data/**"/>
+				<exclude name="data/fonts/**"/>
+				<exclude name="data/gui/**"/>
+				<exclude name="data/test/**"/>
+				<exclude name="data/*.log"/>
+			</fileset>
+		</jar>
+		<exec executable="jar" output="dist/share/viewer/.filelist">
+			<arg line="tf dist/share/viewer/lib/viewerdata.jar"/>
+		</exec>
+		<jar destfile="dist/share/viewer/lib/viewerdata.jar" update="true">
+			<fileset file="dist/share/viewer/.filelist"/>
+		</jar>
+		<delete file="dist/share/viewer/.filelist"/>
+		<!-- combine contents of util.jar, core.jar, midi-out.jar, musicxml-in.jar and viewer.jar to the single file viewer.jar
+		     (because it is nicer and because the security manager seems not to accept classes in the same package but in different jars) -->
+		<mkdir dir="dist/share/viewer/temp"/>
+		<unzip src="util/dist/util.jar" dest="dist/share/viewer/temp"/>
+		<unzip src="core/dist/core.jar" dest="dist/share/viewer/temp"/>
+		<unzip src="midi-out/dist/midi-out.jar" dest="dist/share/viewer/temp"/>
+		<unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/viewer/temp"/>
+		<unzip src="player/dist/player.jar" dest="dist/share/viewer/temp"/>
+		<unzip src="viewer/dist/viewer.jar" dest="dist/share/viewer/temp"/>
+		<delete dir="dist/share/viewer/temp/META-INF"/>
+		<jar destfile="dist/share/viewer/lib/viewer.jar">
+			<fileset dir="dist/share/viewer/temp"/>
+		</jar>
+		<delete dir="dist/share/viewer/temp"/>
+		<!-- sign the jar (only working on systems were a certificate named "Xenoage" is there, pwd is "123456") -->
+		<signjar jar="dist/share/viewer/lib/viewer.jar" alias="Xenoage" storepass="123456"/>
+		<!-- *** OS specific files *** -->
+		<antcall target="project-dist-all-os"><param name="project" value="viewer"/><param name="nativelibs" value="true"/></antcall>
+	</target>
+	
+	<target name="test" depends="util-test,core-test,musicxml-in-test,midi-out-test,player-test,viewer-test"> <!-- ,editor-test -->
+	</target>
+	
+	
+	<!-- ********************************* -->
+	<!-- * libraries                     * -->
+	<!-- ********************************* -->
+	
+	<path id="gervill.classpath"><pathelement location="lib/gervill.jar"/></path>
+	<path id="jogl.classpath"><pathelement location="lib/jogl.jar"/><pathelement location="lib/gluegen-rt.jar"/></path>
+	<path id="junit.classpath"><pathelement location="lib/dev/junit/junit-4.7.jar"/></path>
+	<path id="proxymusic.classpath"><pathelement location="lib/proxymusic-2.0.jar"/></path>
+	<path id="tablelayout.classpath"><pathelement location="lib/tablelayout.jar"/></path>
+	
+	
+	<!-- ********************************* -->
+	<!-- * project targets               * -->
+	<!-- ********************************* -->
+	
+	<path id="core.classpath">
+		<pathelement location="util/dist/util.jar"/>
+	</path>
+	<target name="core-clean"><antcall target="project-clean"><param name="project" value="core"/></antcall></target>
+	<target name="core-jar" depends="util-jar"><antcall target="project-jar"><param name="project" value="core"/></antcall></target>
+	<target name="core-test" depends="util-jar"><antcall target="project-test"><param name="project" value="core"/></antcall></target>
+	
+	<path id="editor.classpath">
+		<path refid="viewer.classpath"/>
+		<pathelement location="viewer/dist/viewer.jar"/>
+	</path>
+	<target name="editor-clean"><antcall target="project-clean"><param name="project" value="editor"/></antcall></target>
+	<target name="editor-jar" depends="viewer-jar"><antcall target="project-jar"><param name="project" value="editor"/></antcall></target>
+	<target name="editor-test" depends="viewer-jar"><antcall target="project-test"><param name="project" value="editor"/></antcall></target>
+	
+	<path id="midi-out.classpath">
+		<pathelement location="util/dist/util.jar"/>
+		<pathelement location="core/dist/core.jar"/>
+		<path refid="gervill.classpath"/>
+	</path>
+	<target name="midi-out-clean"><antcall target="project-clean"><param name="project" value="midi-out"/></antcall></target>
+	<target name="midi-out-jar" depends="util-jar,core-jar"><antcall target="project-jar"><param name="project" value="midi-out"/></antcall></target>
+	<target name="midi-out-test" depends="util-jar,core-jar"><antcall target="project-test"><param name="project" value="midi-out"/></antcall></target>
+	
+	<path id="musicxml-in.classpath">
+		<pathelement location="util/dist/util.jar"/>
+		<pathelement location="core/dist/core.jar"/>
+		<path refid="proxymusic.classpath"/>
+	</path>
+	<target name="musicxml-in-clean"><antcall target="project-clean"><param name="project" value="musicxml-in"/></antcall></target>
+	<target name="musicxml-in-jar" depends="util-jar,core-jar"><antcall target="project-jar"><param name="project" value="musicxml-in"/></antcall></target>
+	<target name="musicxml-in-test" depends="util-jar,core-jar"><antcall target="project-test"><param name="project" value="musicxml-in"/></antcall></target>
+	
+	<path id="player.classpath">
+		<pathelement location="util/dist/util.jar"/>
+		<pathelement location="core/dist/core.jar"/>
+		<pathelement location="midi-out/dist/midi-out.jar"/>
+		<pathelement location="musicxml-in/dist/musicxml-in.jar"/>
+		<path refid="gervill.classpath"/>
+		<path refid="jogl.classpath"/>
+		<path refid="proxymusic.classpath"/>
+	</path>
+	<target name="player-clean"><antcall target="project-clean"><param name="project" value="player"/></antcall></target>
+	<target name="player-jar" depends="util-jar,core-jar,midi-out-jar,musicxml-in-jar"><antcall target="project-jar"><param name="project" value="player"/></antcall></target>
+	<target name="player-test" depends="util-jar,core-jar,midi-out-jar,musicxml-in-jar"><antcall target="project-test"><param name="project" value="player"/></antcall></target>
+	
+	<path id="util.classpath">
+	</path>
+	<target name="util-clean"><antcall target="project-clean"><param name="project" value="util"/></antcall></target>
+	<target name="util-jar"><antcall target="project-jar"><param name="project" value="util"/></antcall></target>
+	<target name="util-test"><antcall target="project-test"><param name="project" value="util"/></antcall></target>
+	
+	<path id="viewer.classpath">
+		<pathelement location="core/dist/core.jar"/>
+		<pathelement location="util/dist/util.jar"/>
+		<pathelement location="midi-out/dist/midi-out.jar"/>
+		<pathelement location="musicxml-in/dist/musicxml-in.jar"/>
+		<pathelement location="player/dist/player.jar"/>
+		<path refid="gervill.classpath"/>
+		<path refid="jogl.classpath"/>
+		<path refid="proxymusic.classpath"/>
+		<path refid="tablelayout.classpath"/>
+	</path>
+	<target name="viewer-clean"><antcall target="project-clean"><param name="project" value="viewer"/></antcall></target>
+	<target name="viewer-jar" depends="util-jar,core-jar,musicxml-in-jar,player-jar"><antcall target="project-jar"><param name="project" value="viewer"/></antcall></target>
+	<target name="viewer-test" depends="util-jar,core-jar,musicxml-in-jar,player-jar"><antcall target="project-test"><param name="project" value="viewer"/></antcall></target>
+
+
+	<!-- ********************************* -->
+	<!-- * helper targets                * -->
+	<!-- ********************************* -->
+	
+	<!-- Cleans the given ${project} (deleting bin and dist folder) -->
+	<target name="project-clean" if="project">
+		<echo>Cleaning the ${project} project...</echo>
+		<delete dir="${project}/bin"/>
+		<delete dir="${project}/dist"/>
+	</target>
+	
+	<!-- Initializes the given ${project} (creating bin folder) -->
+	<target name="project-init" if="project">
+		<echo>Initializing the ${project} project...</echo>
+		<mkdir dir="${project}/bin"/>
+	</target>
+	
+	<!-- Builds the src folder of the given ${project} and puts the classes in the bin folder -->
+	<target name="project-build-src" if="project">
+		<antcall target="project-build">
+    	<param name="dir" value="src"/>
+  	</antcall>
+	</target>
+	
+	<!-- Builds the test folder of the given ${project} and puts the classes in the bin folder -->
+	<target name="project-build-test" if="project">
+		<antcall target="project-build">
+    	<param name="dir" value="test"/>
+  	</antcall>
+	</target>
+	
+	<!-- Builds the ${dir} folder of the given ${project} and puts the classes in the bin folder -->
+	<target name="project-build" if="dir">
+		<echo>Building folder ${dir} of the ${project} project...</echo>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${project}/bin" source="${source}" target="${target}" encoding="UTF-8">
+			<src path="${project}/${dir}"/>
+			<classpath refid="${project}.classpath"/>
+			<classpath refid="junit.classpath"/>
+		</javac>
+	</target>
+	
+	<!-- Builds the JAR of the given ${project} and puts it in its dist folder -->
+	<target name="project-jar" depends="project-clean,project-init,project-build-src" if="project">
+		<echo>Creating JAR for the ${project} project...</echo>
+		<mkdir dir="${project}/dist"/>
+		<jar destfile="${project}/dist/${project}.jar">
+			<fileset dir="${project}/bin"/>
+			<fileset file="${project}/license.txt"/>
+		</jar>
+	</target>
+	
+	
+	<!-- Creates the distribution packages for the given ${project} all supported operating systems.
+	     Uses native libs, if parameter nativelibs is set -->
+	<target name="project-dist-all-os" if="project">
+		<echo>Creating distribution packages for the ${project} project...</echo>
+		<mkdir dir="dist/os"/>
+		<mkdir dir="dist/packages"/>
+		<!-- windows-i586 -->
+		<antcall target="project-dist-windows-i586">
+			<param name="project" value="${project}"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- linux-i586 -->
+		<antcall target="project-dist-linux-i586">
+			<param name="project" value="${project}"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- macosx-universal -->
+		<antcall target="project-dist-macosx-universal">
+			<param name="project" value="${project}"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- solaris-i586 -->
+		<antcall target="project-dist-solaris-i586">
+			<param name="project" value="${project}"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+	</target>
+	
+	
+	<!-- Creates a .zip package for windows-i586 for the given ${project} -->
+	<target name="project-dist-windows-i586" if="project">
+		<!-- directory -->
+		<mkdir dir="dist/os/windows-i586/${project}"/>
+		<copy todir="dist/os/windows-i586/${project}">
+			<fileset dir="dist/share/${project}"/>
+			<fileset dir="${project}/launcher/dist/windows-i586"/>
+		</copy>
+		<!-- native libs -->
+		<antcall target="project-dist-nativelibs">
+			<param name="os" value="windows-i586"/>
+			<param name="project" value="${project}"/>
+			<param name="outdir" value="dist/os/windows-i586/${project}/lib/windows-i586"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- create zip -->
+		<zip destfile="dist/packages/zong${project}-${zong-version}-windows-i586.zip" basedir="dist/os/windows-i586/${project}"/>
+	</target>
+	
+	
+	<!-- Creates a .tar.bz2 package for linux-i586 for the given ${project} -->
+	<target name="project-dist-linux-i586" if="project">
+		<!-- directory -->
+		<mkdir dir="dist/os/linux-i586/${project}"/>
+		<copy todir="dist/os/linux-i586/${project}">
+			<fileset dir="dist/share/${project}"/>
+			<fileset dir="${project}/launcher/dist/linux-i586"/>
+		</copy>
+		<!-- native libs -->
+		<antcall target="project-dist-nativelibs">
+			<param name="os" value="linux-i586"/>
+			<param name="project" value="${project}"/>
+			<param name="outdir" value="dist/os/linux-i586/${project}/lib/linux-i586"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- make .sh files executable -->
+		<chmod perm="+x" dir="dist/os/linux-i586/${project}" includes="**/*.sh"/>
+		<!-- create package -->
+		<tar destfile="dist/packages/zong${project}-${zong-version}-linux-i586.tar">
+			<!-- .sh executable -->
+			<tarfileset dir="dist/os/linux-i586/${project}" mode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="dist/os/linux-i586/${project}">
+				<exclude name="**/*.sh"/>
+			</tarfileset>
+		</tar>
+		<bzip2 destfile="dist/packages/zong${project}-${zong-version}-linux-i586.tar.bz2" src="dist/packages/zong${project}-${zong-version}-linux-i586.tar"/>
+		<delete file="dist/packages/zong${project}-${zong-version}-linux-i586.tar"/>
+	</target>
+	
+	
+	<!-- Creates a .zip package for macosx-universal (as an .app) for the given ${project} -->
+	<target name="project-dist-macosx-universal" if="project">
+		<!-- directory -->
+		<mkdir dir="dist/os/macosx-universal/${project}/zong${project}.app/Contents/Resources/Java"/>
+		<copy todir="dist/os/macosx-universal/${project}">
+			<fileset dir="${project}/launcher/dist/macosx-universal"/>
+		</copy>
+		<copy todir="dist/os/macosx-universal/${project}/zong${project}.app/Contents/Resources/Java">
+			<fileset dir="dist/share/${project}"/> 
+		</copy>
+		<!-- native libs -->
+		<antcall target="project-dist-nativelibs">
+			<param name="os" value="macosx-universal"/>
+			<param name="project" value="${project}"/>
+			<param name="outdir" value="dist/os/macosx-universal/${project}/zong${project}.app/Contents/Resources/Java/lib/macosx-universal"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- make JavaApplicationStub executable -->
+		<chmod perm="+x" file="dist/os/macosx-universal/${project}/zong${project}.app/Contents/MacOS/JavaApplicationStub"/>
+		<!-- create .tar.bz2 -->
+		<tar destfile="dist/packages/zong${project}-${zong-version}-macosx-universal.tar">
+			<!-- .sh executable -->
+			<tarfileset dir="dist/os/macosx-universal/${project}" mode="755">
+				<include name="**/JavaApplicationStub"/>
+			</tarfileset>
+			<tarfileset dir="dist/os/macosx-universal/${project}">
+				<exclude name="**/JavaApplicationStub"/>
+			</tarfileset>
+		</tar>
+		<bzip2 destfile="dist/packages/zong${project}-${zong-version}-macosx-universal.tar.bz2" src="dist/packages/zong${project}-${zong-version}-macosx-universal.tar"/>
+		<delete file="dist/packages/zong${project}-${zong-version}-macosx-universal.tar"/>
+	</target>
+	
+	
+	<!-- Creates a .tar.bz2 package for solaris-i586 for the given ${project} -->
+	<target name="project-dist-solaris-i586" if="project">
+		<!-- directory -->
+		<mkdir dir="dist/os/solaris-i586/${project}"/>
+		<copy todir="dist/os/solaris-i586/${project}">
+			<fileset dir="dist/share/${project}"/>
+			<fileset dir="${project}/launcher/dist/solaris-i586"/>
+		</copy>
+		<!-- native libs -->
+		<antcall target="project-dist-nativelibs">
+			<param name="os" value="solaris-i586"/>
+			<param name="project" value="${project}"/>
+			<param name="outdir" value="dist/os/solaris-i586/${project}/lib/solaris-i586"/>
+			<param name="nativelibs" value="${nativelibs}"/>
+		</antcall>
+		<!-- make .sh files executable -->
+		<chmod perm="+x" dir="dist/os/solaris-i586/${project}" includes="**/*.sh"/>
+		<!-- create .tar.bz2 -->
+		<tar destfile="dist/packages/zong${project}-${zong-version}-solaris-i586.tar">
+			<!-- .sh executable -->
+			<tarfileset dir="dist/os/solaris-i586/${project}" mode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="dist/os/solaris-i586/${project}">
+				<exclude name="**/*.sh"/>
+			</tarfileset>
+		</tar>
+		<bzip2 destfile="dist/packages/zong${project}-${zong-version}-solaris-i586.tar.bz2" src="dist/packages/zong${project}-${zong-version}-solaris-i586.tar"/>
+		<delete file="dist/packages/zong${project}-${zong-version}-solaris-i586.tar"/>
+	</target>
+	
+	
+	<!-- Copies the native libs for the given ${project} and ${os} to the folder ${outdir}, if parameter ${nativelibs} is set -->
+	<target name="project-dist-nativelibs" if="nativelibs">
+		<copy todir="${outdir}">
+			<fileset dir="lib/${os}"/>
+		</copy>
+	</target>
+	
+	
+	<!-- Tests the given ${project} -->
+	<target name="project-test" depends="project-clean,project-init,project-build-src,project-build-test" if="project">
+		<echo>Testing the ${project} project...</echo>
+		<junit printsummary="withOutAndErr" haltonfailure="yes" showoutput="yes" dir="${project}" fork="yes">
+			<!-- <formatter type="plain"/> -->
+			<classpath location="${project}/bin"/>
+			<classpath refid="${project}.classpath"/>
+			<classpath refid="junit.classpath"/>
+			<jvmarg value="-Djava.library.path=../lib/linux-i586"/> <!-- works on i586 Linux only -->             
+      <batchtest fork="yes">
+				<fileset dir="${project}/test">
+					<include name="**/*Test.java"/>
+					<include name="**/*TestEx.java"/>
+				</fileset>
+      </batchtest>
+		</junit> 
+	</target>
+	
+</project>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Menu">
+	<voc key="About_" value="About..."/>
+	<voc key="Audio_" value="Audio..."/>
+	<voc key="Beta" value="Beta"/>
+	<voc key="Blog_" value="Read blog..."/>
+	<voc key="Document" value="Document"/>
+	<voc key="Edit" value="Edit"/>
+  <voc key="Edit_Redo" value="Redo"/>
+  <voc key="Edit_Undo" value="Undo"/>
+  <voc key="ErrorReportOrFeatureRequest_" value="Error report or feature request..."/>
+  <voc key="Exit" value="Exit"/>
+  <voc key="Help" value="Help"/>
+  <voc key="Language" value="Language"/>
+  <voc key="Open_" value="Open..."/>
+  <voc key="Play" value="Play"/>
+  <voc key="Playback" value="Playback"/>
+  <voc key="Print_" value="Print..."/>
+  <voc key="Readme_" value="Readme..."/>
+  <voc key="SaveAsMidi_" value="Save as Midi..."/>
+  <voc key="Settings" value="Settings"/>
+  <voc key="Stop" value="Stop"/>
+  <voc key="Website_" value="Open website..."/>
+</vocabulary>

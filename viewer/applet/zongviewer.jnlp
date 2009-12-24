@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp href="zongviewer.jnlp">
+	<information>
+		<title>Zong! Viewer Applet</title>
+		<vendor>Xenoage Software</vendor>
+		<homepage href="http://www.xenoage.com"/>
+		<offline-allowed />
+	</information>
+	<resources>
+		<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+		<jar href="lib/viewer.jar" main="true"/>
+		<jar href="lib/viewerdata.jar"/>
+		<jar href="lib/gervill.jar"/>
+		<jar href="lib/proxymusic-2.0.jar"/>
+		<jar href="lib/tablelayout.jar"/>
+		<extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp"/>
+	</resources>
+	<applet-desc name="Zong! Viewer Applet" main-class="Viewer" width="100" height="100">
+	</applet-desc>
+</jnlp>
+

@@ -1,0 +1,62 @@
+package com.xenoage.zong.musiclayout.layouter.cache;
+
+import java.util.HashMap;
+
+import com.xenoage.util.InstanceID;
+import com.xenoage.util.iterators.It;
+import com.xenoage.util.lang.Tuple3;
+import com.xenoage.zong.data.music.text.Lyric;
+import com.xenoage.zong.musiclayout.stampings.NoteheadStamping;
+import com.xenoage.zong.musiclayout.stampings.StaffTextStamping;
+
+
+/**
+ * Cache for lyric elements which still have to be created.
+ * Since normal lyrics and hyphens can be created immediately,
+ * this cache is only needed for auxiliary elements like
+ * underscore lines ("___") to indicate syllables
+ * that span over several chords.
+ * 
+ * @author Andreas Wenger
+ */
+public class OpenLyricsCache
+{
+	
+	//cache for open underscore lyrics: left syllable (starting point) and currently
+	//rightmost notehead (ending point)
+	//key: InstanceID of the first Lyric
+	//TIDY: own class for Tuple3<StaffTextStamping, NoteheadStamping, Integer>
+	private HashMap<InstanceID, Tuple3<StaffTextStamping, NoteheadStamping, Integer>> openUnderscores =
+		new HashMap<InstanceID, Tuple3<StaffTextStamping, NoteheadStamping, Integer>>();
+	
+	
+	/**
+	 * Adds or changes the given underscore line that startes at
+	 * the given left syllable and ends at the given notehead.
+	 */
+	public void setUnderscore(Lyric start, StaffTextStamping leftSyllable, NoteheadStamping rightmostNotehead, int staffIndex)
+	{
+		openUnderscores.put(start.getInstanceID(),
+			new Tuple3<StaffTextStamping, NoteheadStamping, Integer>(leftSyllable, rightmostNotehead, staffIndex));
+	}
+	
+	
+	/**
+	 * Gets the underscore line belonging to the given lyric, or null.
+	 */
+	public Tuple3<StaffTextStamping, NoteheadStamping, Integer> getUnderscore(Lyric lyric)
+	{
+		return openUnderscores.get(lyric.getInstanceID());
+	}
+	
+	
+	/**
+	 * Gets all open underscore lines.
+	 */
+	public It<Tuple3<StaffTextStamping, NoteheadStamping, Integer>> getUnderscores()
+	{
+		return new It<Tuple3<StaffTextStamping, NoteheadStamping, Integer>>(openUnderscores.values());
+	}
+	
+
+}

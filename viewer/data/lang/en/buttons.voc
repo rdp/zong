@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Buttons">
+	<voc key="Close" value="Close"/>
+	<voc key="Details" value="Details..."/>
+	<voc key="ReportError" value="Report error via internet..."/>
+</vocabulary>

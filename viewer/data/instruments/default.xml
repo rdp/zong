@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instruments> <!-- TODO revise design -->
+  <groups>
+    <group id="keyboard" name="Keyboard"/>
+    <group id="strings" name="Strings"/>
+    <group id="woodwind" name="Woodwind"/>
+    <group id="percussion" name="Percussion"/>
+  </groups>
+  <instrument id="piano">
+    <name>Piano</name>
+    <abbr>Pno</abbr>
+    <groups>
+      <group>keyboard</group>
+    </groups>
+    <midi-program>1</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+      <staff clef="clef-f" lines="5" bottomline ="G2"/>
+    </staves>
+    <pitch-bottom>A0</pitch-bottom>
+    <pitch-top>C8</pitch-top>
+    <polyphonic>0</polyphonic>
+  </instrument>
+  <instrument id="flute">
+    <name>Flute</name>
+    <abbr>Fl</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>97</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>C4</pitch-bottom>
+    <pitch-top>D7</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="alto_flute">
+    <name>Alto Flute</name>
+    <abbr>Fl</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>97</midi-program>
+    <transpose>-5</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>G3</pitch-bottom>
+    <pitch-top>G6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="oboe">
+    <name>Oboe</name>
+    <abbr>Ob</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>89</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Bflat3</pitch-bottom>
+    <pitch-top>A6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="english_horn">
+    <name>English Horn</name>
+    <abbr>En</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>90</midi-program>
+    <transpose>-7</transpose>
+    <staves>
+      <staff clef ="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>E3</pitch-bottom>
+    <pitch-top>C6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="clarinet">
+    <name>Clarinet in B</name>
+    <abbr>Cl</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>92</midi-program>
+    <transpose>-2</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>D3</pitch-bottom>
+    <pitch-top>Bflat6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="horn_f">
+    <name>Horn in F</name>
+    <abbr>Hrn</abbr>
+    <groups>
+      <group>brass</group>
+    </groups>
+    <midi-program>75</midi-program>
+    <transpose>-7</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Bflat1</pitch-bottom>
+    <pitch-top>Bflat5</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="trumpet_c">
+    <name>Trumpet in C</name>
+    <abbr>Tr</abbr>
+    <groups>
+      <group>brass</group>
+    </groups>
+    <midi-program>71</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>F3</pitch-bottom>
+    <pitch-top>E6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="trumpet_b">
+    <name>Trumpet in B flat</name>
+    <abbr>Tr</abbr>
+    <groups>
+      <group>brass</group>
+    </groups>
+    <midi-program>71</midi-program>
+    <transpose>-2</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Eflat3</pitch-bottom>
+    <pitch-top>D6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="piccolo">
+    <name>Piccolo</name>
+    <abbr>Pic</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>96</midi-program>
+    <transpose>12</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>C5</pitch-bottom>
+    <pitch-top>C8</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="soprano">
+    <name>Soprano</name>
+    <abbr>S</abbr>
+    <groups>
+      <group>singer</group>
+    </groups>
+    <midi-program>58</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>C4</pitch-bottom>
+    <pitch-top>C6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="mezzo_soprano">
+    <name>Mezzo-soprano</name>
+    <abbr>MS</abbr>
+    <groups>
+      <group>singer</group>
+    </groups>
+    <midi-program>58</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>A3</pitch-bottom>
+    <pitch-top>A5</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="alto">
+    <name>Alto</name>
+    <abbr>A</abbr>
+    <groups>
+      <group>singer</group>
+    </groups>
+    <midi-program>58</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>F3</pitch-bottom>
+    <pitch-top>F5</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="tenor">
+    <name>Tenor</name>
+    <abbr>T</abbr>
+    <groups>
+      <group>singer</group>
+    </groups>
+    <midi-program>58</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g-8" lines="5" bottomline="E3"/>
+    </staves>
+    <pitch-bottom>B2</pitch-bottom>
+    <pitch-top>B4</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="baritone">
+    <name>Baritone</name>
+    <abbr>B</abbr>
+    <groups>
+      <group>singer</group>
+    </groups>
+    <midi-program>58</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g-8" lines="5" bottomline="E3"/>
+    </staves>
+    <pitch-bottom>G2</pitch-bottom>
+    <pitch-top>G4</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="bass">
+    <name>Bass</name>
+    <abbr>B</abbr>
+    <groups>
+      <group>singer</group>
+    </groups>
+    <midi-program>58</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>E2</pitch-bottom>
+    <pitch-top>E4</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="violin">
+    <name>Violin</name>
+    <abbr>V</abbr>
+    <groups>
+      <group>string</group>
+    </groups>
+    <midi-program>63</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>G3</pitch-bottom>
+    <pitch-top>C7</pitch-top>
+    <polyphonic>4</polyphonic>
+  </instrument>
+  <instrument id="viola">
+    <name>Viola</name>
+    <abbr>V</abbr>
+    <groups>
+      <group>string</group>
+    </groups>
+    <midi-program>63</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>C3</pitch-bottom>
+    <pitch-top>A6</pitch-top>
+    <polyphonic>4</polyphonic>
+  </instrument>
+  <instrument id="cello">
+    <name>Cello</name>
+    <abbr>C</abbr>
+    <groups>
+      <group>string</group>
+    </groups>
+    <midi-program>64</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-c" lines="5" bottomline="F4"/>
+    </staves>
+    <pitch-bottom>C2</pitch-bottom>
+    <pitch-top>A5</pitch-top>
+    <polyphonic>4</polyphonic>
+  </instrument>
+  <instrument id="contrabass">
+    <name>Contrabass</name>
+    <abbr>C</abbr>
+    <groups>
+      <group>string</group>
+    </groups>
+    <midi-program>65</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-f" lines="5" bottomline="G2"/>
+    </staves>
+    <pitch-bottom>C1</pitch-bottom>
+    <pitch-top>G4</pitch-top>
+    <polyphonic>4</polyphonic>
+  </instrument>
+  <instrument id="guitar">
+    <name>Guitar</name>
+    <abbr>G</abbr>
+    <groups>
+      <group>guitar</group>
+    </groups>
+    <midi-program>35</midi-program>
+    <transpose>-12</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>E2</pitch-bottom>
+    <pitch-top>D6</pitch-top>
+    <polyphonic>6</polyphonic>
+  </instrument>
+  <instrument id="vibraphone">
+    <name>Vibraphone</name>
+    <abbr>Vib</abbr>
+    <groups>
+      <group>percussion</group>
+    </groups>
+    <midi-program>12</midi-program>
+    <transpose>0</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>F2</pitch-bottom>
+    <pitch-top>C6</pitch-top>
+    <polyphonic>0</polyphonic>
+  </instrument>
+  <instrument id="glockenspiel">
+    <name>Glockenspiel</name>
+    <abbr>Gl</abbr>
+    <groups>
+      <group>percussion</group>
+    </groups>
+    <midi-program>21</midi-program>
+    <transpose>24</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>G5</pitch-bottom>
+    <pitch-top>C8</pitch-top>
+    <polyphonic>0</polyphonic>
+  </instrument>
+  <instrument id="celesta">
+    <name>Celesta</name>
+    <abbr>Cel</abbr>
+    <groups>
+      <group>percussion</group>
+      <group>keyboard</group>
+    </groups>
+    <midi-program>11</midi-program>
+    <transpose>12</transpose>
+    <staves>
+      <staff clef ="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>C4</pitch-bottom>
+    <pitch-top>C8</pitch-top>
+    <polyphonic>0</polyphonic>
+  </instrument>
+  <instrument id="soprano_sax">
+    <name>Soprano Saxophone</name>
+    <abbr>Sopr</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>83</midi-program>
+    <transpose>-2</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Gsharp3</pitch-bottom>
+    <pitch-top>Csharp6</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="alto_sax">
+    <name>Alto Saxophone</name>
+    <abbr>Alto</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>84</midi-program>
+    <transpose>-9</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Dflat3</pitch-bottom>
+    <pitch-top>A5</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="tenor_sax">
+    <name>Tenor Saxophone</name>
+    <abbr>Tenor</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>85</midi-program>
+    <transpose>-14</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Aflat2</pitch-bottom>
+    <pitch-top>Eflat5</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="baritone_sax">
+    <name>Baritone Saxophone</name>
+    <abbr>Bar</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>86</midi-program>
+    <transpose>-21</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>C2</pitch-bottom>
+    <pitch-top>A4</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="bass_sax">
+    <name>Bass Saxophone</name>
+    <abbr>Bass</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>85</midi-program>
+    <transpose>-2</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>Aflat1</pitch-bottom>
+    <pitch-top>D4</pitch-top>
+    <polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="clarinetineb">
+    <name>Clarinet in Eb</name>
+    <abbr>Cl. in Eb</abbr>
+    <groups>
+      <group>woodwind</group>
+    </groups>
+    <midi-program>72</midi-program>
+    <transpose>3</transpose>
+    <staves>
+      <staff clef="clef-g" lines="5" bottomline="E4"/>
+    </staves>
+    <pitch-bottom>G3</pitch-bottom>
+    <pitch-top>F6</pitch-top>
+	<polyphonic>1</polyphonic>
+  </instrument>
+  <instrument id="drums">
+    <name>Drums</name>
+    <abbr>Dr</abbr>
+    <groups>
+      <group>percussion</group>
+    </groups>
+    <unpitched/>
+    <staves>
+      <staff clef="clef-percussion" lines="5" bottomline="G2"/>
+    </staves>
+  </instrument>
+</instruments>

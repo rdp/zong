@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="General">
+	<voc key="Bottom" value="Bottom"/>
+	<voc key="Cancel" value="Cancel"/>
+	<voc key="Distance" value="Distance"/>
+	<voc key="Size" value="Size"/>
+	<voc key="Height" value="Height"/>
+	<voc key="Impossible" value="Impossible"/>
+	<voc key="Instruments" value="Instruments"/>
+	<voc key="Left" value="Left"/>
+	<voc key="MemoryUsage" value="Memory usage"/>
+	<voc key="PageFormat" value="Page format"/>
+	<voc key="PageMargins" value="Page margins"/>
+	<voc key="PageSettings" value="Page settings"/>
+	<voc key="Position" value="Position"/>
+	<voc key="OK" value="OK"/>
+	<voc key="Right" value="Right"/>
+	<voc key="Rotation" value="Rotation"/>
+	<voc key="Staves" value="Staves"/>
+	<voc key="Top" value="Top"/>
+	<voc key="Width" value="Width"/>
+</vocabulary>
