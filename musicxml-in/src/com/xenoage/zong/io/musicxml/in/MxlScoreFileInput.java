@@ -61,10 +61,11 @@ public class MxlScoreFileInput
   
   /**
    * Creates a {@link Score} instance from the document
-   * behind the given {@link InputStream}. If the file path is known too,
-   * it can be given, otherwise it is null.
-   * The given {@link ErrorProcessing} instance is used for logging warnings,
-   * but it may also be null.
+   * behind the given {@link InputStream}. 
+   * @param inputStream  the input stream with the MusicXML document
+   * @param filePath     file path if known, null otherwise
+   * @param err          the error handler, which is used for logging warnings,
+   *                     but it may also be null
    */
   @Override public Score read(InputStream inputStream, String filePath, ErrorProcessing err)
     throws InvalidFormatException, IOException
@@ -87,30 +88,43 @@ public class MxlScoreFileInput
   		throw new IOException(ex);
   	}
   	
-  	//create new score
-  	Score score = new Score();
-  	
-  	//read information about the score
-  	MxlScoreInfo mxlScoreInfo = new MxlScoreInfo(doc);
-  	score.setScoreInfo(mxlScoreInfo.getScoreInfo());
-  	
-    //read score format
-    MxlScoreFormat scoreFormatReader = new MxlScoreFormat(doc);
-    score.setScoreFormat(scoreFormatReader.getScoreFormat());
-    score.addMetaData("layoutformat", scoreFormatReader.getPageFormat());
-    
-    //create the list of staves
-    MxlStavesList stavesInfo = new MxlStavesList(doc, score);
-    score.setStavesList(stavesInfo.getStavesList());
-    
-    //read the musical contents
-    ScoreInput input = new ScoreInput(score);
-    MxlScoreData.read(doc, input, scoreFormatReader, err);
-    
-    //remember the XML document for further application-dependend processing
-    score.addMetaData("xmldoc", doc);
-    
-    return score;
+  	return read(doc, err);
+  }
+  
+  
+  /**
+   * Builds a {@link Score} entity from a {@link ScorePartwise} document.
+   * @param doc  the provided ScorePartwise document
+   * @param err  the error handler, which is used for logging warnings,
+   *             but it may also be null
+   */
+  public Score read (ScorePartwise doc, ErrorProcessing err)
+  	throws InvalidFormatException
+  {
+		//create new score
+		Score score = new Score();
+
+		//read information about the score
+		MxlScoreInfo mxlScoreInfo = new MxlScoreInfo(doc);
+		score.setScoreInfo(mxlScoreInfo.getScoreInfo());
+
+		//read score format
+		MxlScoreFormat scoreFormatReader = new MxlScoreFormat(doc);
+		score.setScoreFormat(scoreFormatReader.getScoreFormat());
+		score.addMetaData("layoutformat", scoreFormatReader.getPageFormat());
+
+		//create the list of staves
+		MxlStavesList stavesInfo = new MxlStavesList(doc, score);
+		score.setStavesList(stavesInfo.getStavesList());
+
+		//read the musical contents
+		ScoreInput input = new ScoreInput(score);
+		MxlScoreData.read(doc, input, scoreFormatReader, err);
+
+		//remember the XML document for further application-dependend processing
+		score.addMetaData("xmldoc", doc);
+
+		return score;
   }
   
 

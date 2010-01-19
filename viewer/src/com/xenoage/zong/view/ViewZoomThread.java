@@ -92,7 +92,7 @@ public class ViewZoomThread
 	}
 	
 	
-	private void scroll(long nowTime)
+	private synchronized void scroll(long nowTime)
 	{
 		//when a target scroll position is set and smooth scrolling is not
 		//done at this moment, begin a new smooth scroll.

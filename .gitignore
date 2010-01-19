@@ -3,3 +3,4 @@ dist
 *.properties
 editor
 test
+copy-from-developer-rep.sh
