@@ -4,8 +4,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import javax.sound.midi.ControllerEventListener;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
@@ -53,6 +56,9 @@ public class SynthManager
 	private Mixer mixer = null;
 	private SourceDataLine line = null;
 	private AudioFormat format = null;
+	
+	private Set<ControllerEventListener> controllerEventListeners =
+		new HashSet<ControllerEventListener>();
 	
 	
 	/**
@@ -115,6 +121,31 @@ public class SynthManager
 		if (instance == null)
 			throw new IllegalStateException("init() must be called first");
 		return instance;
+	}
+	
+	
+	/**
+	 * For the parameters, see {@link Sequencer#addControllerEventListener}.
+	 * Call this method instead, because this class will remember the registered
+	 * listeners so you can call removeAllControllerEventListeners.
+	 */
+	public static void addControllerEventListener(ControllerEventListener listener, int[] controllers)
+	{
+		SynthManager instance = getInstance();
+		instance.controllerEventListeners.add(listener);
+		instance.sequencer.addControllerEventListener(listener, controllers);
+	}
+	
+	
+	/**
+	 * Removes all addeed ControllerEventListeners.
+	 */
+	public static void removeAllControllerEventListeners()
+	{
+		SynthManager instance = getInstance();
+		for (ControllerEventListener listener : instance.controllerEventListeners)
+			instance.sequencer.removeControllerEventListener(listener, null);
+		instance.controllerEventListeners.clear();
 	}
 	
 	

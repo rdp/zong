@@ -1,3 +1,5 @@
 .metadata
 dist
 *.properties
+editor
+test

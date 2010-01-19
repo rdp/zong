@@ -38,6 +38,9 @@ import com.xenoage.util.logging.Log;
  * The MIDIOutput class is responsible for playing Midi Music. All Signals are
  * sent on Channel 0. If the Instrument is changed, all tones are stopped.
  * 
+ * @deprecated: Replaced by MidiScorePlayer and MidiChordPlayer, but still
+ * used in some code. Resolve that!
+ * 
  * @author Uli Teschemacher
  * @author Andreas Wenger
  */

@@ -46,7 +46,7 @@ public class MidiScorePlayer
 		throws MidiUnavailableException
 	{
     setVolume(volume);
-    Sequencer sequencer = SynthManager.getSequencer();
+    SynthManager.removeAllControllerEventListeners();
 
 		//Java Sound is only able to use listeners for controllerevents,
 		//but not for normal note-on events. So we add a control-event on
@@ -55,18 +55,18 @@ public class MidiScorePlayer
 		//doesn't affect anything.
 		//See http://www.midi.org/techspecs/midimessages.php
 		int controllers[] = { NOTE_ON_EVENT };
-		sequencer.addControllerEventListener(this, controllers);
+    SynthManager.addControllerEventListener(this, controllers);
 		
 		/* NOTNEEDED
 		//For the metronome control event 118 is used. It doesn't mean
 		//anything and we are able to seperate the events.
 		int controllersMetronome[] = { METRONOME_EVENT };
-		sequencer.addControllerEventListener(this, controllersMetronome);
+		SynthManager(this, controllersMetronome);
 		*/
 		
 		//For the playbackAtEnd control event 117 is used.
 		int controllersplaybackAtEnd[] = { PLAYBACK_END_EVENT };
-		sequencer.addControllerEventListener(this, controllersplaybackAtEnd);
+		SynthManager.addControllerEventListener(this, controllersplaybackAtEnd);
 	}
 	
 	
