@@ -1,4 +1,7 @@
+cp ../Zong/Programm/Zong/build.xml .
+
 rm -rf core
+rm -rf installer
 rm -rf lib
 rm -rf midi-out
 rm -rf musicxml-in
@@ -7,6 +10,7 @@ rm -rf shared
 rm -rf util
 rm -rf viewer
 cp -r ../Zong/Programm/Zong/core .
+cp -r ../Zong/Programm/Zong/installer .
 cp -r ../Zong/Programm/Zong/lib .
 cp -r ../Zong/Programm/Zong/midi-out .
 cp -r ../Zong/Programm/Zong/musicxml-in .

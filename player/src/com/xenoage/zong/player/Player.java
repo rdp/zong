@@ -13,7 +13,8 @@ import com.xenoage.util.logging.ApplicationLog;
 import com.xenoage.util.logging.Log;
 import com.xenoage.zong.Zong;
 import com.xenoage.zong.io.midi.out.SynthManager;
-import com.xenoage.zong.player.gui.FrameController;
+import com.xenoage.zong.player.gui.ZongFrameController;
+import com.xenoage.zong.player.gui.ZongFrameView;
 import com.xenoage.zong.player.language.Voc;
 
 
@@ -63,7 +64,7 @@ public class Player
 				getProjectName(), JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		FrameController ctrl = new FrameController();
+		ZongFrameController ctrl = new ZongFrameController(new ZongFrameView());
 		
 		if (args.length > 0)
     {
@@ -78,7 +79,7 @@ public class Player
       }
     }
 		
-		ctrl.getFrame().setVisible(true);
+		ctrl.getFrameView().getFrame().setVisible(true);
 	}
 	
 	

@@ -27,6 +27,8 @@ import com.xenoage.zong.player.language.Voc;
  * the applet version.
  * 
  * @author Andreas Wenger
+ * @author Uli Teschemacher
+ * @author Hervé Bitteur
  */
 public class Controller
 {
@@ -73,6 +75,12 @@ public class Controller
 	{
 		player.addPlaybackListener(listener);
 	}
+	
+	
+	public void removePlaybackListener (PlaybackListener listener)
+  {
+		player.removePlaybackListener(listener);
+  }
 	
 	
 	/**
@@ -145,7 +153,7 @@ public class Controller
     {
     	this.score = score;
     	player.openScore(score);
-    	player.play();
+    	play();
     }
 	}
 	
@@ -158,14 +166,13 @@ public class Controller
 	
 	public void pause()
 	{
-		player.stop();
+		player.pause();
 	}
 	
 	
 	public void stop()
 	{
 		player.stop();
-		player.setMicrosecondPosition(0);
 	}
 	
 	

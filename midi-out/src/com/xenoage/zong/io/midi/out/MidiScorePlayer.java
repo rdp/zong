@@ -32,6 +32,7 @@ public class MidiScorePlayer
 	private List<PlaybackListener> listeners = new LinkedList<PlaybackListener>();
 	private boolean metronomeEnabled;
 	private float volume = 0.7f;
+	private int currentPosition;
 	
 	
 	private static final int NOTE_ON_EVENT = 119;
@@ -116,6 +117,7 @@ public class MidiScorePlayer
 	public void setMicrosecondPosition(long ms)
 	{
 		SynthManager.getSequencer().setMicrosecondPosition(ms);
+		currentPosition = 0;
 	}
 	
 	
@@ -128,6 +130,7 @@ public class MidiScorePlayer
 		long tickPosition = calculateTickFromScorePosition(sp,
 			sequenceContainer.getMeasureStartTicks(), sequenceContainer.getSequence().getResolution());
 		SynthManager.getSequencer().setTickPosition(tickPosition);
+		currentPosition = 0; //As we don't know the real position, we set it 0, because the playback will automatically jump to the correct position.
 	}
 
 
@@ -146,7 +149,7 @@ public class MidiScorePlayer
 	 * Stops the playback without resetting the
 	 * current position.
 	 */
-	public void stop()
+	public void pause()
 	{
 		Sequencer sequencer = SynthManager.getSequencer();
 		if (sequencer.isRunning())
@@ -157,6 +160,17 @@ public class MidiScorePlayer
 				listener.playbackStopped(sequenceContainer.getScorePositionTicks().getFirst().get2());
 			}
 		}
+	}
+	
+	
+	/**
+	 * Stops the playback and sets the cursor to the start position.
+	 */
+	public void stop()
+	{
+		pause();
+		setMicrosecondPosition(0);
+		currentPosition = 0;
 	}
 	
 	
@@ -203,22 +217,19 @@ public class MidiScorePlayer
 			// calls the listener with the most actual tick
 			long currentTick = SynthManager.getSequencer().getTickPosition();
 			//if playback is ahead: return nothing
-			if (scorePositionTicks.getFirst().get1() > currentTick)
+			if (scorePositionTicks.get(currentPosition).get1() > currentTick)
 			{
 				return;
 			}
 			//if the program hung up but the player continued, there programm would always be to late.
 			//So the algorithm deletes all aruments before the current Element.
-			while (scorePositionTicks.get(1).get1() <= currentTick)
-			{
-				scorePositionTicks.removeFirst();
-			}
-			ScorePosition pos = scorePositionTicks.getFirst().get2();
+			while (scorePositionTicks.get(currentPosition + 1).get1() <= currentTick)
+				currentPosition++;
+			ScorePosition pos = scorePositionTicks.get(currentPosition).get2();
 			for (PlaybackListener listener : listeners)
 			{
 				listener.playbackAtScorePosition(pos);
 			}
-			scorePositionTicks.removeFirst();
 		}
 		else if (message.getData1() == PLAYBACK_END_EVENT)
 		{

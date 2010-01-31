@@ -3,11 +3,22 @@
 Ant scripts for all Zong! projects.
 
 @author Andreas Wenger
+@author Uli Teschemacher
 -->
+
+
 <project basedir="." default="build" name="Zong!">
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+		  <pathelement location="lib/dev/ant-contrib/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	
 	<defaultexcludes add="**/*.gitignore"/>
 
-	<property name="zong-version" value="i48"/>
+	<property name="zong-version" value="i49"/>
 	<property name="debuglevel" value="source,lines,vars"/>
 	<property name="target" value="1.6"/>
 	<property name="source" value="1.6"/>
@@ -24,7 +35,8 @@ Ant scripts for all Zong! projects.
 		<delete dir="dist"/>
 	</target>
 	
-	<target name="dist" depends="player-dist,viewer-dist"/> <!-- ,editor-dist -->
+	<target name="dist-installer" depends="dist,installer"/> <!-- dist including nsis installer (works currently only on windows) -->
+	<target name="dist" depends="player-dist,viewer-dist"/>
 	
 	<!-- copy file="player/launcher/dist/linux-i586/zongplayer.sh" todir="dist/player"/>
 		<chmod file="dist/player/zongplayer.sh" perm="+x"/>
@@ -96,8 +108,8 @@ Ant scripts for all Zong! projects.
 		<delete dir="dist/share/player/temp"/>
 		<!-- sign the jar (only working on systems were a certificate named "Xenoage" is there, pwd is "123456") -->
 		<signjar jar="dist/share/player/lib/player.jar" alias="Xenoage" storepass="123456"/>
-		<!-- *** OS specific files *** -->
-		<antcall target="project-dist-all-os"><param name="project" value="player"/></antcall>
+		<!-- create dist files -->
+		<antcall target="project-dist-all-os"><param name="project" value="player"/><param name="nativelibs" value="false"/></antcall>
 	</target>
 	
 	
@@ -163,7 +175,7 @@ Ant scripts for all Zong! projects.
 		<delete dir="dist/share/viewer/temp"/>
 		<!-- sign the jar (only working on systems were a certificate named "Xenoage" is there, pwd is "123456") -->
 		<signjar jar="dist/share/viewer/lib/viewer.jar" alias="Xenoage" storepass="123456"/>
-		<!-- *** OS specific files *** -->
+		<!-- create dist files -->
 		<antcall target="project-dist-all-os"><param name="project" value="viewer"/><param name="nativelibs" value="true"/></antcall>
 	</target>
 	
@@ -454,10 +466,15 @@ Ant scripts for all Zong! projects.
 	
 	
 	<!-- Copies the native libs for the given ${project} and ${os} to the folder ${outdir}, if parameter ${nativelibs} is set -->
-	<target name="project-dist-nativelibs" if="nativelibs">
-		<copy todir="${outdir}">
-			<fileset dir="lib/${os}"/>
-		</copy>
+	<target name="project-dist-nativelibs">
+		<if>
+			<equals arg1="${nativelibs}" arg2="true"/>
+			<then>
+				<copy todir="${outdir}">
+					<fileset dir="lib/${os}"/>
+				</copy>
+			</then>
+		</if>
 	</target>
 	
 	
@@ -477,6 +494,20 @@ Ant scripts for all Zong! projects.
 				</fileset>
       </batchtest>
 		</junit> 
+	</target>
+
+
+	<!-- import NSIS Ant Task -->
+	<taskdef name="nsis" classname="net.sf.nsisant.Task">
+		<classpath location="installer/nsisant-1.2.jar"/>
+	</taskdef>
+
+	<target name="installer">
+		<!-- Finally create an installer for Windows -->
+		<nsis script="installer/zongviewer.nsi" verbosity="2">
+			<define name="VERSION" value="${zong-version}"/>
+			<define name="OUTFILE" value="../dist/packages/zongviewer_setup.exe"/>
+		</nsis>
 	</target>
 	
 </project>
