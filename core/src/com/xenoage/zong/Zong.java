@@ -10,12 +10,12 @@ public class Zong
 {
 
 	//the version of this program as an integer number
-	public static final int PROJECT_ITERATION = 49;
+	public static final int PROJECT_ITERATION = 50;
 	
 	//general information on this program
   public static final String PROJECT_FAMILY_NAME = "Zong!";
   public static final String PROJECT_VERSION = "p0.4";
-  public static final String PROJECT_ITERATION_NAME = "Rousseau";
+  public static final String PROJECT_ITERATION_NAME = "Haydn";
   
   //package path
   public static final String PACKAGE = "com.xenoage.zong";

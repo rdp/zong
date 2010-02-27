@@ -113,7 +113,7 @@ public class SymbolPool
     if (!IO.existsDataFile(texXMLPath) ||
       !IO.existsDataFile(texPNGPath))
     {
-      SymbolTexturePool.createSymbolTextures(id, symbols);
+      SymbolTexturePool.createSymbolTextures(id, symbols, 1024);
     }
     //load the texture pool
     texturePool = new SymbolTexturePool(id);

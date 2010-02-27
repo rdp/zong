@@ -1,17 +1,14 @@
-/**
- * 
- */
 package com.xenoage.zong.app.symbols.rasterizer;
 
 import com.xenoage.util.math.Size2f;
 import com.xenoage.util.math.TextureRectangle2f;
 
+
 /**
  * The Class tries to arrange the textures in a way, that all the textures fit
  * in it.
  * 
- * @author Uli
- * 
+ * @author Uli Teschemacher
  */
 public class SymbolsAdjuster
 {
@@ -62,9 +59,6 @@ public class SymbolsAdjuster
 
 	/**
 	 * The boolean value returns, whether all the symbols fitted in the texture.
-	 * 
-	 * @param texturesizes
-	 * @param order
 	 */
 	private boolean calculatePositions(Size2f[] texturesizes, int[] order,
 			float factor, Size2f spacing)

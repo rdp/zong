@@ -7,7 +7,6 @@ import com.xenoage.util.xml.XMLReader;
 import com.xenoage.util.xml.XMLWriter;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.language.Voc;
-import com.xenoage.zong.app.opengl.OpenGLCaps;
 import com.xenoage.zong.app.opengl.TextureManager;
 import com.xenoage.zong.app.symbols.rasterizer.SymbolsAdjuster;
 import com.xenoage.zong.app.symbols.rasterizer.SymbolsRasterizer;
@@ -121,7 +120,7 @@ public class SymbolTexturePool
    * with the given id.
    */
   public static void createSymbolTextures(
-    String id, Hashtable<String, Symbol> symbols)
+    String id, Hashtable<String, Symbol> symbols, int textureSize)
   {
     
     //collect the symbols
@@ -134,25 +133,8 @@ public class SymbolTexturePool
     }
     Symbol[] symbolsArray = ArrayTools.toSymbolArray(symbolsList);
     
-    //compute the size of the texture
-    Size2i maxSize = OpenGLCaps.getMaxRGBATextureSize(null);
-    int width;
-    if (maxSize.width == 0)
-    {
-      //could not find out the maximum texture size. but 512x512 should
-      //work even on old machines...
-      width = 512;
-    }
-    else if (maxSize.width > 1024)
-    {
-      width = 1024; //1024 is enough
-    }
-    else
-    {
-      width = maxSize.width;
-    }
-    
     //compute the texture coordinates
+    int width = textureSize;
     Size2f[] symbolsSizes = new Size2f[symbolsArray.length];
     for (int i = 0; i < symbolsSizes.length; i++)
     {

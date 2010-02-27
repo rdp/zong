@@ -18,7 +18,7 @@ Ant scripts for all Zong! projects.
 	
 	<defaultexcludes add="**/*.gitignore"/>
 
-	<property name="zong-version" value="i49"/>
+	<property name="zong-version" value="i50"/>
 	<property name="debuglevel" value="source,lines,vars"/>
 	<property name="target" value="1.6"/>
 	<property name="source" value="1.6"/>
@@ -36,7 +36,8 @@ Ant scripts for all Zong! projects.
 	</target>
 	
 	<target name="dist-installer" depends="dist,installer"/> <!-- dist including nsis installer (works currently only on windows) -->
-	<target name="dist" depends="player-dist,viewer-dist"/>
+	<target name="dist" depends="player-dist,viewer-dist,zongfree-src-dist"/>
+
 	
 	<!-- copy file="player/launcher/dist/linux-i586/zongplayer.sh" todir="dist/player"/>
 		<chmod file="dist/player/zongplayer.sh" perm="+x"/>
@@ -115,7 +116,7 @@ Ant scripts for all Zong! projects.
 	
 	<!-- create the viewer and pack it for all OSes -->
 	<target name="viewer-dist" depends="clean,util-jar,core-jar,midi-out-jar,musicxml-in-jar,player-jar,viewer-jar">
-		<!-- *** shared files *** -->
+		<!-- shared files -->
 		<mkdir dir="dist/share/viewer"/>
 		<copy file="viewer/readme.txt" todir="dist/share/viewer"/>
 		<copy file="viewer/license.txt" todir="dist/share/viewer"/>
@@ -142,6 +143,8 @@ Ant scripts for all Zong! projects.
 				<exclude name="data/*.log"/>
 			</fileset>
 		</copy>
+		<!-- create symbolpool textures -->
+		<antcall target="rasterize-symbolpool"/>
 		<!-- viewerdata.jar -->
 		<jar destfile="dist/share/viewer/lib/viewerdata.jar">
 			<fileset dir="viewer">
@@ -179,7 +182,49 @@ Ant scripts for all Zong! projects.
 		<antcall target="project-dist-all-os"><param name="project" value="viewer"/><param name="nativelibs" value="true"/></antcall>
 	</target>
 	
+	
 	<target name="test" depends="util-test,core-test,musicxml-in-test,midi-out-test,player-test,viewer-test"> <!-- ,editor-test -->
+	</target>
+	
+	
+	<target name="rasterize-symbolpool">
+    <java dir="dist/share/viewer" classname="com.xenoage.zong.app.symbols.rasterizer.SymbolPoolRasterizer"
+    	classpathref="viewer.classpath" classpath="viewer/bin" fork="true" failonerror="true">
+    	<arg value="default"/>
+    </java>
+	</target>
+	
+	
+	<!-- create the zongfree-src (basically this is just everything in this directory
+	     without dist, editor, test, .git, .metadata and all inner bin directories) -->
+	<target name="zongfree-src-dist" depends="clean">
+		<mkdir dir="dist/share/zongfree-src"/>
+		<!-- collect files -->
+		<copy todir="dist/share/zongfree-src">
+			<fileset dir=".">
+				<exclude name="dist/**"/>
+				<exclude name="editor/**"/>
+				<exclude name="test/**"/>
+				<exclude name=".git/**"/>
+				<exclude name=".metadata/**"/>
+				<exclude name="**/bin/**"/>
+			</fileset>
+		</copy>
+		<!-- make .sh files executable -->
+		<chmod perm="+x" dir="dist/share/zongfree-src" includes="**/*.sh"/>
+		<!-- create package -->
+		<mkdir dir="dist/packages"/>
+		<tar destfile="dist/packages/zongfree-${zong-version}-src.tar">
+			<!-- .sh executable -->
+			<tarfileset dir="dist/share/zongfree-src" mode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="dist/share/zongfree-src">
+				<exclude name="**/*.sh"/>
+			</tarfileset>
+		</tar>
+		<bzip2 destfile="dist/packages/zongfree-${zong-version}-src.tar.bz2" src="dist/packages/zongfree-${zong-version}-src.tar"/>
+		<delete file="dist/packages/zongfree-${zong-version}-src.tar"/>
 	</target>
 	
 	

@@ -231,6 +231,19 @@ public class App
   {
     try
     {
+    	//TODO: known bug. workaround (close program, but avoid crash)
+    	//Stack Trace: (program in path "C:\Users\andi\test\Zong!\doesntmatteranymore\")
+    	//sun.misc.ServiceConfigurationError: javax.sound.midi.spi.MidiDeviceProvider: : java.io.FileNotFoundException: C:\Users\andi\test\Zong (Das System kann die angegebene Datei nicht finden)
+    	//at sun.misc.Service.fail(Unknown Source)
+    	//...
+    	//at javax.sound.midi.MidiSystem.getSynthesizer(Unknown Source)
+    	if (System.getProperty("user.dir").contains("!"))
+		{
+			showMessageDialog("Due to a bug in a Java Sound module this program\n" +
+				"can not be started under a path which contains an \"!\".\n" +
+				"Please move the whole program directory to another location.");
+			System.exit(0);
+		}
     	SynthManager.init(readSettings);
     }
     catch (MidiUnavailableException ex)
