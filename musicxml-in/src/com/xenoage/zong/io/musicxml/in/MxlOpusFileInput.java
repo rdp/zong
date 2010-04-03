@@ -100,7 +100,7 @@ public class MxlOpusFileInput
 			OpusItem resolvedItem = item;
 			if (item instanceof OpusLink)
 			{
-				Opus newOpus = readOpusFile(IO.openInputStream(
+				Opus newOpus = readOpusFile(IO.openInputStreamPreservePath(
 					baseDirectory + "/" + ((OpusLink) item).getHref()));
 				resolvedItem = resolveOpusLinks(newOpus, baseDirectory);
 			}

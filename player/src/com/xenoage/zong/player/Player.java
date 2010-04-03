@@ -33,8 +33,8 @@ public class Player
 	public static void main(String[] args)
 	{
 		//init IO, language, audio and GUI
-		Log.initApplicationLog(ApplicationLog.FILENAME_DEFAULT, Zong.getNameAndVersion(PROJECT_FIRST_NAME));
 		IO.initApplication(FILENAME);
+		Log.initApplicationLog(ApplicationLog.FILENAME_DEFAULT, Zong.getNameAndVersion(PROJECT_FIRST_NAME));
 		try
   	{
 	  	//get available languages

@@ -10,6 +10,9 @@ import java.util.List;
 import org.junit.Test;
 
 import com.xenoage.util.FileTools;
+import com.xenoage.util.io.ApplicationIO;
+import com.xenoage.util.io.IO;
+import com.xenoage.zong.Zong;
 
 
 /**
@@ -23,6 +26,7 @@ public class MxlCompressedFileInputTest
 	@Test public void test()
 		throws Exception
 	{
+		IO.initApplication(Zong.PROJECT_FAMILY_NAME);
 		MxlCompressedFileInput zip = new MxlCompressedFileInput(
 			new FileInputStream(new File("data/test/MxlCompressedFileInputTest/album.mxl")),
 			FileTools.getTempFolder());

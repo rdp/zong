@@ -121,6 +121,19 @@ public class ApplicationIO
   
   
   /**
+   * Opens and returns an input stream for the data file with
+   * the given absolute or relative path. The path is guaranteed to
+   * be untouched (no automatic rerouting to home directory or something
+   * like that).
+   */
+  @Override public InputStream openInputStreamPreservePath(String filepath)
+    throws IOException
+  {
+  	return new FileInputStream(filepath);
+  }
+  
+  
+  /**
    * Opens and returns an output stream for the data file with
    * the given relative path. It is always opened in the user's
    * application settings folder.

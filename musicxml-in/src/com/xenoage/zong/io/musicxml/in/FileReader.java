@@ -37,7 +37,7 @@ public class FileReader
 		//get directory name
 		String directory = FileTools.getDirectoryName(path);
 		//open stream
-		BufferedInputStream bis = new BufferedInputStream(IO.openInputStream(path));
+		BufferedInputStream bis = new BufferedInputStream(IO.openInputStreamPreservePath(path));
 		StreamTools.markInputStream(bis);
 		//file type
 		FileType fileType = FileTypeReader.getFileType(bis);

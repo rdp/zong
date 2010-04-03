@@ -147,6 +147,19 @@ public class AppletIO
   
   
   /**
+   * Opens and returns an input stream for the data file with
+   * the given absolute or relative path. The path is guaranteed to
+   * be untouched (no automatic rerouting to home directory or something
+   * like that).
+   */
+  @Override public InputStream openInputStreamPreservePath(String filepath)
+    throws IOException
+  {
+  	return openInputStream(filepath);
+  }
+  
+  
+  /**
    * Throws an exception, since an applet may not write files.
    */
   @Override public OutputStream openOutputStream(String filepath)

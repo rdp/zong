@@ -44,6 +44,16 @@ public interface IOInterface
   
   
   /**
+   * Opens and returns an input stream for the data file with
+   * the given absolute or relative path. The path is guaranteed to
+   * be untouched (no automatic rerouting to home directory or something
+   * like that).
+   */
+  public InputStream openInputStreamPreservePath(String filepath)
+    throws IOException;
+  
+  
+  /**
    * Opens and returns an output stream for the data file with
    * the given relative path.
    */
