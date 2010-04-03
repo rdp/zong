@@ -42,6 +42,15 @@ public class Log
   {
     log = new AppletLog();
   }
+  
+  
+  /**
+   * Initialize the quiet logging (no logging).
+   */
+  public static void initNoLog()
+  {
+    log = new NoLog();
+  }
 
 
   /**

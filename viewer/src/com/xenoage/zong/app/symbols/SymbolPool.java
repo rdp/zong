@@ -40,14 +40,23 @@ public class SymbolPool
   
   
   /**
-   * Loads and returns the default symbol pool or reports an
+   * Gets an empty symbol pool.
+   */
+  public static SymbolPool empty()
+  {
+  	return new SymbolPool();
+  }
+  
+  
+  /**
+   * Loads and returns the symbol pool with the given ID or reports an
    * error if not possible.
    */
-  public static SymbolPool loadDefault()
+  public static SymbolPool load(String id)
   {
   	try
     {
-      return new SymbolPool("default");
+      return new SymbolPool(id, false);
     }
     catch (Exception ex)
     {
@@ -58,9 +67,36 @@ public class SymbolPool
   
   
   /**
+   * Loads and returns the default symbol pool or reports an
+   * error if not possible.
+   */
+  public static SymbolPool loadDefault()
+  {
+  	return load("default");
+  }
+  
+  
+  /**
+   * Loads and returns the symbol pool with the given ID or reports an
+   * error if not possible.
+   */
+  public static void createFilesInSystemDir(String id)
+  {
+  	try
+    {
+      new SymbolPool(id, true);
+    }
+    catch (Exception ex)
+    {
+    	App.err().report(ErrorLevel.Fatal, Voc.Error_CouldNotLoadSymbolPool, ex);
+    }
+  }
+  
+  
+  /**
    * Creates an empty pool for symbols.
    */
-  public SymbolPool()
+  private SymbolPool()
   {
   	this.id = null;
   	this.symbols = new Hashtable<String, Symbol>(0);
@@ -70,9 +106,13 @@ public class SymbolPool
   
   /**
    * Creates a new pool for symbols.
-   * @param id  the ID of the style, e.g. "default"
+   * @param id                 the ID of the style, e.g. "default"
+   * @param createFilesInSystemDir
+   *                           if true, the XML and texture files (if any)
+   *                           will be written to the programs folder, not
+   *                           to the user's home folder.
    */
-  public SymbolPool(String id)
+  private SymbolPool(String id, boolean createFilesInSystemDir)
     throws FileNotFoundException
   {
     this.id = id;
@@ -116,15 +156,16 @@ public class SymbolPool
       App.err().report(ErrorLevel.Fatal, Voc.Error_CouldNotLoadSymbolPool, ex);
     }
     
-    //if the texture of the style is not available, or one of the symbols
-    //is newer than this file, (re)create it
+    //if the creation of files is forced, if texture of the style is not available,
+    //or one of the symbols is newer than this file, (re)create it
     String texXMLPath = SymbolTexturePool.getTextureXMLPath(id);
     String texPNGPath = SymbolTexturePool.getTexturePNGPath(id, 0);
     Date texXMLDate = IO.getDataFileModificationDate(texXMLPath);
-    if (!IO.existsDataFile(texXMLPath) || !IO.existsDataFile(texPNGPath) ||
+    if (createFilesInSystemDir ||
+    	!IO.existsDataFile(texXMLPath) || !IO.existsDataFile(texPNGPath) ||
     	(texXMLDate != null && texXMLDate.before(latestSymbolDate)))
     {
-      SymbolTexturePool.createSymbolTextures(id, symbols, 1024);
+      SymbolTexturePool.createSymbolTextures(id, symbols, 1024, createFilesInSystemDir);
     }
     //load the texture pool
     texturePool = new SymbolTexturePool(id);

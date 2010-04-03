@@ -71,7 +71,7 @@ public class App
   ScorePanelController scorePanelController = null;
   
   //the pools for symbols, ...
-  SymbolPool symbolPool = new SymbolPool();
+  SymbolPool symbolPool = SymbolPool.empty();
   
   //main frame, used as parent for showing dialogs (should also work for applets)
   Frame mainFrame;

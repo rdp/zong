@@ -24,7 +24,7 @@ public class SymbolPoolTest
     //load default symbol pool, clef-g must exist
     try
     {
-      symbolPool = new SymbolPool("default");
+      symbolPool = SymbolPool.loadDefault();
     }
     catch (Exception ex)
     {

@@ -120,7 +120,8 @@ public class SymbolTexturePool
    * with the given id.
    */
   public static void createSymbolTextures(
-    String id, Hashtable<String, Symbol> symbols, int textureSize)
+    String id, Hashtable<String, Symbol> symbols, int textureSize,
+    boolean createFilesInSystemDir)
   {
     
     //collect the symbols
@@ -150,8 +151,16 @@ public class SymbolTexturePool
       int level = 0;
       while (width >= 1)
       {
-        SymbolsRasterizer.rasterizeSymbols(IO.openOutputStream(getTexturePNGPath(id, level)),
-          width, width, symbolsArray, texCords);
+      	OutputStream os;
+      	if (createFilesInSystemDir)
+      	{
+      		os = new FileOutputStream(getTexturePNGPath(id, level));
+      	}
+      	else
+      	{
+      		os = IO.openOutputStream(getTexturePNGPath(id, level));
+      	}
+        SymbolsRasterizer.rasterizeSymbols(os, width, width, symbolsArray, texCords);
         width /= 2;
         level++;
       }
@@ -175,8 +184,16 @@ public class SymbolTexturePool
         XMLWriter.addAttribute(eTexture, "x2", Float.toString(texCords[i].x2));
         XMLWriter.addAttribute(eTexture, "y2", Float.toString(1 - texCords[i].y1));
       }
-      //TODO: use IO class
-      XMLWriter.writeFile(document, IO.openOutputStream(getTextureXMLPath(id)));
+      OutputStream os;
+    	if (createFilesInSystemDir)
+    	{
+    		os = new FileOutputStream(getTextureXMLPath(id));
+    	}
+    	else
+    	{
+    		os = IO.openOutputStream(getTextureXMLPath(id));
+    	}
+      XMLWriter.writeFile(document, os);
     }
     catch (Exception ex)
     {
