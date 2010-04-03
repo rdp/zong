@@ -73,7 +73,7 @@ public class FeedbackDialogController
 		{
 			try
 			{
-				report.registerData("app.log", IO.openDataFile("data/app.log"));
+				report.registerData("app.log", IO.openInputStream("data/app.log"));
 			}
 			catch (Exception ex)
 			{
@@ -85,7 +85,7 @@ public class FeedbackDialogController
 			String filename = FileTools.getFileName(documentPath);
 			try
 			{
-				report.registerData(filename, IO.openDataFile(documentPath));
+				report.registerData(filename, IO.openInputStream(documentPath));
 			}
 			catch (Exception ex)
 			{

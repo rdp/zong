@@ -247,28 +247,28 @@ public class ViewerApplet
 	{
 		//load gui textures
 		Texture tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/button-open.png"), true, "png");
+			.openInputStream("data/img/gui/button-open.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_OPEN);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/button-save.png"), true, "png");
+			.openInputStream("data/img/gui/button-save.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_SAVE);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/button-print.png"), true, "png");
+			.openInputStream("data/img/gui/button-print.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_PRINT);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/button-play.png"), true, "png");
+			.openInputStream("data/img/gui/button-play.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_PLAY_TUTTI);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/gui-buttonpanel.png"), true, "png");
+			.openInputStream("data/img/gui/gui-buttonpanel.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTONPANEL);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/logo-viewer.png"), true, "png");
+			.openInputStream("data/img/gui/logo-viewer.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_LOGO_VIEWER);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/gui-tooltip.png"), true, "png");
+			.openInputStream("data/img/gui/gui-tooltip.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_TOOLTIP);
 		tex = TextureIO.newTexture(IO
-			.openDataFile("data/img/gui/gui-tooltip-small.png"), true, "png");
+			.openInputStream("data/img/gui/gui-tooltip-small.png"), true, "png");
 		textureManager.addAppTexture(tex, TextureManager.ID_GUI_TOOLTIP_SMALL);
 	}
 	

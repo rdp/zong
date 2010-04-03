@@ -116,7 +116,7 @@ public class NotationStrategy
 		//load the duration-to-width mapping from the file "data/layout/widths.xml".
 		try
 		{
-			Document doc = XMLReader.readFile(IO.openDataFile("data/layout/widths.xml"));
+			Document doc = XMLReader.readFile(IO.openInputStream("data/layout/widths.xml"));
 			List<Element> eWidths = XMLReader.elements(XMLReader.root(doc), "width");
 			widths = new DurationWidth[eWidths.size()];
 			int i = 0;

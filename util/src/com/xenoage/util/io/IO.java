@@ -2,6 +2,8 @@ package com.xenoage.util.io;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Date;
+import java.util.Set;
 
 
 /**
@@ -21,15 +23,15 @@ public class IO
 {
   
   //the implementation of the file reader: application or applet
-  private static IOInterface implementation = new ApplicationIO();
+  private static IOInterface implementation = null;
   
   
   /**
    * Initialized the file reader for the application.
    */
-  public static void initApplication()
+  public static void initApplication(String programName)
   {
-    implementation = new ApplicationIO();
+    implementation = new ApplicationIO(programName);
   }
   
   
@@ -63,20 +65,41 @@ public class IO
   
   
   /**
+   * Gets the modification date of the given data file,
+   * or null, if the date is unavailable.
+   */
+  public static Date getDataFileModificationDate(String filepath)
+  {
+  	return implementation.getDataFileModificationDate(filepath);
+  }
+  
+  
+  /**
    * Opens and returns an input stream for the data file with
    * the given relative path.
    */
-  public static InputStream openDataFile(String filepath)
+  public static InputStream openInputStream(String filepath)
     throws IOException
   {
-    return implementation.openDataFile(filepath);
+    return implementation.openInputStream(filepath);
+  }
+  
+  
+  /**
+   * Opens and returns an output stream for the data file with
+   * the given relative path.
+   */
+  public static OutputStream openOutputStream(String filepath)
+    throws IOException
+  {
+    return implementation.openOutputStream(filepath);
   }
   
   
   /**
    * Finds and returns the data files in the given directory.
    */
-  public static String[] listDataFiles(String directory)
+  public static Set<String> listDataFiles(String directory)
     throws IOException
   {
     return implementation.listDataFiles(directory);
@@ -86,7 +109,7 @@ public class IO
   /**
    * Finds and returns the data directories in the given directory.
    */
-  public static String[] listDataDirectories(String directory)
+  public static Set<String> listDataDirectories(String directory)
     throws IOException
   {
     return implementation.listDataDirectories(directory);
@@ -97,7 +120,7 @@ public class IO
    * Finds and returns the data files in the given directory
    * matching the given filename filter.
    */
-  public static String[] listDataFiles(String directory, FilenameFilter filter)
+  public static Set<String> listDataFiles(String directory, FilenameFilter filter)
     throws IOException
   {
     return implementation.listDataFiles(directory, filter);

@@ -10,8 +10,10 @@ import com.xenoage.zong.app.symbols.loader.SVGSymbolLoader;
 import com.xenoage.util.io.IO;
 
 import java.io.FileNotFoundException;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Set;
 
 
 /**
@@ -77,19 +79,26 @@ public class SymbolPool
     
     //load symbols from data/symbols/<id>/
     String dir = "data/symbols/" + id;
+    Date latestSymbolDate = new Date(0);
     if (!IO.existsDataDirectory(dir))
       throw new FileNotFoundException("\"data/symbols/" + id + "\" does not exist!");
     try
     {
-      String files[] = IO.listDataFiles(dir, FileTools.getSVGFilter());
-      symbols = new Hashtable<String, Symbol>(files.length);
+      Set<String> files = IO.listDataFiles(dir, FileTools.getSVGFilter());
+      symbols = new Hashtable<String, Symbol>(files.size());
       SVGSymbolLoader loader = new SVGSymbolLoader();
       LinkedList<String> symbolsWithErrors = new LinkedList<String>();
       for (String file : files)
       {
       	try
       	{
-      		Symbol symbol = loader.loadSymbol("data/symbols/" + id + "/" + file);
+      		String symbolPath = "data/symbols/" + id + "/" + file;
+      		Symbol symbol = loader.loadSymbol(symbolPath);
+      		Date symbolDate = IO.getDataFileModificationDate(symbolPath);
+      		if (symbolDate != null && symbolDate.after(latestSymbolDate))
+      		{
+      			latestSymbolDate = symbolDate;
+      		}
           symbols.put(symbol.getID(), symbol);
       	}
         catch (IllegalArgumentException ex)
@@ -107,11 +116,13 @@ public class SymbolPool
       App.err().report(ErrorLevel.Fatal, Voc.Error_CouldNotLoadSymbolPool, ex);
     }
     
-    //if the texture of the style is not available, create it
+    //if the texture of the style is not available, or one of the symbols
+    //is newer than this file, (re)create it
     String texXMLPath = SymbolTexturePool.getTextureXMLPath(id);
     String texPNGPath = SymbolTexturePool.getTexturePNGPath(id, 0);
-    if (!IO.existsDataFile(texXMLPath) ||
-      !IO.existsDataFile(texPNGPath))
+    Date texXMLDate = IO.getDataFileModificationDate(texXMLPath);
+    if (!IO.existsDataFile(texXMLPath) || !IO.existsDataFile(texPNGPath) ||
+    	(texXMLDate != null && texXMLDate.before(latestSymbolDate)))
     {
       SymbolTexturePool.createSymbolTextures(id, symbols, 1024);
     }

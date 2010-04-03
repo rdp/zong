@@ -95,15 +95,21 @@ public class Lang
    * Ensure that a language pack was loaded. If not,
    * throw a fatal error.
    */
-  private static void ensureLanguageLoaded()
+  private static boolean checkLanguageLoaded()
   {
   	if (currentLanguage == null)
   	{
   		if (err != null)
+  		{
   			err.report(ErrorLevel.Fatal, "No language loaded!");
+  			return false;
+  		}
   		else
+  		{
     		throw new RuntimeException("No language loaded!");
+  		}
   	}
+  	return true;
   }
   
   
@@ -113,8 +119,14 @@ public class Lang
    */
   public static String getWithNull(VocabularyID id)
   {
-  	ensureLanguageLoaded();
-    return currentLanguage.getWithNull(id);
+  	if (checkLanguageLoaded())
+  	{
+  		return currentLanguage.getWithNull(id);
+  	}
+  	else
+  	{
+  		return null;
+  	}
   }
   
   
@@ -126,8 +138,14 @@ public class Lang
    */
   public static String get(VocabularyID id)
   {
-  	ensureLanguageLoaded();
-    return currentLanguage.get(id);
+  	if (checkLanguageLoaded())
+  	{
+  		return currentLanguage.get(id);
+  	}
+  	else
+  	{
+  		return id.toString();
+  	}
   }
   
   

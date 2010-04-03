@@ -2,10 +2,9 @@ package com.xenoage.zong.app;
 
 import java.awt.Frame;
 import java.io.File;
-import java.io.FileInputStream;
 
-import com.xenoage.util.FileTools;
 import com.xenoage.util.logging.Log;
+import com.xenoage.zong.Zong;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.gui.controller.frames.ViewerMainFrameController;
 import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInput;
@@ -26,6 +25,7 @@ public class ViewerApplication
 {
 	
 	private static final String PROJECT_FIRST_NAME = "Viewer";
+	public static final String FILENAME = Zong.FILENAME + "/viewer/";
 
 
 	/**

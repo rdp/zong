@@ -60,7 +60,7 @@ public class SwingImageFrameRenderer
     BufferedImage image = null;
     try
     {
-      image = ImageIO.read(IO.openDataFile(imageFrame.getImagePath()));
+      image = ImageIO.read(IO.openInputStream(imageFrame.getImagePath()));
     }
     catch (IOException ex)
     {

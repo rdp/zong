@@ -20,6 +20,9 @@ public class Zong
   //package path
   public static final String PACKAGE = "com.xenoage.zong";
   
+  //name in filesystem
+  public static final String FILENAME = "zong";
+  
   //copyright information
   public static final String COPYRIGHT =
   	"Copyright © 2006-2010 by Andreas Wenger, Uli Teschemacher, Xenoage Software";
@@ -47,5 +50,6 @@ public class Zong
   	return Zong.PROJECT_FAMILY_NAME + " " + firstName + " " + Zong.PROJECT_VERSION + "." +
   		Zong.PROJECT_ITERATION + " ALPHA";
   }
+
 
 }

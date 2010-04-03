@@ -44,12 +44,9 @@ public class XMLWriter
    * Writes the given XML document into a file
    * at the given path.
    */
-  public static void writeFile(Document doc, String path)
+  public static void writeFile(Document doc, OutputStream outputStream)
     throws IOException
   {
-    File f = new File(path);
-    FileOutputStream fos = new FileOutputStream(f);
-    
     try
     {
       TransformerFactory tFactory =
@@ -61,7 +58,7 @@ public class XMLWriter
         "{http://xml.apache.org/xslt}indent-amount", "2");
       
       DOMSource source = new DOMSource(doc);
-      StreamResult result = new StreamResult(fos);
+      StreamResult result = new StreamResult(outputStream);
       
       transformer.transform(source, result);
     }

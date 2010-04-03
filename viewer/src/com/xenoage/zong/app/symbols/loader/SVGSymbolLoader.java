@@ -36,7 +36,7 @@ public class SVGSymbolLoader
     Document doc;
     try
     {
-      doc = XMLReader.readFile(IO.openDataFile(svgFilepath));
+      doc = XMLReader.readFile(IO.openInputStream(svgFilepath));
     }
     catch (Exception ex)
     {

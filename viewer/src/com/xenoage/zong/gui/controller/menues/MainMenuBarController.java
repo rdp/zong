@@ -64,7 +64,7 @@ public class MainMenuBarController
     Document menuDoc = null;
     try
     {
-      menuDoc = XMLReader.readFile(IO.openDataFile("data/gui/menu.xml"));
+      menuDoc = XMLReader.readFile(IO.openInputStream("data/gui/menu.xml"));
 	    //read root element
 	    Element eMenuBar = XMLReader.element(menuDoc, "menubar");
 	    if (eMenuBar == null)
@@ -177,7 +177,7 @@ public class MainMenuBarController
   {
     try
     {
-      Image img = ImageIO.read(IO.openDataFile("data/img/menu/16/" + iconID));
+      Image img = ImageIO.read(IO.openInputStream("data/img/menu/16/" + iconID));
       return new ImageIcon(img);
     }
     catch (IOException ex)

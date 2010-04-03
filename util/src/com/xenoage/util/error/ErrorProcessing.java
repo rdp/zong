@@ -19,6 +19,10 @@ import com.xenoage.util.logging.Log;
 public class ErrorProcessing
 {
 	
+	//when an error occurs within this class, we do not want to process
+	//this error, since this can lead to infinite loop
+	private boolean working = false;
+	
 	
 	/**
 	 * Creates a new {@link ErrorProcessing} instance.
@@ -60,13 +64,20 @@ public class ErrorProcessing
 	 */
 	public void report(ErrorLevel level, VocabularyID messageID, Throwable error, String filePath)
 	{
-		//log the error
-		Log.log(level.getLogLevel(), messageID.getID());
-		Log.log(level.getLogLevel(), error);
-		//console
-		error.printStackTrace();
-		//handle error
-		handleError(level, Lang.get(messageID), error, filePath);
+		if (!working)
+		{
+			//set working flag
+			working = true;
+			//log the error
+			Log.log(level.getLogLevel(), messageID.getID());
+			Log.log(level.getLogLevel(), error);
+			//console
+			error.printStackTrace();
+			//handle error
+			handleError(level, Lang.get(messageID), error, filePath);
+			//reset working flag
+			working = false;
+		}
 	}
 	
 	
@@ -78,21 +89,28 @@ public class ErrorProcessing
 	 */
 	public void report(ErrorLevel level, VocabularyID messageID, List<String> files)
 	{
-		//list the files
-		StringBuilder filesList = new StringBuilder();
-		for (String file : files)
+		if (!working)
 		{
-			filesList.append("\n");
-			filesList.append(file);
+			//set working flag
+			working = true;
+			//list the files
+			StringBuilder filesList = new StringBuilder();
+			for (String file : files)
+			{
+				filesList.append("\n");
+				filesList.append(file);
+			}
+			//log the error
+			String logMessage = messageID.getID() + ". The following files were reported: " + filesList.toString().replaceAll("\n", " ");
+			Log.log(level.getLogLevel(), logMessage);
+			Log.log(level.getLogLevel(), new Exception()); //for the strack trace
+			//console
+			System.err.println(logMessage);
+			//handle error
+			handleError(level, Lang.get(messageID) + "\n" + filesList.toString(), new Exception(logMessage), null);
+			//reset working flag
+			working = false;
 		}
-		//log the error
-		String logMessage = messageID.getID() + ". The following files were reported: " + filesList.toString().replaceAll("\n", " ");
-		Log.log(level.getLogLevel(), logMessage);
-		Log.log(level.getLogLevel(), new Exception()); //for the strack trace
-		//console
-		System.err.println(logMessage);
-		//handle error
-		handleError(level, Lang.get(messageID) + "\n" + filesList.toString(), new Exception(logMessage), null);
 	}
 	
 	
@@ -131,13 +149,20 @@ public class ErrorProcessing
 	 */
 	public void report(ErrorLevel level, String message, Throwable error, String filePath)
 	{
-		//log the error
-		Log.log(level.getLogLevel(), message);
-		Log.log(level.getLogLevel(), error);
-		//console
-		//error.printStackTrace();
-		//handle error
-		handleError(level, message, error, filePath);
+		if (!working)
+		{
+			//set working flag
+			working = true;
+			//log the error
+			Log.log(level.getLogLevel(), message);
+			Log.log(level.getLogLevel(), error);
+			//console
+			//error.printStackTrace();
+			//handle error
+			handleError(level, message, error, filePath);
+			//reset working flag
+			working = false;
+		}
 	}
 	
 	

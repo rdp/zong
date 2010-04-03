@@ -51,13 +51,13 @@ public abstract class MainFrame
     try
     {
     	List<Image> icons = new ArrayList<Image>();
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo512.png")));
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo256.png")));
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo128.png")));
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo64.png")));
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo48.png")));
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo32.png")));
-    	icons.add(ImageIO.read(IO.openDataFile("data/img/icons/logo16.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo512.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo256.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo128.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo64.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo48.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo32.png")));
+    	icons.add(ImageIO.read(IO.openInputStream("data/img/icons/logo16.png")));
       setIconImages(icons);
     }
     catch (IOException ex)

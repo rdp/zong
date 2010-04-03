@@ -352,7 +352,7 @@ public abstract class BasicFrameView
 
 	protected BufferedImage loadImage(String filename) throws IOException
 	{
-		return ImageIO.read(IO.openDataFile("data/img/gui/" + filename));
+		return ImageIO.read(IO.openInputStream("data/img/gui/" + filename));
 	}
 
 	

@@ -1,6 +1,6 @@
 package com.xenoage.zong.app.symbols.rasterizer;
 
-import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.xenoage.util.math.Size2f;
@@ -8,10 +8,11 @@ import com.xenoage.util.math.TextureRectangle2f;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.loader.SVGSymbolLoader;
 
+
 /**
+ * Try out the {@link SymbolsRasterizer} class.
  * 
- * @author Uli
- * 
+ * @author Uli Teschemacher
  */
 public class SymbolsRasterizerTry
 {
@@ -38,11 +39,10 @@ public class SymbolsRasterizerTry
 		SymbolsAdjuster adjuster = new SymbolsAdjuster(1024,1024,sizes,4);
 		TextureRectangle2f[] rec = adjuster.getAllTextureRectangles2f();
 		
-		File file = new File("C:/test.png");
-		
 		try
 		{
-			SymbolsRasterizer.rasterizeSymbols(file, 1024, 1024, s, rec);
+			SymbolsRasterizer.rasterizeSymbols(new FileOutputStream("SymbolsRasterizerTry.png"),
+				1024, 1024, s, rec);
 		}
 		catch (IOException e)
 		{

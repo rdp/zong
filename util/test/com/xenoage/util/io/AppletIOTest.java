@@ -8,6 +8,7 @@ import com.xenoage.util.FileTools;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,17 +58,17 @@ public class AppletIOTest
     try
     {
       //empty folder
-      String[] files = io.listDataFiles("dir1/ordner/");
-      assertEquals(0, files.length);
+      Set<String> files = io.listDataFiles("dir1/ordner/");
+      assertEquals(0, files.size());
       //folder with 2 files
       files = io.listDataFiles("dir1");
-      assertEquals(2, files.length);
-      assertEquals("hallo.voc", files[0]);
-      assertEquals("buffer.png", files[1]);
+      assertEquals(2, files.size());
+      assertTrue(files.contains("hallo.voc"));
+      assertTrue(files.contains("buffer.png"));
       //folder with 2 files, filtered
       files = io.listDataFiles("dir1/", FileTools.getVocFilter());
-      assertEquals(1, files.length);
-      assertEquals("hallo.voc", files[0]);
+      assertEquals(1, files.size());
+      assertTrue(files.contains("hallo.voc"));
     }
     catch (Exception ex)
     {

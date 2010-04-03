@@ -49,7 +49,7 @@ public class CursorManager
 				{
 					BufferedImage img = new BufferedImage(
 						cursorSize.width, cursorSize.height, BufferedImage.TYPE_INT_ARGB);
-					BufferedImage imgRaw = ImageIO.read(com.xenoage.util.io.IO.openDataFile(filepath));
+					BufferedImage imgRaw = ImageIO.read(com.xenoage.util.io.IO.openInputStream(filepath));
 					Graphics2D imgGr = img.createGraphics();
 					imgGr.drawImage(imgRaw, img.getWidth() / 2 - imgRaw.getWidth() / 2,
 						img.getHeight() / 2 - imgRaw.getHeight() / 2, null);

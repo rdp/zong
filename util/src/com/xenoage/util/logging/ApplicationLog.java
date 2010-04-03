@@ -4,6 +4,8 @@ import java.io.*;
 import java.text.DateFormat;
 import java.util.Date;
 
+import com.xenoage.util.io.IO;
+
 
 /**
  * Logging class for the application version
@@ -18,7 +20,6 @@ public class ApplicationLog
   public static final String FILENAME_DEFAULT = "data/app.log";
   
   private static String logFileName;
-  private static File logFile = null;
   
   private static PrintStream writer = null;
   private static int logLevel = 0;
@@ -32,11 +33,7 @@ public class ApplicationLog
     try
     {
       ApplicationLog.logFileName = logFileName;
-      logFile = new File(logFileName);
-      if (logFile.exists())
-        logFile.delete();
-      logFile.createNewFile();
-      writer = new PrintStream(new FileOutputStream(logFile));
+      writer = new PrintStream(IO.openOutputStream(logFileName));
       //start message
       writer.print(time() + " " + getLevelString(Log.MESSAGE) +
         " Logging started for: " + appNameAndVersion + "\n");
@@ -50,8 +47,7 @@ public class ApplicationLog
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
-      System.exit(1);
+      throw new RuntimeException(ex);
     }
   }
 

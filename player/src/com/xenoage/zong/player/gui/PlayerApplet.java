@@ -308,7 +308,7 @@ public class PlayerApplet
   {
     try
     {
-    	return new ImageIcon(ImageIO.read(IO.openDataFile(filename)));
+    	return new ImageIcon(ImageIO.read(IO.openInputStream(filename)));
     }
     catch (IOException ex)
     {

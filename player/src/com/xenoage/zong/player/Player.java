@@ -27,13 +27,14 @@ public class Player
 {
 	
 	private static final String PROJECT_FIRST_NAME = "Player";
+	private static final String FILENAME = Zong.FILENAME + "/player/";
 	
 	
 	public static void main(String[] args)
 	{
 		//init IO, language, audio and GUI
 		Log.initApplicationLog(ApplicationLog.FILENAME_DEFAULT, Zong.getNameAndVersion(PROJECT_FIRST_NAME));
-		IO.initApplication();
+		IO.initApplication(FILENAME);
 		try
   	{
 	  	//get available languages

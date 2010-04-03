@@ -31,7 +31,7 @@ public class Log
    */
   public static void initApplicationLog(String logFileName, String appNameAndVersion)
   {
-    log = new ApplicationLog(logFileName, appNameAndVersion);
+  	log = new ApplicationLog(logFileName, appNameAndVersion);
   }
   
   
@@ -52,7 +52,7 @@ public class Log
    */
   public static void log(int level, Object sender, String msg)
   {
-    ensureInit();
+  	assertInit();
     log.log(level, sender, msg);
   }
 
@@ -64,7 +64,7 @@ public class Log
    */
   public static void log(int level, String msg)
   {
-    ensureInit();
+  	assertInit();
     log.log(level, msg);
   }
 
@@ -76,7 +76,7 @@ public class Log
    */
   public static void log(int level, Throwable e)
   {
-    ensureInit();
+  	assertInit();
     log.log(level, e);
   }
   
@@ -90,7 +90,7 @@ public class Log
    */
   public static void log(Throwable e)
   {
-    ensureInit();
+  	assertInit();
     log.log(e);
   }
 
@@ -105,7 +105,7 @@ public class Log
    */
   public static void log(int level, Object sender, Throwable e)
   {
-    ensureInit();
+  	assertInit();
     log.log(level, sender, e);
   }
   
@@ -117,7 +117,7 @@ public class Log
 
   public static void setLoggingLevel(int Level)
   {
-    ensureInit();
+  	assertInit();
     log.setLoggingLevel(Level);
   }
 
@@ -127,7 +127,7 @@ public class Log
    */
   public static void close()
   {
-    ensureInit();
+  	assertInit();
     log.close();
   }
 
@@ -137,21 +137,19 @@ public class Log
    */
   public static String getLogFilename()
   {
-    ensureInit();
+  	assertInit();
     return log.getLogFilename();
   }
   
   
   /**
-   * If this class is not initialized yet, it is
-   * initialized as an application logging class
-   * with anonymous name.
+   * If this class is not initialized yet, an RuntimeException is thrown.
    */
-  private static void ensureInit()
+  private static void assertInit()
   {
     if (log == null)
     {
-    	initApplicationLog(ApplicationLog.FILENAME_DEFAULT, "Anonymous"); //open default log file
+    	throw new RuntimeException("Logging not initiated");
     }
   }
 

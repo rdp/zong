@@ -25,7 +25,7 @@ public class Texture
   {
     try
     {
-      BufferedImage tex = ImageIO.read(IO.openDataFile(file));
+      BufferedImage tex = ImageIO.read(IO.openInputStream(file));
       GraphicsConfiguration gc = Screen.getGraphicsConfiguration();
       BufferedImage texComp =
         gc.createCompatibleImage(tex.getWidth(), tex.getHeight());

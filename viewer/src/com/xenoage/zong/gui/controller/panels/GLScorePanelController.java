@@ -174,7 +174,7 @@ public class GLScorePanelController
 			for (int i = 0; true; i++)
 			{
 				TextureData mipmapLevel = TextureIO.newTextureData(
-			    IO.openDataFile(SymbolTexturePool.getTexturePNGPath(symbolPool.getID(), i)), false, "png");
+			    IO.openInputStream(SymbolTexturePool.getTexturePNGPath(symbolPool.getID(), i)), false, "png");
 				mipmapLevels.add(mipmapLevel);
 				if (mipmapLevel.getWidth() <= 1)
 					break;
@@ -210,58 +210,58 @@ public class GLScorePanelController
 		{
 			//load paper, shadow and background texture
 			Texture texPaper = TextureIO.newTexture(IO
-				.openDataFile("data/img/paper/paper1.png"), true, "png");
+				.openInputStream("data/img/paper/paper1.png"), true, "png");
 			textureManager.addAppTexture(texPaper, TextureManager.IDBASE_PAPERS);
 			Texture texShadow = TextureIO.newTexture(IO
-				.openDataFile("data/img/shadow/shadow1.png"), true, "png");
+				.openInputStream("data/img/shadow/shadow1.png"), true, "png");
 			textureManager.addAppTexture(texShadow, TextureManager.IDBASE_SHADOWS);
 			Texture texDesktop = TextureIO.newTexture(IO
-				.openDataFile("data/img/desktop/blue3.jpg"), false, "jpg");
+				.openInputStream("data/img/desktop/blue3.jpg"), false, "jpg");
 			textureManager.addAppTexture(texDesktop, TextureManager.IDBASE_DESKTOPS);
 			//load adjustment handles textures
 			Texture tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/handles/handle-resize.png"), true, "png");
+				.openInputStream("data/img/handles/handle-resize.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_HANDLE_RESIZE);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/handles/handle-resize-hover.png"), true, "png");
+				.openInputStream("data/img/handles/handle-resize-hover.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_HANDLE_RESIZE_HOVER);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/handles/handle-rotate.png"), true, "png");
+				.openInputStream("data/img/handles/handle-rotate.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_HANDLE_ROTATE);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/handles/handle-rotate-hover.png"), true, "png");
+				.openInputStream("data/img/handles/handle-rotate-hover.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_HANDLE_ROTATE_HOVER);
 			//load warning texture
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/other/warning64.png"), true, "png");
+				.openInputStream("data/img/other/warning64.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_WARNING);
 			//load app's specific textures
 			App.getInstance().loadAppTextures(textureManager);
 			
 			//TEST
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/button-open.png"), true, "png");
+				.openInputStream("data/img/gui/button-open.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_OPEN);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/button-save.png"), true, "png");
+				.openInputStream("data/img/gui/button-save.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_SAVE);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/button-print.png"), true, "png");
+				.openInputStream("data/img/gui/button-print.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_PRINT);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/button-play.png"), true, "png");
+				.openInputStream("data/img/gui/button-play.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTON_PLAY_TUTTI);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/gui-buttonpanel.png"), true, "png");
+				.openInputStream("data/img/gui/gui-buttonpanel.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_BUTTONPANEL);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/logo-viewer.png"), true, "png");
+				.openInputStream("data/img/gui/logo-viewer.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_LOGO_VIEWER);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/gui-tooltip.png"), true, "png");
+				.openInputStream("data/img/gui/gui-tooltip.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_TOOLTIP);
 			tex = TextureIO.newTexture(IO
-				.openDataFile("data/img/gui/gui-tooltip-small.png"), true, "png");
+				.openInputStream("data/img/gui/gui-tooltip-small.png"), true, "png");
 			textureManager.addAppTexture(tex, TextureManager.ID_GUI_TOOLTIP_SMALL);
 		}
 		catch (Exception ex)

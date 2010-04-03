@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,7 +41,7 @@ public class LanguageInfo
   {
   	this.path = path;
   	this.id = id;
-    Document doc = XMLReader.readFile(IO.openDataFile(path + "/" + id + "/id.xml"));
+    Document doc = XMLReader.readFile(IO.openInputStream(path + "/" + id + "/id.xml"));
     Element root = XMLReader.root(doc);
     Element intName = XMLReader.element(root, "intname");
     Element localName = XMLReader.element(root, "localname");
@@ -105,12 +106,12 @@ public class LanguageInfo
   	throws Exception
   {
     ArrayList<LanguageInfo> ret = new ArrayList<LanguageInfo>();
-    String[] langs = IO.listDataDirectories(path);
+    Set<String> langs = IO.listDataDirectories(path);
     if (langs == null)
     {
       throw new Exception("Languages directory does not exist!");
     }
-    else if (langs.length < 1)
+    else if (langs.size() < 1)
     {
     	throw new Exception("No language pack installed!");
     }

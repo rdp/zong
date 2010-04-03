@@ -5,6 +5,7 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import com.xenoage.util.FileTools;
 import com.xenoage.util.SortedList;
@@ -58,7 +59,7 @@ public class FontTools
 		throws Exception
 	{
   	String fontPath = "data/fonts";
-  	String[] ttfFiles = IO.listDataFiles(fontPath, FileTools.getTTFFilter());
+  	Set<String> ttfFiles = IO.listDataFiles(fontPath, FileTools.getTTFFilter());
   	for (String file : ttfFiles)
   	{
   		Font font = Font.createFont(Font.TRUETYPE_FONT, new File(fontPath + "/" + file));

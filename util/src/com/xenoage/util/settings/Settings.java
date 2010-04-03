@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Set;
 
 import com.xenoage.util.FileTools;
 import com.xenoage.util.Parser;
@@ -73,7 +74,7 @@ public class Settings
 		}
 		// load the settings from the .settings files
 		this.files = new Hashtable<String, Properties>();
-		String[] fileList = new String[0];
+		Set<String> fileList = null;
 		try
 		{
 			fileList = IO.listDataFiles(directory);
@@ -85,24 +86,21 @@ public class Settings
 			else
 				throw new RuntimeException("Could not list setting files!", ex);
 		}
-		if (fileList != null)
+		for (String file : fileList)
 		{
-			for (int i = 0; i < fileList.length; i++)
+			String name = file;
+			if (name.endsWith(".settings"))
 			{
-				String name = fileList[i];
-				if (name.endsWith(".settings"))
+				try
 				{
-					try
-					{
-						reload(FileTools.getNameWithoutExt(fileList[i]));
-					}
-					catch (Exception ex)
-					{
-						if (err != null)
-							err.report(ErrorLevel.Error, "Could not load settings from " + fileList[i], ex);
-						else
-							throw new RuntimeException("Could not load settings from " + fileList[i], ex);
-					}
+					reload(FileTools.getNameWithoutExt(file));
+				}
+				catch (Exception ex)
+				{
+					if (err != null)
+						err.report(ErrorLevel.Error, "Could not load settings from " + file, ex);
+					else
+						throw new RuntimeException("Could not load settings from " + file, ex);
 				}
 			}
 		}
@@ -171,7 +169,7 @@ public class Settings
 		{
 			try
 			{
-				p.storeToXML(new FileOutputStream(this.directory + "/" + file
+				p.storeToXML(IO.openOutputStream(this.directory + "/" + file
 					+ ".settings"), "Changed " + new Date());
 			}
 			catch (IOException ex)
@@ -192,7 +190,7 @@ public class Settings
 		try
 		{
 			Properties p = new Properties();
-			p.loadFromXML(IO.openDataFile(directory + "/" + file + ".settings"));
+			p.loadFromXML(IO.openInputStream(directory + "/" + file + ".settings"));
 			files.put(file, p);
 		}
 		catch (Exception ex)

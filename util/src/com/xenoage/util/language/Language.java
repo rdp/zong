@@ -56,18 +56,18 @@ public class Language
     Log.log(Log.MESSAGE, "Loading language pack \"" + id + "\"...");
     
     //locate vocabulary files
-    String[] langFiles = IO.listDataFiles(path + "/" + id, FileTools.getVocFilter());
+    Set<String> langFiles = IO.listDataFiles(path + "/" + id, FileTools.getVocFilter());
     
     //load entries
     entries = new HashMap<String, String>();
     int entriesCount = 0;
     int entriesOverwrittenCount = 0;
-    for (int iFiles = 0; iFiles < langFiles.length; iFiles++)
+    for (String langFile : langFiles)
     {
-      currentFile = new File(langFiles[iFiles]).getName();
+      currentFile = new File(langFile).getName();
       Log.log(Log.MESSAGE, "Reading language file \"" + currentFile + "\"...");
       Document doc = null;
-      doc = XMLReader.readFile(IO.openDataFile(path + "/" + id + "/" + currentFile));
+      doc = XMLReader.readFile(IO.openInputStream(path + "/" + id + "/" + currentFile));
       
       //check root element
       Element root = XMLReader.root(doc);
@@ -76,13 +76,13 @@ public class Language
       	if (err != null)
       	{
       		err.report(ErrorLevel.Fatal, "Corrupted vocabulary file!",
-      			new Exception(".voc file does not start with \"vocabulary\" element"), langFiles[iFiles]);
+      			new Exception(".voc file does not start with \"vocabulary\" element"), langFile);
       		continue;
       	}
       	else
       	{
       		throw new Exception("Corrupted vocabulary file: " +
-      			".voc file does not start with \"vocabulary\" element: " + langFiles[iFiles]);
+      			".voc file does not start with \"vocabulary\" element: " + langFile);
       	}
       }
       

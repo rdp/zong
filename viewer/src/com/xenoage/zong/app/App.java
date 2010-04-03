@@ -112,9 +112,9 @@ public class App
   public void init()
   {
   	//initialize objects using the template pattern
-  	initApp();
   	initIO();
   	initLogging();
+  	initApp();
   	initLanguage();
   	initGUI();
   	initAudio(true);
@@ -161,7 +161,7 @@ public class App
    */
   void initIO()
   {
-  	IO.initApplication();
+  	IO.initApplication(ViewerApplication.FILENAME);
   }
   
   

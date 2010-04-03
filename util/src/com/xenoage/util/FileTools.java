@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import com.xenoage.util.OSTools.OS;
 import com.xenoage.util.io.IO;
 import com.xenoage.util.lang.Tuple2;
 
@@ -116,7 +117,7 @@ public class FileTools
     {
       StringBuffer fileData = new StringBuffer(1024);
       BufferedReader reader = new BufferedReader(new InputStreamReader(
-      	IO.openDataFile(filepath)));
+      	IO.openInputStream(filepath)));
       char[] buf = new char[1024];
       int numRead = 0;
       while((numRead=reader.read(buf)) != -1){
@@ -290,6 +291,52 @@ public class FileTools
   		}
   	}
   	return ret;
+  }
+  
+  
+  /**
+   * Gets the default directory of the operating system to store application
+   * data for the current user and the given application name.
+   * For user "andi" and program "myapp" this is for example:
+   * <ul>
+   * 	<il>under Linux and Solaris: "/home/andi/.myapp/"</il>
+   *  <il>under MacOSX: "/Users/andi/Library/Application Support/myapp"</il>
+   * 	<il>under Windows: "C:/Users/andi/AppData/Roaming" (under Vista at least)</il>
+   * </ul>
+   * Of course these settings may differ between different versions of
+   * the operating system. This function determines the right place to store
+   * the settings. If impossible to find the perfectly right folder, the user's
+   * home folder extended by "/myapp" is returned.
+   */
+  public static File getUserAppDataDirectory(String program)
+  {
+  	OS os = OSTools.getOS();
+  	if (os == OS.Linux || os == OS.Solaris)
+  	{
+  		//Linux, Solaris: <user-home>/.<program>
+  		return new File(System.getProperty("user.home") + "/." + program);
+  	}
+  	else if (os == OS.MacOSX)
+  	{
+  		//Mac OS X: <user-home>/Library/Application Support/<program>
+  		String path = System.getProperty("user.home") +
+  			"/Library/Application Support/";
+  		if (path != null && new File(path).exists())
+  		{
+  			return new File(path + "/" + program);
+  		}
+  	}
+  	else if (os == OS.Windows)
+  	{
+  		//Windows: use APPDATA environment variable.
+  		String path = System.getenv("APPDATA");
+  		if (path != null && new File(path).exists())
+  		{
+  			return new File(path + "/" + program);
+  		}
+  	}
+  	//otherwise: <user-home>/<program>
+  	return new File(System.getProperty("user.home") + "/" + program);
   }
 
   

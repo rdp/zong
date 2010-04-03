@@ -28,7 +28,7 @@ public class GUILoader
 		throws IOException
 	{
 		//load XML document
-		InputStream in = IO.openDataFile(filepath);
+		InputStream in = IO.openInputStream(filepath);
     Document xmlDoc;
     try
     {

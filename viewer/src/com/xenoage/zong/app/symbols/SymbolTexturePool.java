@@ -51,7 +51,7 @@ public class SymbolTexturePool
     InputStream in = null;
     try
     {
-      in = IO.openDataFile(getTextureXMLPath(id));
+      in = IO.openInputStream(getTextureXMLPath(id));
     }
     catch (Exception ex)
     {
@@ -150,7 +150,7 @@ public class SymbolTexturePool
       int level = 0;
       while (width >= 1)
       {
-        SymbolsRasterizer.rasterizeSymbols(new File(getTexturePNGPath(id, level)),
+        SymbolsRasterizer.rasterizeSymbols(IO.openOutputStream(getTexturePNGPath(id, level)),
           width, width, symbolsArray, texCords);
         width /= 2;
         level++;
@@ -176,7 +176,7 @@ public class SymbolTexturePool
         XMLWriter.addAttribute(eTexture, "y2", Float.toString(1 - texCords[i].y1));
       }
       //TODO: use IO class
-      XMLWriter.writeFile(document, getTextureXMLPath(id));
+      XMLWriter.writeFile(document, IO.openOutputStream(getTextureXMLPath(id)));
     }
     catch (Exception ex)
     {

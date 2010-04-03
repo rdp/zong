@@ -84,7 +84,7 @@ public class ImageFrameTexture
     try
     {
       texture = TextureIO.newTexture(
-        IO.openDataFile(path), true, "png");
+        IO.openInputStream(path), true, "png");
     }
     catch (IOException ex)
     {

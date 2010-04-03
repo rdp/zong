@@ -2,12 +2,11 @@ package com.xenoage.util.io;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
-
-import com.xenoage.util.ArrayTools;
 
 
 /**
@@ -36,7 +35,7 @@ public class AppletIO
     {
       dataFiles = new HashSet<String>();
       BufferedReader reader = new BufferedReader(
-        new InputStreamReader(openDataFile(".filelist")));
+        new InputStreamReader(openInputStream(".filelist")));
       String line;
       while ((line = reader.readLine()) != null)
       {
@@ -103,12 +102,21 @@ public class AppletIO
   
   
   /**
+   * Returns null, since an applet can not read file dates.
+   */
+  @Override public Date getDataFileModificationDate(String filepath)
+  {
+  	return null;
+  }
+  
+  
+  /**
    * Opens and returns an input stream for the data file with
    * the given relative path. The file is searched in the
    * class path first (that means, e.g. in included JAR files).
    * If not found, it is searched relative to the code base.
    */
-  public InputStream openDataFile(String filepath)
+  public InputStream openInputStream(String filepath)
     throws IOException
   {
     if (filepath.length() == 0)
@@ -139,9 +147,19 @@ public class AppletIO
   
   
   /**
+   * Throws an exception, since an applet may not write files.
+   */
+  @Override public OutputStream openOutputStream(String filepath)
+    throws IOException
+  {
+    throw new IOException("Applets can not write files");
+  }
+  
+  
+  /**
    * Finds and returns the data files in the given directory.
    */
-  public String[] listDataFiles(String directory)
+  public Set<String> listDataFiles(String directory)
     throws IOException
   {
     return listDataFiles(directory, null);
@@ -152,10 +170,10 @@ public class AppletIO
    * Finds and returns the data files in the given directory
    * matching the given filename filter.
    */
-  public String[] listDataFiles(String directory, FilenameFilter filter)
+  public Set<String> listDataFiles(String directory, FilenameFilter filter)
     throws IOException
   {
-    ArrayList<String> ret = new ArrayList<String>();
+  	Set<String> ret = new HashSet<String>();
     if (!directory.endsWith("/"))
       directory += "/";
     for (String dataFile : dataFiles)
@@ -180,17 +198,17 @@ public class AppletIO
         }
       }
     }
-    return ArrayTools.toStringArray(ret);
+    return ret;
   }
   
   
   /**
    * Finds and returns the data directories in the given directory.
    */
-  public String[] listDataDirectories(String directory)
+  public Set<String> listDataDirectories(String directory)
     throws IOException
   {
-  	ArrayList<String> ret = new ArrayList<String>();
+  	Set<String> ret = new HashSet<String>();
     if (!directory.endsWith("/"))
       directory += "/";
     for (String dataFile : dataFiles)
@@ -212,7 +230,7 @@ public class AppletIO
         }
       }
     }
-    return ArrayTools.toStringArray(ret);
+    return ret;
   }
 
 }

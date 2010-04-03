@@ -23,7 +23,7 @@ public class ImageTools
 	{
 		try
 		{
-			return new ImageIcon(ImageIO.read(IO.openDataFile(path)));
+			return new ImageIcon(ImageIO.read(IO.openInputStream(path)));
 		}
 		catch (Exception ex)
 		{

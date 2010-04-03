@@ -59,9 +59,9 @@ public class TabbedPane
     try
     {
       iconCloseButtonHover = new ImageIcon(ImageIO.read(
-        IO.openDataFile("data/img/menu/16/fileclose.png")));
+        IO.openInputStream("data/img/menu/16/fileclose.png")));
       iconCloseButton = new ImageIcon(ImageIO.read(
-        IO.openDataFile("data/img/menu/16/fileclose2.png")));
+        IO.openInputStream("data/img/menu/16/fileclose2.png")));
     }
     catch (Exception ex)
     {

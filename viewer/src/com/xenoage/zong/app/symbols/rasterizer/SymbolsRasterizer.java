@@ -3,8 +3,8 @@ package com.xenoage.zong.app.symbols.rasterizer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -18,11 +18,12 @@ import com.xenoage.zong.app.symbols.Symbol;
  * png-file. The positions a rendered by SymbolsAdjuster
  * 
  * @author Uli Teschemacher
+ * @author Andreas Wenger
  */
 public class SymbolsRasterizer
 {
 	
-	public static void rasterizeSymbols(File file, int width, int height,
+	public static void rasterizeSymbols(OutputStream outputStream, int width, int height,
 			Symbol[] symbols, TextureRectangle2f[] positions)
 			throws IOException
 	{
@@ -38,7 +39,7 @@ public class SymbolsRasterizer
 			
 			symbols[i].draw(gr, Color.WHITE, startpoint, scaling);
 		}
-		ImageIO.write(texture, "png", file);
+		ImageIO.write(texture, "png", outputStream);
 	}
 	
 
