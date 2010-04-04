@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.stampings;
 
-import com.xenoage.zong.data.music.Volta;
+import com.xenoage.zong.core.music.volta.Volta;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.VoltaStampingRenderer;

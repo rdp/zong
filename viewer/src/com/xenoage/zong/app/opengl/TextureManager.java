@@ -33,7 +33,6 @@ public class TextureManager
   public static final int ID_HANDLE_ROTATE_HOVER = 5003;
   public static final int ID_WARNING = 5050;
   
-  
   public static final int ID_GUI_ARROW = 6000; //only editor
   public static final int ID_GUI_BUTTON_OPEN = 6100; //only viewer
   public static final int ID_GUI_BUTTON_SAVE = 6101; //only viewer
@@ -44,16 +43,7 @@ public class TextureManager
   public static final int ID_GUI_TOOLTIP = 6400;
   public static final int ID_GUI_TOOLTIP_SMALL = 6401;
   
-  private static final int CATEGORY_APP = 0;
-  private static final int CATEGORY_IMAGE = 1;
-  
   public static final int TEXT_TEXTURE_SIZE = 512;
-  
-  //the currently used texture (category and ID within category)
-  //it is stored for performance reasons (if an already active
-  //texture is activated again, no change is needed)
-  private int currentCategory = CATEGORY_APP;
-  private int currentTexture = 0;
   
   //application textures: these are the textures for the symbols,
   //papers, desktops, shadows and so on
@@ -113,16 +103,10 @@ public class TextureManager
    */
   public void activateAppTexture(int textureID)
   {
-    if (/* buggy since textures may be set from elsewhere:  textureID != currentTexture ||
-    	currentCategory != CATEGORY_APP */ true)
+    Texture tex = appTextures.get(textureID);
+    if (tex != null)
     {
-      currentCategory = CATEGORY_APP;
-      currentTexture = textureID;
-      Texture tex = appTextures.get(textureID);
-      if (tex != null)
-      {
-        tex.bind();
-      }
+      tex.bind();
     }
   }
   
@@ -152,7 +136,6 @@ public class TextureManager
    */
   public Texture getImageFrameTexture(String path, boolean force)
   {
-    currentCategory = CATEGORY_IMAGE;
     ImageFrameTexture tex = imageFrameTextures.get(path);
     //texture loaded?
     if (tex != null)
@@ -230,7 +213,6 @@ public class TextureManager
    */
   public Texture loadImageFrameTexture(String path, BufferedImage image, boolean force)
   {
-  	currentCategory = CATEGORY_IMAGE;
     ImageFrameTexture tex = imageFrameTextures.get(path);
     //texture loaded?
     if (tex != null)

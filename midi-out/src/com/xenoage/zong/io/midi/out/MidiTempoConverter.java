@@ -1,5 +1,10 @@
 package com.xenoage.zong.io.midi.out;
 
+import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.MP.atMeasure;
+import static com.xenoage.zong.io.midi.out.MidiConverter.calculateTickFromFraction;
+import static com.xenoage.zong.io.score.ScoreController.getMeasureBeats;
+
 import java.util.ArrayList;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -7,16 +12,18 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 
-import com.xenoage.util.RAList;
 import com.xenoage.util.error.ErrorLevel;
 import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.directions.Tempo;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Attachable;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
+import com.xenoage.zong.core.music.direction.Tempo;
 
 
 /**
@@ -31,16 +38,16 @@ public class MidiTempoConverter
 
 
 	/*public static ArrayList<MidiElement> getTempo(Score score,
-		ArrayList<Tuple2<ScorePosition, ScorePosition>> playList, int resolution)*/
+		ArrayList<Tuple2<MP, MP>> playList, int resolution)*/
 	public static void getTempoTrack(Score score,
-		ArrayList<Tuple2<ScorePosition, ScorePosition>> playList, int resolution, Track track)
+		ArrayList<Tuple2<MP, MP>> playList, int resolution, Track track)
 	{
 		//ArrayList<MidiElement> messages = new ArrayList<MidiElement>();
 		//score.getScoreHeader() //TODO
-		for (int i = 0; i < score.getStavesCount(); i++)
+		for (int iStaff = 0; iStaff < score.getStavesCount(); iStaff++)
 		{
 			long measurestarttick = 0;
-			for (Tuple2<ScorePosition, ScorePosition> tuple : playList)
+			for (Tuple2<MP, MP> tuple : playList)
 			{
 				for (int iMeasure = tuple.get1().getMeasure(); iMeasure <= tuple.get2()
 					.getMeasure(); iMeasure++)
@@ -52,7 +59,7 @@ public class MidiTempoConverter
 					}
 					else
 					{
-						start = new Fraction(0, 1);
+						start = fr(0, 1);
 					}
 					if (tuple.get2().getMeasure() == iMeasure)
 					{
@@ -60,20 +67,31 @@ public class MidiTempoConverter
 					}
 					else
 					{
-						end = score.getController().getMeasureBeats(iMeasure);
+						end = getMeasureBeats(score, iMeasure);
 					}
 
-					Measure measure = score.getMeasure(i, iMeasure);
-					RAList<MusicElement> elements = measure.getVoices().get(0).getElements();
-					for (MusicElement musicElement : elements)
+					//TODO: no... we _must_ save tempo changes in the column headers...
+					Globals globals = score.getGlobals();
+					Measure measure = score.getMeasure(atMeasure(iStaff, iMeasure));
+					for (Voice voice : measure.getVoices())
 					{
-						if (musicElement instanceof Tempo && musicElement.getBeat().compareTo(start)!=-1 && musicElement.getBeat().compareTo(end)!=1)
+						for (VoiceElement element : voice.getElements())
 						{
-							Tempo tempo = (Tempo) musicElement;
-							MetaMessage message = createMetaMessage(tempo);
-							MidiEvent event = new MidiEvent(message, measurestarttick
-								+ MidiConverter.calculateTickFromFraction(tempo.getBeat().sub(start), resolution));
-							track.add(event);
+							Fraction elementBeat = globals.getMP(element).getBeat();
+							if (elementBeat.compareTo(start) > -1 && elementBeat.compareTo(end) < 1)
+							{
+								for (Attachable attachment : globals.getAttachments().get(element))
+								{
+									if (attachment instanceof Tempo)
+									{
+										Tempo tempo = (Tempo) attachment;
+										MetaMessage message = createMetaMessage(tempo);
+										MidiEvent event = new MidiEvent(message, measurestarttick +
+											calculateTickFromFraction(elementBeat.sub(start), resolution));
+										track.add(event);
+									}
+								}
+							}
 						}
 					}
 					Fraction measureDuration = end.sub(start);

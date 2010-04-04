@@ -1,37 +1,15 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
-import javax.sound.midi.Sequence;
-
-import org.junit.Assert;
 import org.junit.Test;
-
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Part;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.clef.ClefType;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.DynamicsType;
-import com.xenoage.zong.data.music.key.TraditionalKey;
-import com.xenoage.zong.data.music.time.NormalTime;
 
 
 /**
- * @author Uli
- * 
+ * @author Uli Teschemacher
  */
 public class MidiVelocityConverterTest
 {
-	@Test
-	public void midiConverterTest()
+	
+	@Test public void midiConverterTest()
 	{
 		/* TODO
 		Score score = createTestScore();
@@ -73,6 +51,7 @@ public class MidiVelocityConverterTest
 	}
 	
 	
+	/*
 	public static Score createTestScore()
 	{
 		Score ret = new Score();
@@ -90,54 +69,56 @@ public class MidiVelocityConverterTest
 		Chord chord;
 
 		Voice voice = measure.getVoices().get(0);
-		chord = voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'G', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.pp));
 
-		chord = voice.addNote(new Pitch('A', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'A', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.ff));
 
-		chord = voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'G', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.sfp));
 
 		voice = measure.addVoice();
 		
-		chord = voice.addNote(new Pitch('C', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'C', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.fff));
 
 
 		measure = staff.getMeasures().get(1);
 
 		voice = measure.getVoices().get(0);
-		chord = voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'G', 0, 4), fr(1, 4));
 		//chord.addDirection(new Dynamics(DynamicsType.pp));
 
-		chord = voice.addNote(new Pitch('A', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'A', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.pp));
 
-		chord = voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'G', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.pp));
 
 		voice = measure.addVoice();
-		chord = voice.addNote(new Pitch('C', 0, 5), new Fraction(1, 4));
+		chord = voice.addNote(pi'C', 0, 5), fr(1, 4));
 
 		
 		measure = staff.getMeasures().get(2);
 
 		voice = measure.getVoices().get(0);
-		chord = voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'G', 0, 4), fr(1, 4));
 		chord.addDirection(new Dynamics(DynamicsType.sfz));
 
-		chord = voice.addNote(new Pitch('A', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'A', 0, 4), fr(1, 4));
 		//chord.addDirection(new Dynamics(DynamicsType.pp));
 
-		chord = voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		chord = voice.addNote(pi'G', 0, 4), fr(1, 4));
 		//chord.addDirection(new Dynamics(DynamicsType.pp));
 		
 		voice = measure.addVoice();
 		voice = measure.addVoice();
-		chord = voice.addNote(new Pitch('C',0,5), new Fraction(1,2));
+		chord = voice.addNote(pi'C',0,5), fr(1,2));
 
 
 		return ret;
 	}
+	*/
+	
 }

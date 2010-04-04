@@ -2,7 +2,6 @@ package com.xenoage.zong.documents;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.xenoage.util.font.FontInfo;
 import com.xenoage.util.math.Point2f;
@@ -10,11 +9,11 @@ import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.tools.Tool;
 import com.xenoage.zong.commands.CommandPerformer;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.PageFormat;
+import com.xenoage.zong.core.format.PageMargins;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.event.ScoreChangedEvent;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.format.PageMargins;
-import com.xenoage.zong.data.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextParagraph;
 import com.xenoage.zong.data.text.FormattedTextString;
@@ -22,7 +21,6 @@ import com.xenoage.zong.data.text.FormattedTextStyle;
 import com.xenoage.zong.gui.controller.panels.ScorePanelController;
 import com.xenoage.zong.gui.controller.panels.ScorePanelController.CursorLevel;
 import com.xenoage.zong.gui.cursor.Cursor;
-import com.xenoage.zong.io.score.ViewerScoreInput;
 import com.xenoage.zong.layout.Layout;
 import com.xenoage.zong.layout.Page;
 import com.xenoage.zong.layout.frames.ScoreFrame;
@@ -38,10 +36,10 @@ import com.xenoage.zong.view.View;
  * Class for a score document.
  * 
  * A score document may contain multiple scores.
- * It has at least one layout.
  * 
- * At the moment a score document has only one
- * layout and page view.
+ * At the moment a score document has only one layout and page view.
+ * Later, it will be able to contain more than one layout (e.g. a
+ * main score and extracted parts).
  *
  * @author Andreas Wenger
  */
@@ -51,11 +49,9 @@ public class ScoreDocument
   
   //contained scores and their input interfaces
   private ArrayList<Score> scores = new ArrayList<Score>();
-  private HashMap<Score, ViewerScoreInput> scoresInputs =
-  	new HashMap<Score, ViewerScoreInput>(); //TODO: really save input objects in this class?
   
-  //layouts. layout 0 is always the default layout.
-  private ArrayList<Layout> layouts = new ArrayList<Layout>();
+  //layout
+  private Layout layout;
   
   //views. view 0 is always the default page view.
   private ArrayList<ScoreView> views = new ArrayList<ScoreView>();
@@ -72,8 +68,7 @@ public class ScoreDocument
   //the command performer
   private CommandPerformer commandPerformer;
   
-  //the current edited score and it's score frame chain
-  private Score currentScore = null;
+  //the score frame chain of the currently edited score
   private ScoreFrameChain currentScoreFrameChain = null;
   
   
@@ -84,8 +79,7 @@ public class ScoreDocument
     throws IllegalArgumentException
   {
     //create an empty layout
-    Layout layout = new Layout(this);
-    layouts.add(layout);
+    layout = new Layout(this);
     //create command performer
     commandPerformer = new CommandPerformer(this);
   }
@@ -109,8 +103,7 @@ public class ScoreDocument
     
     this.filePath = filePath;
     
-    Layout layout = new Layout(this);
-    layouts.add(layout);
+    layout = new Layout(this);
     
     /*
     //DEMO
@@ -163,8 +156,7 @@ public class ScoreDocument
   	}
     
     //DEMO
-    Layout layout = new Layout(this);
-    layouts.add(layout);
+    layout = new Layout(this);
     
     for (Score score : scores)
     {
@@ -224,7 +216,6 @@ public class ScoreDocument
   private void addScore(Score score)
   {
   	scores.add(score);
-  	scoresInputs.put(score, new ViewerScoreInput(score, App.getInstance().getScoreInputOptions()));
   }
   
   
@@ -306,11 +297,8 @@ public class ScoreDocument
    */
   public void scoreChanged(ScoreChangedEvent event)
   {
-    //tell all layouts that the given score was changed
-    for (Layout layout : layouts)
-    {
-      layout.scoreChanged(event);
-    }
+    //tell the layout that the given score was changed
+    layout.scoreChanged(event);
     //repaint the current view
     View currentView = getCurrentView();
     if (currentView != null)
@@ -354,7 +342,7 @@ public class ScoreDocument
    */
   public Layout getDefaultLayout()
   {
-    return layouts.get(0);
+    return layout;
   }
   
   
@@ -366,28 +354,7 @@ public class ScoreDocument
   	Score score = scoreFrameChain.getScore();
   	if (!scores.contains(score))
   		throw new IllegalStateException("Score is unknown to the document");
-  	this.currentScore = score;
   	this.currentScoreFrameChain = scoreFrameChain;
-  }
-  
-  
-  /**
-   * Gets the current input interface.
-   */
-  public ViewerScoreInput getCurrentScoreInput()
-  {
-  	if (currentScore == null)
-  		throw new IllegalStateException("No score is current");
-    return scoresInputs.get(currentScore);
-  }
-  
-  
-  /**
-   * Gets the input interface of the given score.
-   */
-  public ViewerScoreInput getScoreInput(Score score)
-  {
-    return scoresInputs.get(score);
   }
   
   

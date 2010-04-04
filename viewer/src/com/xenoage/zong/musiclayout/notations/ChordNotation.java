@@ -1,7 +1,7 @@
 package com.xenoage.zong.musiclayout.notations;
 
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.ArticulationsAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;

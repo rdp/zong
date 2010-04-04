@@ -9,7 +9,7 @@ import com.xenoage.util.FileTools;
 import com.xenoage.util.StreamTools;
 import com.xenoage.util.filter.Filter;
 import com.xenoage.util.io.IO;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.io.musicxml.FileType;
 import com.xenoage.zong.io.musicxml.opus.Opus;
 

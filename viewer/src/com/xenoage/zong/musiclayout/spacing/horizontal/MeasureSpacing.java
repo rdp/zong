@@ -1,7 +1,6 @@
 package com.xenoage.zong.musiclayout.spacing.horizontal;
 
-import com.xenoage.zong.data.music.Measure;
-
+import com.xenoage.zong.core.music.MP;
 
 
 /**
@@ -13,32 +12,32 @@ import com.xenoage.zong.data.music.Measure;
 public final class MeasureSpacing
 {
   
-	private final Measure measure;
+	private final MP mp;
 	private final VoiceSpacing[] voiceSpacings;
   private final MeasureLeadingSpacing leadingSpacing;
   
 
   /**
    * Creates an empty measure spacing for one staff.
-   * @param measure         the musical data of the measure
+   * @param mp              the musical position of the measure
    * @param voiceSpacings   the list of voices
    * @param leadingSpacing  the elements at the beginning (initial clef, key signature, ...), or null
    */
-  public MeasureSpacing(Measure measure, VoiceSpacing[] voiceSpacings,
+  public MeasureSpacing(MP mp, VoiceSpacing[] voiceSpacings,
   	MeasureLeadingSpacing leadingSpacing)
   {
-  	this.measure = measure;
+  	this.mp = mp;
     this.voiceSpacings = voiceSpacings;
     this.leadingSpacing = leadingSpacing;
   }
   
   
   /**
-   * Gets the musical data of the measure.
+   * Gets the musical position of the measure.
    */
-  public Measure getMeasure()
+  public MP getMP()
   {
-  	return measure;
+  	return mp;
   }
   
   

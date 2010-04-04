@@ -1,11 +1,10 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
-import static com.xenoage.zong.data.music.StemDirection.Down;
-import static com.xenoage.zong.data.music.StemDirection.None;
-import static com.xenoage.zong.data.music.StemDirection.Up;
+import static com.xenoage.zong.core.music.chord.StemDirection.Down;
+import static com.xenoage.zong.core.music.chord.StemDirection.None;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 
-import com.xenoage.zong.data.music.Stem;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.chord.NoteAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
@@ -35,7 +34,7 @@ public class StemAlignmentStrategy
    * @param linesCount  the number of lines in this staff
    * @return  the vertical position of the stem, or <code>null</code> if the chord has no stem.
    */
-	public StemAlignment computeStemAlignment(Stem stem,
+	public StemAlignment computeStemAlignment(com.xenoage.zong.core.music.chord.Stem stem,
 		NotesAlignment na, StemDirection sd, int linesCount)
 	{
 		NoteAlignment high = na.getNoteAlignment(na.getNotesCount() - 1);

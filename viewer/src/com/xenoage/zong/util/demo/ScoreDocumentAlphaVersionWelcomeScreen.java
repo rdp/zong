@@ -1,15 +1,12 @@
-/**
- * 
- */
 package com.xenoage.zong.util.demo;
 
 import com.xenoage.util.annotations.Demo;
 import com.xenoage.util.font.FontInfo;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.PageFormat;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextParagraph;
 import com.xenoage.zong.data.text.FormattedTextString;
@@ -35,13 +32,12 @@ public class ScoreDocumentAlphaVersionWelcomeScreen
 	@Demo public static ScoreDocument createScore(ScorePanelController scorePanelController)
 	{
 		Score score = ScoreRevolutionary.createScore();//createDemoScore(128);
+		score = score.withScoreInfo(score.getScoreInfo().withWorkTitle("Welcome to Zong!"));
+		
 		ScoreDocument document = new ScoreDocument(score, null, scorePanelController);
 
 		Page page = document.getCurrentLayout().addPage(new PageFormat());
 		ScoreFrameChain sfc = null;
-		
-		//Set document title
-		score.getScoreInfo().setWorkTitle("Welcome to Zong!");
 		
 		//Show Logo
 		ImageFrame image = new ImageFrame(new Point2f(105,65), new Size2f(156,104), "data/demo/logo.png");

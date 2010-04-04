@@ -1,46 +1,47 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.PSet;
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.NullTools;
 import com.xenoage.util.enums.VSide;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.lang.Tuple3;
-import com.xenoage.util.math.Fraction;
 import com.xenoage.util.math.Point2f;
-import com.xenoage.zong.data.BarlineGroup;
-import com.xenoage.zong.data.BracketGroup;
-import com.xenoage.zong.data.Part;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.format.MeasureNumbering;
-import com.xenoage.zong.data.header.MeasureColumnHeader;
-import com.xenoage.zong.data.header.ScoreHeader;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.CurvedLine;
-import com.xenoage.zong.data.music.CurvedLineWaypoint;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.NoVoiceElement;
-import com.xenoage.zong.data.music.Rest;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.TupletInfo;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.CurvedLineWaypoint.Type;
-import com.xenoage.zong.data.music.barline.Barline;
-import com.xenoage.zong.data.music.barline.BarlineGroupStyle;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.Pedal;
-import com.xenoage.zong.data.music.directions.Tempo;
-import com.xenoage.zong.data.music.directions.Wedge;
-import com.xenoage.zong.data.music.directions.Words;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.music.text.Lyric;
-import com.xenoage.zong.data.music.text.Lyric.SyllableType;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.MeasureNumbering;
+import com.xenoage.zong.core.header.ColumnHeader;
+import com.xenoage.zong.core.header.ScoreHeader;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.MeasureElement;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.Part;
+import com.xenoage.zong.core.music.Staff;
+import com.xenoage.zong.core.music.StavesGroup;
+import com.xenoage.zong.core.music.StavesList;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.barline.Barline;
+import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint.Type;
+import com.xenoage.zong.core.music.direction.Wedge;
+import com.xenoage.zong.core.music.rest.Rest;
+import com.xenoage.zong.core.music.text.Lyric;
+import com.xenoage.zong.core.music.text.Lyric.SyllableType;
+import com.xenoage.zong.core.music.tuplet.Tuplet;
+import com.xenoage.zong.core.music.util.BeatE;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextElement;
 import com.xenoage.zong.data.text.FormattedTextString;
@@ -142,15 +143,17 @@ public class ScoreFrameLayoutStrategy
   	NotationsCache notations, List<ContinuedElement> unclosedElements, ScoreLayouterContext lc)
   {
   	Score score = lc.getScore(); 
+  	Globals globals = score.getGlobals();
   	ScoreHeader header = score.getScoreHeader();
     int stavesCount = score.getStavesCount();
+    StavesList stavesList = score.getStavesList();
     LinkedList<StaffStamping> staffStampsPool = new LinkedList<StaffStamping>();
     LinkedList<Stamping> otherStampsPool = new LinkedList<Stamping>();
     MeasureNumbering measureNumbering = score.getScoreFormat().getMeasureNumbering();
     
     //default lyric style
     FormattedTextStyle defaultLyricStyle = new FormattedTextStyle(
-    	score.getScoreFormat().getDefaultLyricFont());
+    	score.getScoreFormat().getLyricFont());
     
     //caches
     OpenBeamsCache openBeamsCache = new OpenBeamsCache();
@@ -190,7 +193,7 @@ public class ScoreFrameLayoutStrategy
       
       //add the part names (first system) or part abbreviations (other systems)
     	int iStaff = 0;
-    	for (Part part : score.getParts())
+    	for (Part part : stavesList.getParts())
     	{
     		StaffStamping firstStaff = systemStaves.get(iStaff);
     		StaffStamping lastStaff = systemStaves.get(iStaff + part.getStavesCount() - 1);
@@ -212,9 +215,9 @@ public class ScoreFrameLayoutStrategy
     	}
     	
       //create the brackets at the beginning of the system
-      for (int i = 0; i < score.getBracketGroupsCount(); i++)
+      for (int i = 0; i < stavesList.getBracketGroups().size(); i++)
       {
-        BracketGroup bracketGroup = score.getBracketGroup(i);
+      	StavesGroup<BracketGroupStyle> bracketGroup = stavesList.getBracketGroups().get(i);
         otherStampsPool.add(new BracketStamping(systemStaves.get(bracketGroup.getStartIndex()),
         	systemStaves.get(bracketGroup.getEndIndex()), system.getMarginLeft() - 1.4f, bracketGroup.getStyle()));
       }
@@ -256,7 +259,8 @@ public class ScoreFrameLayoutStrategy
       	{
       		otherStampsPool.add(new StaffTextStamping(firstStaff,
     				null, new FormattedText("" + (globalMeasureIndex + 1),
-    					new FormattedTextStyle(8), Alignment.Left), new SP(xLeft, firstStaff.getLinesCount() * 2)));
+    					new FormattedTextStyle(8), Alignment.Left),
+    					sp(xLeft, firstStaff.getLinesCount() * 2)));
       	}
       	//for the first measure in the system: begin after leading spacing
       	if (iMeasure == 0)
@@ -266,30 +270,30 @@ public class ScoreFrameLayoutStrategy
         //regard the groups of the score
         for (iStaff = 0; iStaff < stavesCount; iStaff++)
         {
-        	MeasureColumnHeader measureHeader = score.getScoreHeader().getMeasureColumnHeader(
+        	ColumnHeader columnHeader = score.getScoreHeader().getColumnHeader(
           	iMeasure + system.getStartMeasureIndex());
           BarlineGroupStyle barlineGroupStyle = BarlineGroupStyle.Single;
-          BarlineGroup group = score.getBarlineGroup(iStaff); 
+          StavesGroup<BarlineGroupStyle> group = stavesList.getBarlineGroups().get(iStaff); 
           if (group != null)
             barlineGroupStyle = group.getStyle();
           List<StaffStamping> groupStaves = getBarlineGroupStaves(systemStaves, group);
           //start barline
-          Barline startBarline = measureHeader.getStartBarline();
+          Barline startBarline = columnHeader.getStartBarline();
           if (startBarline != null)
           	otherStampsPool.add(new BarlineStamping(startBarline, groupStaves, xLeft, barlineGroupStyle));
           //end barline. if none is set, use a regular one.
-          Barline endBarline = measureHeader.getEndBarline();
+          Barline endBarline = columnHeader.getEndBarline();
           if (endBarline == null)
           	endBarline = Barline.createRegularBarline();
           otherStampsPool.add(new BarlineStamping(endBarline, groupStaves, xRight, barlineGroupStyle));
           //middle barlines
-          if (measureHeader.getMiddleBarlinesCount() > 0)
+          if (columnHeader.getMiddleBarlinesCount() > 0)
           {
-          	for (Tuple2<Fraction,Barline> middleBarline : measureHeader.getMiddleBarlines())
+          	for (BeatE<Barline> middleBarline : columnHeader.getMiddleBarlines())
           	{
           		otherStampsPool.add(new BarlineStamping(
-          			middleBarline.get2(), groupStaves,
-          			xLeft + system.getMeasureColumnSpacings()[iMeasure].getBarlineOffset(middleBarline.get1()),
+          			middleBarline.getElement(), groupStaves,
+          			xLeft + system.getMeasureColumnSpacings()[iMeasure].getBarlineOffset(middleBarline.getBeat()),
           			barlineGroupStyle));
           	}
           }
@@ -353,15 +357,15 @@ public class ScoreFrameLayoutStrategy
                 {
                 	//chord
                 	otherStampsPool.addAll(createChordStampings((ChordNotation) notation, x, staff,
-                		iStaff, iSystem, defaultLyricStyle,
-                		openBeamsCache, openCurvedLinesCache, openLyricsCache, lastLyrics, openTupletsCache));
+                		iStaff, iSystem, defaultLyricStyle, openBeamsCache, openCurvedLinesCache,
+                		openLyricsCache, lastLyrics, openTupletsCache, globals));
                 }
                 else if (element instanceof Rest)
                 {
                 	//rest
                 	otherStampsPool.add(voiceElementStampingStrategy.createRestStamping((RestNotation) notation, x, staff));
                 }
-                else if (element instanceof NoVoiceElement)
+                else if (element instanceof MeasureElement)
                 {
                 	//clef, key, time, ...
                 	otherStampsPool.add(createNoVoiceElementStamping(notations.get(element), x, staff));
@@ -375,34 +379,36 @@ public class ScoreFrameLayoutStrategy
             
             
             //create the elements, for which there are no spacing elements available
+            /* GOON
             for (MusicElement element : score.getStaff(iStaff).getMeasures().get(
             	iMeasure + system.getStartMeasureIndex()).getVoices().get(iVoice).getElements())
             {
             	if (element instanceof Tempo)
             	{
             		otherStampsPool.add(directionStampingStrategy.createTempo((Tempo) element,
-            			new ScorePosition(iStaff, iMeasure + system.getStartMeasureIndex(),
-            				element.getBeat(), iVoice), staff));
+            			mp(iStaff, iMeasure + system.getStartMeasureIndex(),
+            				iVoice, element.getBeat()), staff));
             	}
             	else if (element instanceof Dynamics)
             	{
             		otherStampsPool.add(directionStampingStrategy.createDynamics((Dynamics) element,
-            			new ScorePosition(iStaff, iMeasure + system.getStartMeasureIndex(),
-            				element.getBeat(), iVoice), staff));
+            			mp(iStaff, iMeasure + system.getStartMeasureIndex(),
+            				iVoice, element.getBeat()), staff));
             	}
             	else if (element instanceof Pedal)
             	{
             		otherStampsPool.add(directionStampingStrategy.createPedal((Pedal) element,
-            			new ScorePosition(iStaff, iMeasure + system.getStartMeasureIndex(),
-            				element.getBeat(), iVoice), staff));
+            			mp(iStaff, iMeasure + system.getStartMeasureIndex(),
+            				iVoice, element.getBeat()), staff));
             	}
             	else if (element instanceof Words)
             	{
             		otherStampsPool.add(directionStampingStrategy.createWords((Words) element,
-            			new ScorePosition(iStaff, iMeasure + system.getStartMeasureIndex(),
-            				element.getBeat(), iVoice), staff));
+            			mp(iStaff, iMeasure + system.getStartMeasureIndex(),
+            				iVoice, element.getBeat()), staff));
             	}
             }
+            */
             
           }
           
@@ -423,7 +429,7 @@ public class ScoreFrameLayoutStrategy
     }
     
     //create the collected beams
-    otherStampsPool.addAll(createBeams(openBeamsCache));
+    otherStampsPool.addAll(createBeams(openBeamsCache, globals));
 		
 		//create the collected ties and slurs
     otherStampsPool.addAll(createTiesAndSlurs(
@@ -445,7 +451,7 @@ public class ScoreFrameLayoutStrategy
 		}
 		
 		//create tuplet brackets/numbers
-		for (TupletInfo tuplet : openTupletsCache)
+		for (Tuplet tuplet : openTupletsCache)
 		{
 			otherStampsPool.add(tupletStampingStrategy.createTupletStamping(tuplet, openTupletsCache));
 		}
@@ -465,10 +471,11 @@ public class ScoreFrameLayoutStrategy
   
   
   /**
-   * Returns the stamping for the given notation of a {@link NoVoiceElement},
+   * Returns the stamping for the given notation of a {@link MusicElement},
    * using an appropriate strategy.
    */
-  private Stamping createNoVoiceElementStamping(Notation notation, float positionX, StaffStamping staff)
+  private Stamping createNoVoiceElementStamping(Notation notation,
+  	float positionX, StaffStamping staff)
   {
   	if (notation instanceof ClefNotation)
   	{
@@ -500,12 +507,13 @@ public class ScoreFrameLayoutStrategy
   private LinkedList<Stamping> createChordStampings(ChordNotation chord, float positionX, StaffStamping staff,
   	int staffIndex, int systemIndex, FormattedTextStyle defaultLyricStyle, OpenBeamsCache openBeamsCache,
   	OpenCurvedLinesCache openCurvedLinesCache, OpenLyricsCache openLyricsCache, LastLyrics lastLyrics,
-  	OpenTupletsCache openTupletsCache)
+  	OpenTupletsCache openTupletsCache, Globals globals)
   {
   	LinkedList<Stamping> ret = new LinkedList<Stamping>();
   	
   	//noteheads, leger lines, dots, accidentals, stem, flags, articulations
-    ChordStampings chordSt = voiceElementStampingStrategy.createChordStampings(chord, positionX, staff);
+    ChordStampings chordSt = voiceElementStampingStrategy.createChordStampings(
+    	chord, positionX, staff, globals);
     chordSt.addAllTo(ret);
     
     //beam  
@@ -515,13 +523,14 @@ public class ScoreFrameLayoutStrategy
       //the corresponding list of beamed stems, so that the
       //beam can be created later. the middle stems were not stamped
     	//yet, also remember them.
-      BeamWaypoint beamWaypoint = chord.getMusicElement().getBeamWaypoint();
-      if (beamWaypoint != null)
+    	Beam beam = globals.getBeams().get(chord.getMusicElement());
+      if (beam != null)
       {
-      	BeamedStemStampings beamedStemStampings = openBeamsCache.get(beamWaypoint.getBeam());
-        if (beamWaypoint.getType() == BeamWaypoint.Type.Start)
+      	BeamWaypoint.Type wpt = beam.getWaypointType(chord.getMusicElement());
+      	BeamedStemStampings beamedStemStampings = openBeamsCache.get(beam);
+        if (wpt == BeamWaypoint.Type.Start)
         	beamedStemStampings.setFirstStem(chordSt.stem);
-        else if (beamWaypoint.getType() == BeamWaypoint.Type.Stop)
+        else if (wpt == BeamWaypoint.Type.Stop)
         	beamedStemStampings.setLastStem(chordSt.stem);
         else
         	beamedStemStampings.addMiddleStem(chordSt.openStem);
@@ -530,74 +539,78 @@ public class ScoreFrameLayoutStrategy
     
     //ties and slurs
     Chord chordElement = (Chord) chord.getMusicElement();
-    for (CurvedLine cl : chordElement.getCurvedLines())
+    PSet<CurvedLine> curvedLines = globals.getCurvedLines().get(chordElement);
+    if (curvedLines != null)
     {
-    	Type type = cl.getWaypointType(chordElement);
-    	CurvedLineWaypoint clwp = cl.getWaypoint(chordElement);
-    	int noteIndex = NullTools.notNull(clwp.getNoteIndex(), 0); //TODO: choose top/bottom
-    	NoteheadStamping notehead = chordSt.noteheads.get(noteIndex);
-    	//define the placement: above or below (TODO: better strategy)
-    	VSide side = VSide.Top;
-    	if (type == Type.Start)
-    	{
-    		if (cl.getSide() != null)
-    		{
-    			//use custom side
-    			side = cl.getSide();
-    		}
-    		else
-    		{
-    			//use default side:
-	    		//for all notes over line position 3, use above, else below
-	    		side = (notehead.getPosition().yLp > 3 ? VSide.Top : VSide.Bottom);
-    		}
-    	}
-    	//compute position
-  		if (type == Type.Start)
-  		{
-  			//create start information
-  			//regard articulations
-  			float distance = 0;
-  			if (chord.getArticulationsAlignment() != null)
-  			{
-  				distance = chord.getArticulationsAlignment().getTotalHeightIS();
-  			}
-  			CurvedLineCache tiedChords = CurvedLineCache.createNew(
-  				cl, side, staffIndex, notehead, distance, systemIndex);
-  			openCurvedLinesCache.add(tiedChords);
-  		}
-  		else
-  		{
-  			//create stop information
-  			CurvedLineCache tiedChords = openCurvedLinesCache.get(cl);
-  			if (tiedChords == null)
-  			{
-  				//start notehead of this tie is unknown (must be from some preceding frame), which was forgotten
-  				//ignore it. TODO: warning
-  			}
-  			else
-  			{
-  				//regard articulations
-    			float distance = 0;
-    			if (chord.getArticulationsAlignment() != null)
-    			{
-    				distance = chord.getArticulationsAlignment().getTotalHeightIS();
-    			}
-  				tiedChords.setStop(notehead, distance, systemIndex);
-  			}
-  		}
+	    for (CurvedLine cl : curvedLines)
+	    {
+	    	Type type = cl.getWaypointType(chordElement);
+	    	CurvedLineWaypoint clwp = cl.getWaypoint(chordElement);
+	    	int noteIndex = NullTools.notNull(clwp.getNoteIndex(), 0); //TODO: choose top/bottom
+	    	NoteheadStamping notehead = chordSt.noteheads.get(noteIndex);
+	    	//define the placement: above or below (TODO: better strategy)
+	    	VSide side = VSide.Top;
+	    	if (type == Type.Start)
+	    	{
+	    		if (cl.getSide() != null)
+	    		{
+	    			//use custom side
+	    			side = cl.getSide();
+	    		}
+	    		else
+	    		{
+	    			//use default side:
+		    		//for all notes over line position 3, use above, else below
+		    		side = (notehead.getPosition().yLp > 3 ? VSide.Top : VSide.Bottom);
+	    		}
+	    	}
+	    	//compute position
+	  		if (type == Type.Start)
+	  		{
+	  			//create start information
+	  			//regard articulations
+	  			float distance = 0;
+	  			if (chord.getArticulationsAlignment() != null)
+	  			{
+	  				distance = chord.getArticulationsAlignment().getTotalHeightIS();
+	  			}
+	  			CurvedLineCache tiedChords = CurvedLineCache.createNew(
+	  				cl, side, staffIndex, notehead, distance, systemIndex);
+	  			openCurvedLinesCache.add(tiedChords);
+	  		}
+	  		else
+	  		{
+	  			//create stop information
+	  			CurvedLineCache tiedChords = openCurvedLinesCache.get(cl);
+	  			if (tiedChords == null)
+	  			{
+	  				//start notehead of this tie is unknown (must be from some preceding frame), which was forgotten
+	  				//ignore it. TODO: warning
+	  			}
+	  			else
+	  			{
+	  				//regard articulations
+	    			float distance = 0;
+	    			if (chord.getArticulationsAlignment() != null)
+	    			{
+	    				distance = chord.getArticulationsAlignment().getTotalHeightIS();
+	    			}
+	  				tiedChords.setStop(notehead, distance, systemIndex);
+	  			}
+	  		}
+	    }
     }
     
     //lyric
-    if (chordElement.getLyricsCount() > 0)
+    Vector<Lyric> lyrics = globals.getAttachments().getLyrics(chordElement);
+    if (lyrics.size() > 0)
     {
     	float baseLine = -8;
     	
-    	for (int iVerse = 0; iVerse < chordElement.getLyricsCount(); iVerse++)
+    	for (Lyric lyric : lyrics)
     	{
-    		Lyric lyric = chordElement.getLyric(iVerse);
     		SyllableType lyricType = lyric.getSyllableType();
-    		StaffTextStamping lastLyric = lastLyrics.get(staffIndex, iVerse);
+    		StaffTextStamping lastLyric = lastLyrics.get(staffIndex, lyric.getVerse());
     		
     		if (lyricType == SyllableType.Extend)
     		{
@@ -630,7 +643,7 @@ public class ScoreFrameLayoutStrategy
       		}
     				
     			//remember this lyric as the currently last one in the current staff and verse
-      		lastLyrics.set(staffIndex, iVerse, sts);
+      		lastLyrics.set(staffIndex, lyric.getVerse(), sts);
     			
     		}
     		
@@ -639,12 +652,14 @@ public class ScoreFrameLayoutStrategy
     }
     
     //directions
-    ret.addAll(directionStampingStrategy.createForChord(chord.getMusicElement(), chordSt));
+    ret.addAll(directionStampingStrategy.createForChord(
+    	chord.getMusicElement(), chordSt, globals));
     
     //tuplet
-    if (chordElement.getTupletInfo() != null)
+    Tuplet tuplet = globals.getTuplets().get(chordElement);
+    if (tuplet != null)
     {
-    	openTupletsCache.addChord(chordElement, chordSt);
+    	openTupletsCache.addChord(chordElement, tuplet, chordSt);
     }
     
     return ret;
@@ -654,12 +669,12 @@ public class ScoreFrameLayoutStrategy
   /**
    * Creates the beams collected in the given {@link OpenBeamsCache}.
    */
-  private LinkedList<Stamping> createBeams(OpenBeamsCache openBeamsCache)
+  private LinkedList<Stamping> createBeams(OpenBeamsCache openBeamsCache, Globals globals)
   {
   	LinkedList<Stamping> ret = new LinkedList<Stamping>();
     for (BeamedStemStampings beam : openBeamsCache)
     {
-    	ret.addAll(beamStampingStrategy.createBeamStampings(beam));
+    	ret.addAll(beamStampingStrategy.createBeamStampings(beam, globals));
     }
     return ret;
   }
@@ -671,7 +686,7 @@ public class ScoreFrameLayoutStrategy
    * all staves are returned.
    */
   private List<StaffStamping> getBarlineGroupStaves(
-  	List<StaffStamping> systemStaves, BarlineGroup barlineGroup)
+  	List<StaffStamping> systemStaves, StavesGroup<BarlineGroupStyle> barlineGroup)
   {
     if (barlineGroup == null)
       return systemStaves;
@@ -757,10 +772,10 @@ public class ScoreFrameLayoutStrategy
 		for (int iMeasure = 0; iMeasure < system.getMeasureColumnSpacings().length; iMeasure++)
     {
       int scoreMeasure = system.getStartMeasureIndex() + iMeasure;
-      MeasureColumnHeader measureHeader = header.getMeasureColumnHeader(scoreMeasure);
-      if (measureHeader.getVolta() != null)
+      ColumnHeader columnHeader = header.getColumnHeader(scoreMeasure);
+      if (columnHeader.getVolta() != null)
       {
-      	openVoltasCache.add(new ContinuedVolta(measureHeader.getVolta(),
+      	openVoltasCache.add(new ContinuedVolta(columnHeader.getVolta(),
       		scoreMeasure, 0)); //staff 0: TODO
       }
     }
@@ -791,6 +806,7 @@ public class ScoreFrameLayoutStrategy
 		LinkedList<ContinuedWedge> openWedgesCache)
 	{
 		LinkedList<WedgeStamping> ret = new LinkedList<WedgeStamping>();
+		Globals globals = score.getGlobals();
 		//find new wedges beginning in this staff
 		for (int iStaff = 0; iStaff < score.getStavesCount(); iStaff++)
 		{
@@ -814,9 +830,10 @@ public class ScoreFrameLayoutStrategy
 		for (Iterator<ContinuedWedge> itW = openWedgesCache.iterator(); itW.hasNext();)
 	  {
 			ContinuedWedge wedge = itW.next();
-			ret.add(directionStampingStrategy.createWedgeStamping(wedge.getMusicElement(),
+			ret.add(directionStampingStrategy.createWedgeStamping(globals, wedge.getMusicElement(),
 				staffStampings.get(systemIndex, wedge.getStaffIndex())));
-			if (wedge.getMusicElement().getWedgeEnd().getScorePosition().getMeasure() <= system.getEndMeasureIndex())
+			if (globals.getMPWithAttachments(wedge.getMusicElement().getWedgeEnd()).getMeasure() <=
+				system.getEndMeasureIndex())
 			{
 				//wedge is closed
 				itW.remove();

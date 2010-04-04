@@ -1,11 +1,12 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.music.time.NormalTime;
+import com.xenoage.zong.core.music.time.NormalTime;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
 
@@ -71,7 +72,7 @@ public class NormalTimeStamping
       {
         float symbolWidth = symbol.getBoundingRect().size.width;
         StaffSymbolStampingRenderer.paint(symbol, null,
-        	new SP(positionX + offsetX, linesCount + 1), 1, parentStaff, false, params);
+        	sp(positionX + offsetX, linesCount + 1), 1, parentStaff, false, params);
         offsetX += (symbolWidth + digitGap) * interlineSpace;
       }
     }
@@ -87,7 +88,7 @@ public class NormalTimeStamping
       {
         float symbolWidth = symbol.getBoundingRect().size.width;
         StaffSymbolStampingRenderer.paint(symbol, null,
-        	new SP(positionX + offsetX, linesCount - 3),
+        	sp(positionX + offsetX, linesCount - 3),
         	1, parentStaff, false, params);
         offsetX += (symbolWidth + digitGap) * interlineSpace;
       }

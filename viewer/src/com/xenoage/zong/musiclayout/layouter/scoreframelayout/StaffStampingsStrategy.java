@@ -8,8 +8,8 @@ import com.xenoage.zong.util.ArrayTools;
 import com.xenoage.util.SortedList;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.util.math.Point2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.ScoreFormat;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.ScoreFormat;
 import com.xenoage.zong.musiclayout.BeatMarker;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.MeasureMarks;
@@ -144,9 +144,10 @@ public class StaffStampingsStrategy
       		BeatMarker[] beatMarkerArray = ArrayTools.toBeatMarkerArray(staffBeats.get(iMeasure));
       		if (beatMarkerArray.length == 0)
       		{
-      			throw new IllegalStateException("No beat markers for measure " + iMeasure +
-      				" in staff " + iStaff + " in system " + 
-      				iSystem + " on frame beginning with measure " + frameArr.getStartMeasureIndex());
+      			//TODO
+      			//throw new IllegalStateException("No beat markers for measure " + iMeasure +
+      			//	" in staff " + iStaff + " in system " + 
+      			//	iSystem + " on frame beginning with measure " + frameArr.getStartMeasureIndex());
       		}
       		else
       		{

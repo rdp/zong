@@ -5,10 +5,10 @@ import java.util.LinkedList;
 
 
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.ScoreFormat;
-import com.xenoage.zong.data.format.SystemLayout;
-import com.xenoage.zong.data.header.ScoreHeader;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.ScoreFormat;
+import com.xenoage.zong.core.format.SystemLayout;
+import com.xenoage.zong.core.header.ScoreHeader;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangement;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
@@ -106,7 +106,7 @@ public class FrameArrangementStrategy
 	private float getTopSystemDistance(int systemIndex, ScoreFormat scoreFormat, ScoreHeader scoreHeader)
 	{
 		SystemLayout systemLayout = scoreHeader.getSystemLayout(systemIndex);
-		if (systemLayout != null && systemLayout.getSystemDistance() != null)
+		if (systemLayout != null)
 		{
 			//use custom top system distance
 			return systemLayout.getSystemDistance();
@@ -114,7 +114,7 @@ public class FrameArrangementStrategy
 		else
 		{
 			//use default distance
-			return scoreFormat.getDefaultTopSystemDistance();
+			return scoreFormat.getTopSystemDistance();
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class FrameArrangementStrategy
 	private float getSystemDistance(int systemIndex, ScoreFormat scoreFormat, ScoreHeader scoreHeader)
 	{
 		SystemLayout systemLayout = scoreHeader.getSystemLayout(systemIndex);
-		if (systemLayout != null && systemLayout.getSystemDistance() != null)
+		if (systemLayout != null)
 		{
 			//use custom system distance
 			return systemLayout.getSystemDistance();
@@ -134,7 +134,7 @@ public class FrameArrangementStrategy
 		else
 		{
 			//use default system distance
-			return scoreFormat.getDefaultSystemLayout().getSystemDistance();
+			return scoreFormat.getSystemLayout().getSystemDistance();
 		}
 	}
 

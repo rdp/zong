@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.stampings;
 
-import com.xenoage.zong.data.music.BracketGroupStyle;
+import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.*;
 

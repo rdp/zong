@@ -1,5 +1,7 @@
 package com.xenoage.zong.data.text;
 
+import com.xenoage.zong.core.text.Alignment;
+
 
 /**
  * Test cases for a {@link FormattedText}.

@@ -1,15 +1,16 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import java.util.LinkedList;
 import java.util.List;
 
 import com.xenoage.util.StringTools;
 import com.xenoage.util.iterators.It;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.music.text.Lyric;
-import com.xenoage.zong.data.music.text.Lyric.SyllableType;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.text.Lyric;
+import com.xenoage.zong.core.music.text.Lyric.SyllableType;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextStyle;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
@@ -42,7 +43,7 @@ public class LyricStampingStrategy
 			return null;
 		FormattedText text = new FormattedText(lyric.getText(), style, Alignment.Center);
 		return new StaffTextStamping(staffStamping, lyric, text,
-			new SP(positionX, baseLinePosition));
+			sp(positionX, baseLinePosition));
 	}
 	
 	
@@ -74,7 +75,7 @@ public class LyricStampingStrategy
 		}
 		return new StaffTextStamping(
 			syllableLeft.getParentStaff(), (Lyric) syllableLeft.getMusicElement(), //hyphen belongs to the left syllable
-			text, new SP(positionX, syllableLeft.getPosition().yLp));
+			text, sp(positionX, syllableLeft.getPosition().yLp));
 	}
 	
 	
@@ -187,7 +188,7 @@ public class LyricStampingStrategy
 		int countU = Math.max((int) ((endX - startX) / widthUnderscore) + 1, 1);
 		//create text
 		FormattedText text = new FormattedText(StringTools.repeat("_", countU), style, Alignment.Left);
-		return new StaffTextStamping(staff, (Lyric) element, text, new SP(startX, baseLine));
+		return new StaffTextStamping(staff, (Lyric) element, text, sp(startX, baseLine));
 	}
 	
 

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import proxymusic.SystemMargins;
 
-import com.xenoage.zong.data.format.SystemLayout;
+import com.xenoage.zong.core.format.SystemLayout;
 
 
 /**
@@ -25,20 +25,33 @@ class MxlSystemLayout
 	 */
 	public MxlSystemLayout(proxymusic.SystemLayout mxlSystemLayout, float tenthsMm)
 	{
-		systemLayout = SystemLayout.createEmptySystemLayout();
+		SystemLayout defaultSystemLayout = SystemLayout.getDefault();
 
 		//system-margins
+		float systemMarginLeft, systemMarginRight;
 		SystemMargins mxlSystemMargins = mxlSystemLayout.getSystemMargins();
 		if (mxlSystemMargins != null)
 		{
-			systemLayout.setSystemMarginLeft(tenthsMm * mxlSystemMargins.getLeftMargin().floatValue());
-			systemLayout.setSystemMarginRight(tenthsMm * mxlSystemMargins.getRightMargin().floatValue());
+			systemMarginLeft = tenthsMm * mxlSystemMargins.getLeftMargin().floatValue();
+			systemMarginRight = tenthsMm * mxlSystemMargins.getRightMargin().floatValue();
+		}
+		else
+		{
+			systemMarginLeft = defaultSystemLayout.getSystemMarginLeft();
+			systemMarginRight = defaultSystemLayout.getSystemMarginRight();
 		}
 
 		//system-distance
+		float systemDistance;
 		BigDecimal mxlSystemDistance = mxlSystemLayout.getSystemDistance();
 		if (mxlSystemDistance != null)
-			systemLayout.setSystemDistance(tenthsMm * mxlSystemDistance.floatValue());
+		{
+			systemDistance = tenthsMm * mxlSystemDistance.floatValue();
+		}
+		else
+		{
+			systemDistance = defaultSystemLayout.getSystemDistance();
+		}
 		
 		//top-system-distance
 		BigDecimal xmlTopSystemDistance = mxlSystemLayout.getTopSystemDistance();
@@ -46,6 +59,9 @@ class MxlSystemLayout
 			topSystemDistance = tenthsMm * xmlTopSystemDistance.floatValue();
 		else
 			topSystemDistance = null;
+		
+		systemLayout = new SystemLayout(systemDistance, systemMarginLeft,
+			systemMarginRight, null);
 	}
 	
 	

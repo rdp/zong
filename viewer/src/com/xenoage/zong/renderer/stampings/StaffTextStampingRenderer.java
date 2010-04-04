@@ -3,10 +3,8 @@ package com.xenoage.zong.renderer.stampings;
 import com.xenoage.util.math.Point2i;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffTextStamping;
-import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.RenderingParams;
-import com.xenoage.zong.renderer.screen.ScreenStaff;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.util.Units;
 

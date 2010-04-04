@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.stampings;
 
-import com.xenoage.zong.data.music.Chord;
+import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.*;
 

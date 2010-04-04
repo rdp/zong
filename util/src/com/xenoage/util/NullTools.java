@@ -28,4 +28,19 @@ public class NullTools
 	}
 	
 	
+	/**
+	 * Throws an IllegalArgumentException if one of the given arguments is null.
+	 */
+	public static void throwNullArg(Object... o)
+	{
+		for (int i = 0; i < o.length; i++)
+		{
+			if (o[i] == null)
+			{
+				throw new IllegalArgumentException("Argument may not be null (checked argument with index " + i +")");
+			}
+		}
+	}
+	
+	
 }

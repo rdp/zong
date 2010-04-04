@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInput;
 import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInputTest;
 import com.xenoage.zong.layout.frames.ScoreFrame;

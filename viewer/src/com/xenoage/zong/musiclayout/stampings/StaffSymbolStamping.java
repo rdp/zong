@@ -6,8 +6,8 @@ import com.xenoage.util.math.Rectangle2f;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
 import com.xenoage.zong.app.symbols.Symbol;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.format.SP;
 
 
 /**

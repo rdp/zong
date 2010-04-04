@@ -1,5 +1,7 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import java.awt.Color;
 
 import com.xenoage.util.math.Rectangle2f;
@@ -7,8 +9,8 @@ import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.format.SP;
 
 
 /**
@@ -48,7 +50,7 @@ public class NoteheadStamping
     StaffStamping parentStaff, SP position , int side, float scaling)
   {
     super(parentStaff, chord, color,
-      new SP(computePositionX(position.xMm, notehead, side, parentStaff), position.yLp),
+      sp(computePositionX(position.xMm, notehead, side, parentStaff), position.yLp),
       scaling, false);
     this.notehead = notehead;
     updateBoundingShape();

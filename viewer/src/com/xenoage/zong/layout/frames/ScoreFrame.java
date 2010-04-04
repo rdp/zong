@@ -3,7 +3,7 @@ package com.xenoage.zong.layout.frames;
 import com.xenoage.util.Range;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.musiclayout.ScoreFrameLayout;
 import com.xenoage.zong.musiclayout.ScoreLayout;
 import com.xenoage.zong.musiclayout.layouter.horizontalsystemfilling.HorizontalSystemFillingStrategy;

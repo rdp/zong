@@ -1,13 +1,15 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.util.MathTools;
 import com.xenoage.util.enums.VSide;
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.zong.data.music.CurvedLine;
-import com.xenoage.zong.data.music.CurvedLineWaypoint;
-import com.xenoage.zong.data.music.CurvedLine.Type;
-import com.xenoage.zong.data.music.format.BezierPoint;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
+import com.xenoage.zong.core.music.curvedline.CurvedLine.Type;
+import com.xenoage.zong.core.music.format.BezierPoint;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.zong.musiclayout.continued.ContinuedCurvedLine;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.util.CurvedLineCache;
@@ -141,7 +143,7 @@ public class CurvedLineStampingStrategy
 		
 		//end points of the bezier curve
 		SP p1 = computeEndPoint(cl, startNotehead, wp1.getBezierPoint(), side, startAdditionalDistanceIS);
-		SP p2 = new SP(staff.getPosition().x + staff.getLength(), p1.yLp);
+		SP p2 = sp(staff.getPosition().x + staff.getLength(), p1.yLp);
 		
 		//control points of the bezier curve
 		BezierPoint b1 = wp1.getBezierPoint();
@@ -176,8 +178,8 @@ public class CurvedLineStampingStrategy
   	{
   		yLp = -2; //1 IS below the bottom staff line
   	}
-  	SP p1 = new SP(p1x, yLp);
-  	SP p2 = new SP(p2x, yLp);
+  	SP p1 = sp(p1x, yLp);
+  	SP p2 = sp(p2x, yLp);
   	
   	//control points of the bezier curve
   	SP c1 = computeLeftControlPoint(cl, p1, p2, side, staff); //default formatting
@@ -199,7 +201,7 @@ public class CurvedLineStampingStrategy
 		
 		//end points of the bezier curve
 		SP p2 = computeEndPoint(cl, stopNotehead, wp2.getBezierPoint(), side, stopAdditionalDistanceIS);
-		SP p1 = new SP(staff.getPosition().x +
+		SP p1 = sp(staff.getPosition().x +
 			staff.getMeasureLeadingMm(staff.getStartMeasureIndex()) - 5, p2.yLp); //TODO
 		
 		//control points of the bezier curve
@@ -227,14 +229,14 @@ public class CurvedLineStampingStrategy
 			//default formatting
 			float distanceLP = (cl.getType() == Type.Slur ? 2 : 1.5f); //slur is 2 LP away from note center, tie 1.5
 			float yLp = note.getPosition().yLp + dir * distanceLP + dir * 2 * additionalDistanceIS;
-			return new SP(note.getPosition().xMm, yLp);
+			return sp(note.getPosition().xMm, yLp);
 		}
 		else
 		{
 			//custom formatting
 			float yLp = note.getPosition().yLp + bezierPoint.point.yLp +
 				dir * 2 * additionalDistanceIS;
-			return new SP(note.getPosition().xMm + bezierPoint.point.xMm, yLp);
+			return sp(note.getPosition().xMm + bezierPoint.point.xMm, yLp);
 		}
 	}
 	
@@ -287,7 +289,7 @@ public class CurvedLineStampingStrategy
 		float distanceX = Math.abs(p2.xMm - p1.xMm);
 		float retX = distanceX / 4;
 		float retY = MathTools.clamp(0.3f * distanceX / staff.getInterlineSpace(), 0, 8) * side.getDir();
-		return new SP(retX, retY);
+		return sp(retX, retY);
 	}
 	
 	
@@ -302,7 +304,7 @@ public class CurvedLineStampingStrategy
 	SP computeRightSlurControlPoint(SP p1, SP p2, VSide side, StaffStamping staff)
 	{
 		SP sp = computeLeftSlurControlPoint(p1, p2, side, staff);
-		return new SP(-1 * sp.xMm, sp.yLp);
+		return sp(-1 * sp.xMm, sp.yLp);
 	}
 	
 	
@@ -320,7 +322,7 @@ public class CurvedLineStampingStrategy
 		float distanceX = Math.abs(p2.xMm - p1.xMm);
 		float retX = 1;
 		float retY = MathTools.clamp(0.3f * distanceX / staff.getInterlineSpace(), 0, 8) * side.getDir();
-		return new SP(retX, retY);
+		return sp(retX, retY);
 	}
 	
 	
@@ -335,7 +337,7 @@ public class CurvedLineStampingStrategy
 	SP computeRightTieControlPoint(SP p1, SP p2, VSide side, StaffStamping staff)
 	{
 		SP sp = computeLeftTieControlPoint(p1, p2, side, staff);
-		return new SP(-1 * sp.xMm, sp.yLp);
+		return sp(-1 * sp.xMm, sp.yLp);
 	}
 	
 

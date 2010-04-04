@@ -1,15 +1,14 @@
 package com.xenoage.zong.musiclayout;
 
 import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.MP.atMeasure;
+import static com.xenoage.zong.core.music.Pitch.pi;
+import static com.xenoage.zong.core.music.chord.ChordFactory.chord;
 
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.Note;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.musiclayout.SystemArrangement;
+import com.xenoage.pdlib.PVector;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
 import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureLeadingSpacingMock;
@@ -40,25 +39,24 @@ public class SystemArrangementTry
 	public static SystemArrangement createSystemWith1HMeasure(float leadingWidth,
 		float offsetBeat1, float offsetBeat2, float offsetBeat3)
 	{
-		Measure measure = new Measure(null);
-		Voice voice = measure.getVoices().get(0);
-		voice.addVoiceElement(new Chord(new ChordData(new Note(new Pitch(0, 0, 4)), new Fraction(2, 4))));
-		voice.addVoiceElement(new Chord(new ChordData(new Note(new Pitch(1, 0, 4)), new Fraction(2, 4))));
+		Voice voice = new Voice(new PVector<VoiceElement>(
+			chord(pi(0, 0, 4), fr(2, 4)),
+			chord(pi(1, 0, 4), fr(2, 4))));
 		BeatOffset[] beatOffsets = new BeatOffset[]{
-			new BeatOffset(new Fraction(1, 4), offsetBeat1),
-			new BeatOffset(new Fraction(3, 4), offsetBeat2),
-			new BeatOffset(new Fraction(5, 4), offsetBeat3)
+			new BeatOffset(fr(1, 4), offsetBeat1),
+			new BeatOffset(fr(3, 4), offsetBeat2),
+			new BeatOffset(fr(5, 4), offsetBeat3)
 		};
-		VoiceSpacing[] voiceSpacings = new VoiceSpacing[]{new VoiceSpacing(voice,
+		VoiceSpacing[] voiceSpacings = new VoiceSpacing[]{new VoiceSpacing(voice, 1,
 			new SpacingElement[]{
 				new SpacingElement(null, null, offsetBeat1),
 				new SpacingElement(null, null, offsetBeat2)
 				})};
-		MeasureSpacing measureSpacing = new MeasureSpacing(measure, voiceSpacings,
+		MeasureSpacing measureSpacing = new MeasureSpacing(atMeasure(0, 0), voiceSpacings,
 			MeasureLeadingSpacingMock.createGClefSpacing(leadingWidth));
 		MeasureSpacing[] measureSpacings = new MeasureSpacing[]{measureSpacing};
-		MeasureColumnSpacing mcs = new
-			MeasureColumnSpacing(measureSpacings, beatOffsets,
+		MeasureColumnSpacing mcs = new MeasureColumnSpacing(Score.empty(),
+			measureSpacings, beatOffsets,
 				new BeatOffset[]{new BeatOffset(fr(0, 4), 0), new BeatOffset(fr(6, 4), offsetBeat3)});
 		SystemArrangement system = new SystemArrangement(10, 10,
 			new MeasureColumnSpacing[]{mcs},

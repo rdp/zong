@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.notations;
 
-import com.xenoage.zong.data.music.time.NormalTime;
+import com.xenoage.zong.core.music.time.NormalTime;
 import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
 
 

@@ -1,7 +1,7 @@
 package com.xenoage.zong.musiclayout.layouter;
 
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.musiclayout.ScoreFrameLayout;
 import com.xenoage.zong.musiclayout.ScoreLayout;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
@@ -33,12 +33,12 @@ public class PlaybackLayouter
 	 * Sets a {@link SystemCursorStamping} at the given {@link ScorePosition},
 	 * representing the current playback position.
 	 */
-	public void setCursorAt(ScorePosition scorePosition)
+	public void setCursorAt(MP mp)
 	{
 		//remove old playback cursors
 		removePlaybackStampings();
 		//find frame
-		int measure = scorePosition.getMeasure();
+		int measure = mp.getMeasure();
 		for (ScoreFrameLayout frame : scoreLayout.getScoreFrameLayouts())
 		{
 			if (measure >= frame.getFrameArrangement().getStartMeasureIndex() &&
@@ -50,7 +50,7 @@ public class PlaybackLayouter
 				if (topStaff != null && bottomStaff != null)
 				{
 					frame.getPlaybackStampings().add(new SystemCursorStamping(topStaff, bottomStaff,
-						getPositionX(scorePosition, frame)));
+						getPositionX(mp, frame)));
 				}
 				return;
 			}
@@ -75,13 +75,13 @@ public class PlaybackLayouter
 	 * or 0 if not found (should not happen).
 	 * TIDY: performance?
 	 */
-	private float getPositionX(ScorePosition scorePosition, ScoreFrameLayout frame)
+	private float getPositionX(MP mp, ScoreFrameLayout frame)
 	{
 		float minX = Float.MAX_VALUE;
 		//search all staves for the given musical position, beginning at the top staff
 		for (StaffStamping staff : frame.getStaffStampings())
 		{
-			Float x = staff.getXMmAt(scorePosition);
+			Float x = staff.getXMmAt(mp);
 			if (x != null && x < minX)
 				minX = x;
 		}

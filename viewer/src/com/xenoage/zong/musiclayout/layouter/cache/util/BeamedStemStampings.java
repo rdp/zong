@@ -1,9 +1,9 @@
 package com.xenoage.zong.musiclayout.layouter.cache.util;
 
 import com.xenoage.util.iterators.It;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.StemStamping;
 
@@ -46,7 +46,7 @@ public class BeamedStemStampings
   public BeamedStemStampings(Beam beam)
   {
     this.beam = beam;
-    this.middleStems = new ArrayList<OpenBeamMiddleStem>(beam.getWaypointsCount()); 
+    this.middleStems = new ArrayList<OpenBeamMiddleStem>(beam.getWaypoints().size()); 
   }
   
   

@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.continued;
 
-import com.xenoage.zong.data.music.Volta;
+import com.xenoage.zong.core.music.volta.Volta;
 
 
 /**
@@ -8,7 +8,7 @@ import com.xenoage.zong.data.music.Volta;
  * 
  * @author Andreas Wenger
  */
-public class ContinuedVolta
+public final class ContinuedVolta
 	implements ContinuedElement
 {
 	

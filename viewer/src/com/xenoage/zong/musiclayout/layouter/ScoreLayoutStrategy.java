@@ -1,18 +1,22 @@
 package com.xenoage.zong.musiclayout.layouter;
 
+import static com.xenoage.util.Range.range;
+import static com.xenoage.zong.core.music.util.Column.column;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.xenoage.util.Range;
 import com.xenoage.util.math.Point2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.util.MeasureColumn;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.util.Column;
 import com.xenoage.zong.layout.frames.ScoreFrame;
 import com.xenoage.zong.layout.frames.ScoreFrameChain;
 import com.xenoage.zong.musiclayout.FrameArrangement;
@@ -114,9 +118,10 @@ public class ScoreLayoutStrategy
 		NotationsCache ret = new NotationsCache();
 		//go again through all elements, finding beams, and recompute stem direction
 		Score score = lc.getScore();
+		Globals globals = score.getGlobals();
 		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
 		{
-			MeasureColumn measureColumn = score.getMeasureColumn(iMeasure);
+			Column measureColumn = column(score, iMeasure);
 			for (Measure measure : measureColumn)
 			{
 				for (Voice voice : measure.getVoices())
@@ -127,10 +132,11 @@ public class ScoreLayoutStrategy
 						{
 							Chord chord = (Chord) element;
 							//compute each beam only one time (when the end waypoint is found)
-							if (chord.getBeamWaypoint() != null && chord.getBeamWaypoint().getType() == BeamWaypoint.Type.Stop)
+							Beam beam = globals.getBeams().get(chord);
+							if (beam != null && beam.getLastWaypoint().getChord() == chord)
 							{
 								ret.setAll(beamedStemDirectionNotationsStrategy.computeNotations(
-									chord.getBeamWaypoint().getBeam(), notations, lc));
+									beam, notations, lc));
 							}
 						}
 					}
@@ -151,8 +157,8 @@ public class ScoreLayoutStrategy
 		ArrayList<MeasureColumnSpacing> ret = new ArrayList<MeasureColumnSpacing>(score.getMeasuresCount());
 		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
 		{
-			ret.add(measureColumnSpacingStrategy.computeMeasureColumnSpacing(score.getMeasureColumn(iMeasure),
-				false, notations, score.getScoreHeader().getMeasureColumnHeader(iMeasure), lc).get1()); //TODO: also save optimal voice spacings for later reuse
+			ret.add(measureColumnSpacingStrategy.computeMeasureColumnSpacing(iMeasure, column(score, iMeasure),
+				false, notations, score.getScoreHeader().getColumnHeader(iMeasure), lc).get1()); //TODO: also save optimal voice spacings for later reuse
 		}
 		return ret;
 	}
@@ -258,7 +264,7 @@ public class ScoreLayoutStrategy
 	{
 		ScoreFrameChain chain = lc.getScoreFrameChain();
 		ArrayList<FrameArrangement> ret = new ArrayList<FrameArrangement>(frameArrangements.size());
-		for (int iFrame : new Range(frameArrangements))
+		for (int iFrame : range(frameArrangements))
 	  {
 			FrameArrangement frameArr = frameArrangements.get(iFrame);
 			HorizontalSystemFillingStrategy hFill = chain.getFrame(iFrame).getHorizontalSystemFillingStrategy();
@@ -294,7 +300,7 @@ public class ScoreLayoutStrategy
 		ScoreFrameChain chain = lc.getScoreFrameChain();
 		ArrayList<FrameArrangement> ret = new ArrayList<FrameArrangement>(frameArrs.size());
 		Score score = lc.getScore();
-	  for (int iFrame : new Range(frameArrs))
+	  for (int iFrame : range(frameArrs))
 	  {
 	  	VerticalFrameFillingStrategy vFill = chain.getFrame(iFrame).getVerticalFrameFillingStrategy();
 	  	if (vFill != null)
@@ -316,6 +322,7 @@ public class ScoreLayoutStrategy
 		//collect actual measure column spacings from all frames
 		//(now also including leading spacings and possibly stretched measures)
 		Score score = lc.getScore();
+		Globals globals = score.getGlobals();
 		ArrayList<MeasureColumnSpacing> measureColumnSpacings = new ArrayList<MeasureColumnSpacing>(score.getMeasuresCount());
 		for (FrameArrangement frameArr : frameArrangements)
 		{
@@ -337,7 +344,7 @@ public class ScoreLayoutStrategy
 		//go again through all elements, finding beams, and recompute stem alignment
 		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
 		{
-			MeasureColumn measureColumn = score.getMeasureColumn(iMeasure);
+			Column measureColumn = column(score, iMeasure);
 			for (Measure measure : measureColumn)
 			{
 				for (Voice voice : measure.getVoices())
@@ -348,10 +355,11 @@ public class ScoreLayoutStrategy
 						{
 							Chord chord = (Chord) element;
 							//compute each beam only one time (when the end waypoint is found)
-							if (chord.getBeamWaypoint() != null && chord.getBeamWaypoint().getType() == BeamWaypoint.Type.Stop)
+							Beam beam = globals.getBeams().get(chord);
+							if (beam != null && beam.getLastWaypoint().getChord() == chord)
 							{
-								ret.setAll(beamedStemAlignmentNotationsStrategy.computeNotations(
-									chord.getBeamWaypoint().getBeam(), measureColumnSpacings, notations));
+								ret.setAll(beamedStemAlignmentNotationsStrategy.computeNotations(lc,
+									beam, measureColumnSpacings, notations));
 							}
 						}
 					}

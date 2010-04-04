@@ -2,11 +2,11 @@ package com.xenoage.zong.app.symbols.common;
 
 import java.util.ArrayList;
 
-import com.xenoage.zong.data.music.Accidental;
-import com.xenoage.zong.data.music.Articulation;
-import com.xenoage.zong.data.music.clef.ClefType;
-import com.xenoage.zong.data.music.directions.DynamicsType;
-import com.xenoage.zong.data.music.directions.Pedal;
+import com.xenoage.zong.core.music.chord.Accidental;
+import com.xenoage.zong.core.music.chord.Articulation;
+import com.xenoage.zong.core.music.clef.ClefType;
+import com.xenoage.zong.core.music.direction.DynamicsType;
+import com.xenoage.zong.core.music.direction.Pedal;
 
 
 /**

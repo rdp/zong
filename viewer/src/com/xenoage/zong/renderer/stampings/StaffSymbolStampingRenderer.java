@@ -6,7 +6,7 @@ import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.screen.ScreenStaff;
 import com.xenoage.zong.app.symbols.Symbol;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.util.Units;
 
 import java.awt.Color;

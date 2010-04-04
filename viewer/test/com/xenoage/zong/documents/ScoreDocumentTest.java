@@ -1,12 +1,11 @@
 package com.xenoage.zong.documents;
 
-import static org.junit.Assert.*;
-
-import com.xenoage.zong.data.Score;
-
-import java.io.File;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import com.xenoage.zong.core.Score;
 
 
 /**
@@ -19,7 +18,7 @@ public class ScoreDocumentTest
 
   @Test public void createScoreDocument()
   {
-    Score score = new Score();
+    Score score = Score.empty();
     //create score document without filename
     ScoreDocument doc = new ScoreDocument(score, null, null);
     assertNotNull(doc);

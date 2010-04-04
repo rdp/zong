@@ -24,10 +24,10 @@ import javax.swing.border.TitledBorder;
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.language.Lang;
 import com.xenoage.zong.Zong;
-import com.xenoage.zong.data.Part;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.info.Creator;
-import com.xenoage.zong.data.info.ScoreInfo;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.info.Creator;
+import com.xenoage.zong.core.info.ScoreInfo;
+import com.xenoage.zong.core.music.Part;
 import com.xenoage.zong.player.Player;
 import com.xenoage.zong.player.language.Voc;
 
@@ -139,7 +139,7 @@ public class InfoDialog
 	    */
 	
 	    sScore += Lang.get(Voc.Label_Parts) + "\n";
-	    It<Part> parts = new It<Part>(score.getParts());
+	    It<Part> parts = new It<Part>(score.getStavesList().getParts());
       for (Part part : parts)
       {
         sScore += fillWithSpaces("   " + parts.getIndex() + ":", 24) + part.getName() + "\n";

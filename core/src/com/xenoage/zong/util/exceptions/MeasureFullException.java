@@ -1,7 +1,9 @@
 package com.xenoage.zong.util.exceptions;
 
+import static com.xenoage.zong.core.music.MP.atBeat;
+
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.music.MP;
 
 
 /**
@@ -14,23 +16,23 @@ import com.xenoage.zong.data.ScorePosition;
  */
 @SuppressWarnings("serial")
 public class MeasureFullException
-  extends Exception
+  extends RuntimeException
 {
   
-  private ScorePosition pos;
+  private MP mp;
   private Fraction requestedDuration;
   
   
-  public MeasureFullException(ScorePosition pos, Fraction requestedDuration)
+  public MeasureFullException(MP mp, Fraction requestedDuration)
   {
-    this.pos = pos;
+    this.mp = mp;
     this.requestedDuration = requestedDuration;
   }
   
   
   public MeasureFullException(Fraction beat, Fraction requestedDuration)
   {
-    this.pos = new ScorePosition(1, -1, beat, -1);
+    this.mp = atBeat(beat);
     this.requestedDuration = requestedDuration;
   }
   
@@ -38,7 +40,7 @@ public class MeasureFullException
   @Override public String getMessage()
   {
     return "Measure is full. Requested duration = " +
-    	requestedDuration + ". Score position: " + pos;
+    	requestedDuration + ". MP: " + mp;
   }
 
 }

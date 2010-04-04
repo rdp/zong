@@ -9,8 +9,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JUnit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JOGL"/>
 	<classpathentry kind="lib" path="/lib/tablelayout.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/musicxml-in"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/midi-out"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/player"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pdlib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

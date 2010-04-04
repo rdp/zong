@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.sound.midi.MidiSystem;
 
 import com.xenoage.util.logging.Log;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 
 
 /**

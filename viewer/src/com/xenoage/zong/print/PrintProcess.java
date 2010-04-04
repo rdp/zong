@@ -82,7 +82,7 @@ public class PrintProcess
   public PageFormat getPageFormat(int pageIndex)
     throws IndexOutOfBoundsException
   {
-    com.xenoage.zong.data.format.PageFormat
+    com.xenoage.zong.core.format.PageFormat
       pageFormat = layout.getPages().get(pageIndex).getFormat();
     PageFormat ret = new PageFormat();
     ret.setOrientation(PageFormat.PORTRAIT);

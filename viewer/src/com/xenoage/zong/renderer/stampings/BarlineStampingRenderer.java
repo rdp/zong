@@ -1,13 +1,15 @@
 package com.xenoage.zong.renderer.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.util.math.Point2i;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.barline.BarlineGroupStyle;
-import com.xenoage.zong.data.music.barline.BarlineRepeat;
-import com.xenoage.zong.data.music.barline.BarlineStyle;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.music.barline.BarlineRepeat;
+import com.xenoage.zong.core.music.barline.BarlineStyle;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.zong.musiclayout.stampings.BarlineStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.renderer.RenderingQuality;
@@ -94,8 +96,8 @@ public class BarlineStampingRenderer
 			int lp1 = (staff.getLinesCount() + 1) / 2;
 			int lp2 = lp1 + 2;
 			float x = xPosition + staff.getInterlineSpace() * 1.2f * side;
-		  paintRepeatDot(params, staff, new SP(x, lp1));
-		  paintRepeatDot(params, staff, new SP(x, lp2));
+		  paintRepeatDot(params, staff, sp(x, lp1));
+		  paintRepeatDot(params, staff, sp(x, lp2));
 		}
 	}
 

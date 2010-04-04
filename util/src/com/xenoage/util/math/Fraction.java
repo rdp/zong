@@ -1,5 +1,7 @@
 package com.xenoage.util.math;
 
+import java.util.Comparator;
+
 import com.xenoage.util.MathTools;
 
 
@@ -20,17 +22,25 @@ public final class Fraction
   implements Comparable<Fraction>
 {
 	
-	public static final Fraction _0 = new Fraction(0);
+	public static final Fraction _0 = fr(0);
   
   private final int numerator;
   private final int denominator;
+  
+  private static Comparator<Fraction> comparator = new Comparator<Fraction>()
+	{
+		@Override public int compare(Fraction f1, Fraction f2)
+		{
+			return f1.compareTo(f2);
+		}
+	};
   
 
   /**
    * Creates a new fraction with the given numerator.
    * The denominator is 1.
    */
-  public Fraction(int number)
+  private Fraction(int number)
   {
     this.numerator = number;
     this.denominator = 1;
@@ -38,26 +48,51 @@ public final class Fraction
   
   
   /**
-   * Creates a new Fraction with the given numerator
+   * Creates a new fraction with the given numerator
    * and denominator.
    */
-  public Fraction(int numerator, int denominator)
+  private Fraction(int numerator, int denominator)
   {
   	if (denominator == 0)
       throw new IllegalArgumentException("Denominator may not be 0");
-  	int gcd = MathTools.clampMin(MathTools.gcd(numerator, denominator), 1);
+  	//if fraction is negative, always the numerator is negative
+  	int absNum = Math.abs(numerator);
+  	int absDen = Math.abs(denominator);
+  	if (numerator < 0 || denominator < 0)
+  	{
+  		if (numerator < 0 && denominator < 0)
+  		{
+  			numerator = absNum;
+  		}
+  		else
+  		{
+  			numerator = -1 * absNum;
+  		}
+  		denominator = absDen;
+  	}
+  	int gcd = MathTools.clampMin(MathTools.gcd(absNum, absDen), 1);
     this.numerator = numerator / gcd;
     this.denominator = denominator / gcd;
   }
   
   
   /**
-   * Convenience method to create a {@link Fraction}
-   * (much shorter than </code>new Fraction(...)</code>).
+   * Creates a new fraction with the given numerator
+   * and denominator.
    */
   public static Fraction fr(int numerator, int denominator)
   {
   	return new Fraction(numerator, denominator);
+  }
+  
+  
+  /**
+   * Creates a new fraction with the given numerator.
+   * The denominator is 1.
+   */
+  public static Fraction fr(int number)
+  {
+  	return new Fraction(number);
   }
 
   
@@ -90,7 +125,7 @@ public final class Fraction
       this.numerator * fraction.denominator +
       this.denominator * fraction.numerator;
     int denominator = this.denominator * fraction.denominator;
-    return new Fraction(numerator, denominator);
+    return fr(numerator, denominator);
   }
   
   
@@ -105,7 +140,7 @@ public final class Fraction
       this.numerator * fraction.denominator -
       this.denominator * fraction.numerator;
     int denominator = this.denominator * fraction.denominator;
-    return new Fraction(numerator, denominator);
+    return fr(numerator, denominator);
   }
   
   
@@ -114,7 +149,7 @@ public final class Fraction
    */
   public Fraction invert()
   {
-    return new Fraction(-numerator, denominator);
+    return fr(-numerator, denominator);
   }
   
   
@@ -124,7 +159,7 @@ public final class Fraction
    */
   public static Fraction fromDivisions(int divisions, int divsPerQuarterNote)
   {
-    return new Fraction(divisions, 4 * divsPerQuarterNote);
+    return fr(divisions, 4 * divsPerQuarterNote);
   }
   
   
@@ -145,9 +180,8 @@ public final class Fraction
    *    equal to the given one; -1 if this fraction is numerically less
    *    than the given one; 1 if this fraction is numerically
    *    greater than the given one.
-   * @since   1.2
    */
-  public int compareTo(Fraction fraction)
+  @Override public int compareTo(Fraction fraction)
   {
     Fraction compare = this.sub(fraction);
     if (compare.numerator < 0)
@@ -156,6 +190,15 @@ public final class Fraction
       return 0;
     else
       return 1;
+  }
+  
+  
+  /**
+   * Gets a comparator for fractions.
+   */
+  public static Comparator<Fraction> getComparator()
+  {
+  	return comparator;
   }
   
   
@@ -214,17 +257,26 @@ public final class Fraction
   	int slashPos = s.indexOf("/");
   	if (slashPos == -1)
   	{
-  		return new Fraction(Integer.parseInt(s));
+  		return fr(Integer.parseInt(s));
   	}
   	else
   	{
-  		return new Fraction(Integer.parseInt(s.substring(0, slashPos)), Integer.parseInt(s.substring(slashPos + 1)));
+  		return fr(Integer.parseInt(s.substring(0, slashPos)), Integer.parseInt(s.substring(slashPos + 1)));
   	}
   }
   
   public Fraction divideBy(Fraction fraction)
   {
-	  return new Fraction(this.numerator * fraction.denominator, this.denominator * fraction.numerator);
+	  return fr(this.numerator * fraction.denominator, this.denominator * fraction.numerator);
+  }
+  
+  
+  /**
+   * Returns true, if this fraction is greater than 0.
+   */
+  public boolean isGreater0()
+  {
+  	return numerator > 0;
   }
 
 }

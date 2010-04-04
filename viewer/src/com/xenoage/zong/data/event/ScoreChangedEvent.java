@@ -1,7 +1,7 @@
 package com.xenoage.zong.data.event;
 
 import com.xenoage.util.Range;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 
 
 /**

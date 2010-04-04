@@ -4,7 +4,7 @@ import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.tools.PlaybackTool;
 import com.xenoage.zong.commands.Command;
 import com.xenoage.zong.commands.input.KeyboardScoreInputCommand;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.util.exceptions.PropertyAlreadySetException;
 

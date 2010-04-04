@@ -8,9 +8,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -24,22 +22,14 @@ import com.xenoage.util.io.DownloadTools;
 import com.xenoage.util.io.IO;
 import com.xenoage.util.language.Lang;
 import com.xenoage.util.logging.Log;
-import com.xenoage.util.math.Point2f;
-import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.app.language.Voc;
 import com.xenoage.zong.app.opengl.TextureManager;
 import com.xenoage.zong.commands.dialogs.SaveDocumentDialogViewerCommand.FileFormat;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.format.PageMargins;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.documents.ViewerDocument;
 import com.xenoage.zong.gui.applet.ZongApplet;
 import com.xenoage.zong.io.midi.out.MidiScoreDocumentFileOutput;
 import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInput;
-import com.xenoage.zong.layout.Page;
-import com.xenoage.zong.layout.frames.ScoreFrame;
-import com.xenoage.zong.util.demo.ScoreDemo;
 import com.xenoage.zong.util.demo.ScoreDocumentAlphaVersionWelcomeScreen;
 
 

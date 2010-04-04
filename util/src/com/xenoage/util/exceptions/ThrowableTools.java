@@ -20,18 +20,6 @@ public class ThrowableTools
     error.printStackTrace(printWriter);
     return result.toString();
   }
-	
-	
-	public static void throwNullArg(Object... o)
-	{
-		for (int i = 0; i < o.length; i++)
-		{
-			if (o[i] == null)
-			{
-				throw new IllegalArgumentException("Argument may not be null (checked argument with index " + i +")");
-			}
-		}
-	}
 
 	
 }

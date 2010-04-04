@@ -3,7 +3,7 @@ package com.xenoage.zong.util;
 import com.xenoage.util.SortedList;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.app.symbols.Symbol;
-import com.xenoage.zong.data.music.Pitch;
+import com.xenoage.zong.core.music.Pitch;
 import com.xenoage.zong.musiclayout.BeatMarker;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangement;

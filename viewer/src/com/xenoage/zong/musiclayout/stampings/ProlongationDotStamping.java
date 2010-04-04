@@ -3,8 +3,8 @@ package com.xenoage.zong.musiclayout.stampings;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.*;
 

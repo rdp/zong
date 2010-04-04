@@ -2,8 +2,8 @@ package com.xenoage.zong.musiclayout.stampings;
 
 import java.util.List;
 
-import com.xenoage.zong.data.music.barline.Barline;
-import com.xenoage.zong.data.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.music.barline.Barline;
+import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.*;
 

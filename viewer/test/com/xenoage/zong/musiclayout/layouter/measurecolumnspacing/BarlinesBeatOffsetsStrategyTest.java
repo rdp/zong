@@ -3,14 +3,14 @@ package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
 import static com.xenoage.util.math.Fraction.fr;
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Test;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.zong.data.header.MeasureColumnHeader;
-import com.xenoage.zong.data.music.barline.Barline;
-import com.xenoage.zong.data.music.barline.BarlineStyle;
+import com.xenoage.zong.core.header.ColumnHeader;
+import com.xenoage.zong.core.music.barline.Barline;
+import com.xenoage.zong.core.music.barline.BarlineStyle;
 import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
 
 
@@ -30,22 +30,22 @@ public class BarlinesBeatOffsetsStrategyTest
   	float d = 2; //original distance between notes
   	float is = 1.5f; //interline space
   	//create original offsets
-  	ArrayList<BeatOffset> baseOffsets = new ArrayList<BeatOffset>();
-  	baseOffsets.addAll(Arrays.asList(
+  	PVector<BeatOffset> baseOffsets = new PVector<BeatOffset>();
+  	baseOffsets = baseOffsets.plusAll(Arrays.asList(
   		new BeatOffset(fr(0, 4), 0 * d),
   		new BeatOffset(fr(1, 4), 1 * d),
   		new BeatOffset(fr(2, 4), 2 * d),
   		new BeatOffset(fr(3, 4), 3 * d),
   		new BeatOffset(fr(4, 4), 4 * d)));
   	//create barlines
-  	MeasureColumnHeader measure = new MeasureColumnHeader();
-  	measure.setStartBarline(Barline.createForwardRepeatBarline(BarlineStyle.HeavyLight));
-  	measure.addMiddleBarline(Barline.createBothRepeatBarline(BarlineStyle.LightLight, 1), fr(2, 4));
-  	measure.addMiddleBarline(Barline.createRegularBarline(), fr(3, 4));
-  	measure.setEndBarline(Barline.createBackwardRepeatBarline(BarlineStyle.LightHeavy, 1));
+  	ColumnHeader ch = ColumnHeader.empty();
+  	ch = ch.withStartBarline(Barline.createForwardRepeatBarline(BarlineStyle.HeavyLight));
+  	ch = ch.withMiddleBarline(Barline.createBothRepeatBarline(BarlineStyle.LightLight, 1), fr(2, 4));
+  	ch = ch.withMiddleBarline(Barline.createRegularBarline(), fr(3, 4));
+  	ch = ch.withEndBarline(Barline.createBackwardRepeatBarline(BarlineStyle.LightHeavy, 1));
   	//compute new offsets and check results
-  	Tuple2<ArrayList<BeatOffset>, ArrayList<BeatOffset>> result =
-  		new BarlinesBeatOffsetsStrategy().computeBeatOffsets(baseOffsets, measure, is);
+  	Tuple2<PVector<BeatOffset>, PVector<BeatOffset>> result =
+  		new BarlinesBeatOffsetsStrategy().computeBeatOffsets(baseOffsets, ch, is);
   	float dRep = BarlinesBeatOffsetsStrategy.REPEAT_SPACE * is;
   	float dMid = BarlinesBeatOffsetsStrategy.MID_BARLINE_SPACE * is;
   	//note offsets

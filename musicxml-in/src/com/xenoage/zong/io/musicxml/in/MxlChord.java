@@ -1,7 +1,8 @@
 package com.xenoage.zong.io.musicxml.in;
 
+import static com.xenoage.pdlib.IVector.ivec;
 import static com.xenoage.util.NullTools.notNull;
-import static com.xenoage.util.exceptions.ThrowableTools.throwNullArg;
+import static com.xenoage.util.NullTools.throwNullArg;
 import static com.xenoage.util.iterators.It.it;
 
 import java.math.BigDecimal;
@@ -16,6 +17,9 @@ import proxymusic.StemValue;
 import proxymusic.Syllabic;
 import proxymusic.TextElementData;
 
+import com.xenoage.pdlib.IVector;
+import com.xenoage.pdlib.Vector;
+import com.xenoage.util.NullTools;
 import com.xenoage.util.Parser;
 import com.xenoage.util.enums.VSide;
 import com.xenoage.util.error.ErrorLevel;
@@ -23,24 +27,18 @@ import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.Articulation;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.CurvedLine;
-import com.xenoage.zong.data.music.CurvedLineWaypoint;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.Note;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.data.music.Rest;
-import com.xenoage.zong.data.music.RestData;
-import com.xenoage.zong.data.music.Stem;
-import com.xenoage.zong.data.music.StemDirection;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.DynamicsType;
-import com.xenoage.zong.data.music.format.BezierPoint;
-import com.xenoage.zong.data.music.text.Lyric;
-import com.xenoage.zong.data.music.text.Lyric.SyllableType;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.Note;
+import com.xenoage.zong.core.music.chord.Stem;
+import com.xenoage.zong.core.music.chord.StemDirection;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
+import com.xenoage.zong.core.music.format.BezierPoint;
+import com.xenoage.zong.core.music.rest.Rest;
+import com.xenoage.zong.core.music.text.Lyric;
+import com.xenoage.zong.core.music.text.Lyric.SyllableType;
 import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.zong.util.exceptions.MeasureFullException;
 
@@ -60,7 +58,6 @@ class MxlChord
 	}
 	
 	//input
-	private MxlScoreData parentData;
 	private MxlScoreDataContext context;
 	
 	//output
@@ -74,18 +71,17 @@ class MxlChord
    * Reads the given chord, consisting of a list of note elements, and writes
    * it to context of the given parent {@link MxlScoreData}, including slurs and ties.
    */
-	public static void readChord(List<proxymusic.Note> mxlNotes, MxlScoreData parentData,
+	public static void readChord(List<proxymusic.Note> mxlNotes, MxlScoreDataContext context,
 		ErrorProcessing err)
 		throws InvalidFormatException, MeasureFullException
 	{
-		new MxlChord(parentData, err).doReadChord(mxlNotes);
+		new MxlChord(context, err).doReadChord(mxlNotes);
 	}
 	
 	
-	private MxlChord(MxlScoreData parentData, ErrorProcessing err)
+	private MxlChord(MxlScoreDataContext context, ErrorProcessing err)
 	{
-		this.parentData = parentData;
-		this.context = parentData.getContext();
+		this.context = context;
 		this.err = err;
 	}
 	
@@ -121,7 +117,7 @@ class MxlChord
   	Fraction duration = null;
   	if (mxlDuration != null)
   	{
-  		duration = parentData.readDuration(mxlDuration);
+  		duration = MxlScoreData.readDuration(context, mxlDuration);
   	}
     
     //staff
@@ -155,29 +151,29 @@ class MxlChord
     if (type == Type.Normal)
     {
     	//create a chord
-      chord = new Chord(new ChordData(new Note(pitch), duration));
+      chord = new Chord(ivec(new Note(pitch)), duration, null, null);
     	//collect the following notes of this chord
       It<proxymusic.Note> mxlNotesIt = it(mxlNotes);
       for (proxymusic.Note mxlNote : mxlNotesIt)
       {
       	if (mxlNotesIt.getIndex() > 0)
       	{
-	      	addChordNote(mxlNote, chord, staff);
+	      	chord = plusChordNote(mxlNote, chord, staff);
       	}
       }
       //write the chord
-      parentData.writeVoiceElement(chord, staff, staffVoice);
+      MxlScoreData.writeVoiceElement(context, chord, staff, staffVoice);
     }
     else if (type == Type.Rest)
     {
     	//write a rest
-    	parentData.writeVoiceElement(new Rest(new RestData(duration)), staff, staffVoice);
+    	MxlScoreData.writeVoiceElement(context, new Rest(duration), staff, staffVoice);
     }
     
     //stem
     if (chord != null)
     {
-    	chord.setStem(readStem(mxlFirstNote, chord.getData(), staff));
+    	chord = chord.withStem(readStem(mxlFirstNote, chord, staff));
     }
     
     //add beams
@@ -210,7 +206,7 @@ class MxlChord
         		//close the beam and create it
             context.addBeamChord(chord, number);
             LinkedList<Chord> chords = context.closeBeam(number);
-            new Beam(chords);
+            MxlScoreData.writeBeam(context, chords);
         	}
         }
       }
@@ -249,7 +245,7 @@ class MxlChord
 		    			type = SyllableType.End;
 		    		//the next element must be the text element
 		    		TextElementData mxlText = (TextElementData) mxlLyricElements.next();
-		    		chord.setLyric(new Lyric(mxlText.getValue(), type), 0);
+		    		MxlScoreData.writeAttachment(context, chord, new Lyric(mxlText.getValue(), type));
 		    		break; //we support only ony syllable currently
 		    	}
 		    	if (mxlLyric.getExtend() != null)
@@ -268,7 +264,7 @@ class MxlChord
    * a chord (but not the first note element of the chord), and adds it to the given chord.
    * The context is modified when slurs and ties are found.
    */
-  private void addChordNote(proxymusic.Note mxlNote, Chord chord, int staffIndex)
+  private Chord plusChordNote(proxymusic.Note mxlNote, Chord chord, int staffIndex)
   	throws InvalidFormatException
   {
   	//only pitch is interesting for us, since we do not allow
@@ -277,14 +273,15 @@ class MxlChord
   	if (pitch == null)
   		throw new InvalidFormatException("chord note is missing pitch");
   	Note note = new Note(pitch);
-  	chord.setData(chord.getData().addNote(note));
+  	chord = chord.plusNote(note);
   	//notations. we are only interested in the first element.
   	List<Notations> mxlNotationsList = mxlNote.getNotations();
     if (mxlNotationsList.size() > 0)
     {
-    	readNotations(mxlNotationsList.get(0), chord, chord.getData().getNoteIndex(note),
+    	readNotations(mxlNotationsList.get(0), chord, chord.getNotes().indexOf(note),
     		staffIndex);
     }
+    return chord;
   }
   
   
@@ -295,6 +292,7 @@ class MxlChord
   private void readNotations(Notations mxlNotations, Chord chord, int noteIndex,
   	int staffIndex)
   {
+  	/* <NO>
   	throwNullArg(mxlNotations, chord);
   	
 		for (Object mxlElement : mxlNotations.getTiedOrSlurOrTuplet())
@@ -422,7 +420,7 @@ class MxlChord
 			}
 			
 		}
-		
+		*/
   }
   
   
@@ -459,12 +457,12 @@ class MxlChord
   /**
    * Reads and returns the stem of the given chord.
    * If not available, null is returned.
-   * @param xmlNote          the note element, that contains the interesting
-   *                         stem element. if not, null is returned.
-   * @param chordData        the chord, whose notes are already collected
-   * @param staff            the staff index of the current chord
+   * @param xmlNote   the note element, that contains the interesting
+   *                  stem element. if not, null is returned.
+   * @param chord     the chord, whose notes are already collected
+   * @param staff     the staff index of the current chord
    */
-	private Stem readStem(proxymusic.Note mxlNote, ChordData chordData, int staff)
+	private Stem readStem(proxymusic.Note mxlNote, Chord chord, int staff)
 	{
 		Stem ret = null;
 		proxymusic.Stem mxlStem = mxlNote.getStem();
@@ -497,7 +495,7 @@ class MxlChord
 				float stemEndLinePosition = convertDefaultYToLinePosition(
 					mxlStem.getDefaultY().floatValue(), staff);
 				length = Math.abs(stemEndLinePosition -
-					getNoteLinePosition(chordData, stemEndLinePosition, staff)) / 2;
+					getNoteLinePosition(chord, stemEndLinePosition, staff)) / 2;
 			}
 			//create stem
 			ret = new Stem(direction, length);
@@ -525,20 +523,20 @@ class MxlChord
 	 * Gets the line position of the note which is nearest to the given line position.
 	 * using the musical context from the given staff.
 	 */
-	private float getNoteLinePosition(ChordData chordData, float nearTo, int staff)
+	private float getNoteLinePosition(Chord chord, float nearTo, int staff)
 	{
 		MusicContext mc = context.getCurrentMusicContext(staff);
-		Pitch[] pitches = chordData.getPitches();
+		Vector<Pitch> pitches = chord.getPitches();
 		//if there is just one note, it's easy
-		if (pitches.length == 1)
+		if (pitches.size() == 1)
 		{
-			return mc.computeLinePosition(pitches[0]);
+			return mc.computeLinePosition(pitches.getFirst());
 		}
 		//otherwise, test for the topmost and bottommost note
 		else
 		{
-			float top = mc.computeLinePosition(pitches[pitches.length - 1]);
-			float bottom = mc.computeLinePosition(pitches[0]);
+			float top = mc.computeLinePosition(pitches.getLast());
+			float bottom = mc.computeLinePosition(pitches.getFirst());
 			return (Math.abs(top - nearTo) < Math.abs(bottom - nearTo) ? top : bottom);
 		}
 	}

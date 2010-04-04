@@ -7,7 +7,6 @@ import java.awt.font.TextLayout;
 import java.text.AttributedString;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 import com.xenoage.util.font.FontStyle;

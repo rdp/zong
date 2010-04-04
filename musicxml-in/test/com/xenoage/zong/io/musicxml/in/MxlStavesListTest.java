@@ -4,10 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
 
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.StavesList;
-import com.xenoage.zong.data.music.BracketGroupStyle;
-import com.xenoage.zong.data.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
 import com.xenoage.zong.io.musicxml.in.MxlStavesList;
 import com.xenoage.zong.util.xml.ZongMarshalling;
 

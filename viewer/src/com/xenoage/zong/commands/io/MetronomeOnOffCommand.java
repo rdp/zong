@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.xenoage.zong.commands.io;
 
 import javax.sound.midi.MidiUnavailableException;
@@ -8,7 +5,6 @@ import javax.sound.midi.MidiUnavailableException;
 import com.xenoage.zong.commands.Command;
 import com.xenoage.zong.commands.input.KeyboardScoreInputCommand;
 import com.xenoage.zong.io.midi.out.MIDIOutput;
-import com.xenoage.zong.io.score.ScoreInput;
 import com.xenoage.zong.util.exceptions.PropertyAlreadySetException;
 
 
@@ -21,10 +17,6 @@ public class MetronomeOnOffCommand
 	extends Command
 	implements KeyboardScoreInputCommand
 {
-
-	public MetronomeOnOffCommand(ScoreInput input, String... params)
-	{
-	}
 	
 	
 	@Override

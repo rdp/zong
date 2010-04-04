@@ -1,17 +1,17 @@
 package com.xenoage.zong.player.gui;
 
-import com.xenoage.util.exceptions.InvalidFormatException;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.io.midi.out.MidiScorePlayer;
-import com.xenoage.zong.io.midi.out.PlaybackListener;
-import com.xenoage.zong.io.midi.out.SynthManager;
-
-import proxymusic.ScorePartwise;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.sound.midi.Sequence;
+
+import proxymusic.ScorePartwise;
+
+import com.xenoage.util.exceptions.InvalidFormatException;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.io.midi.out.MidiScorePlayer;
+import com.xenoage.zong.io.midi.out.PlaybackListener;
+import com.xenoage.zong.io.midi.out.SynthManager;
 
 
 /**
@@ -143,12 +143,12 @@ public class BasicFrameController
 	}
 
 
-	@Override public void playbackAtScorePosition(ScorePosition position)
+	@Override public void playbackAtMP(MP position)
 	{
 	}
 
 
-	@Override public void playbackStopped(ScorePosition position)
+	@Override public void playbackStopped(MP position)
 	{
 	}
 

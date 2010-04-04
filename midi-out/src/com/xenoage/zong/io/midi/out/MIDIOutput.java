@@ -1,7 +1,6 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
+
+import static com.xenoage.zong.core.music.MP.mp0;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,13 +23,12 @@ import javax.sound.midi.Transmitter;
 import com.xenoage.util.error.ErrorLevel;
 import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.instrument.Instrument;
-import com.xenoage.zong.data.instrument.PitchedInstrument;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Pitch;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.instrument.Instrument;
+import com.xenoage.zong.core.instrument.PitchedInstrument;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.util.logging.Log;
 
 
@@ -174,7 +172,7 @@ import com.xenoage.util.logging.Log;
 	public void playSingleChord(Chord chord, int midiprogram, int velocity)
 	{
 		stopPlayback();
-		for (int i = 0; i < chord.getPitches().length; i++)
+		for (int i = 0; i < chord.getPitches().size(); i++)
 		{
 			for (Pitch pitch : chord.getPitches())
 			{
@@ -197,8 +195,7 @@ import com.xenoage.util.logging.Log;
 		final Pitch p = pitch;
 		new Timer().schedule(new TimerTask()
 		{
-
-			public void run()
+			@Override public void run()
 			{
 				stopSingleNote(p);
 			}
@@ -235,7 +232,7 @@ import com.xenoage.util.logging.Log;
 	@Deprecated
 	public void playScore(Score score, PlaybackListener listener, int tempo)
 	{
-		ScorePosition position = new ScorePosition(0, 0, new Fraction(0), 0);
+		MP position = mp0;
 		playScore(score, position, listener, tempo);
 	}
 
@@ -246,7 +243,7 @@ import com.xenoage.util.logging.Log;
 	 * @param position the startposition
 	 */
 	@Deprecated
-	public void playScore(Score score, ScorePosition position, PlaybackListener listener,
+	public void playScore(Score score, MP position, PlaybackListener listener,
 		int tempo)
 	{
 		this.listener = listener;
@@ -267,7 +264,7 @@ import com.xenoage.util.logging.Log;
 		sequencer.stop();
 		if (sequencer.isRunning())
 		{
-			listener.playbackStopped(sequenceContainer.getScorePositionTicks().getFirst()
+			listener.playbackStopped(sequenceContainer.getMPTicks().getFirst()
 				.get2());
 		}
 	}
@@ -321,26 +318,25 @@ import com.xenoage.util.logging.Log;
 	 */
 	public void controlChange(ShortMessage message)
 	{
-		LinkedList<Tuple2<Long, ScorePosition>> scorePositionTicks = sequenceContainer
-			.getScorePositionTicks();
+		LinkedList<Tuple2<Long, MP>> mpTicks = sequenceContainer.getMPTicks();
 		if (message.getData1() == 119)
 		{
 			// calls the listener with the most actual tick
 			long currentTick = sequencer.getTickPosition();
-			if (scorePositionTicks.getFirst().get1() > currentTick)
+			if (mpTicks.getFirst().get1() > currentTick)
 			{
 				return;
 			}
-			while (scorePositionTicks.get(1).get1() <= currentTick)
+			while (mpTicks.get(1).get1() <= currentTick)
 			{
-				scorePositionTicks.removeFirst();
+				mpTicks.removeFirst();
 			}
-			ScorePosition pos = scorePositionTicks.getFirst().get2();
+			MP pos = mpTicks.getFirst().get2();
 			if (listener != null)
 			{
-				listener.playbackAtScorePosition(pos);
+				listener.playbackAtMP(pos);
 			}
-			scorePositionTicks.removeFirst();
+			mpTicks.removeFirst();
 		}
 		else if (message.getData1() == 118)
 		{
@@ -384,7 +380,7 @@ import com.xenoage.util.logging.Log;
 	}
 
 
-	private long calculateTickFromScorePosition(ScorePosition pos,
+	private long calculateTickFromScorePosition(MP pos,
 		ArrayList<Long> measureTicks, int resolution)
 	{
 		if (pos == null)

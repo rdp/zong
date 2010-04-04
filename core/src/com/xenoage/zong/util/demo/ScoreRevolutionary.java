@@ -1,530 +1,328 @@
-/**
- * 
- */
 package com.xenoage.zong.util.demo;
 
+import static com.xenoage.pdlib.IVector.ivec;
+import static com.xenoage.util.math.Fraction._0;
 import static com.xenoage.util.math.Fraction.fr;
-
-import java.util.LinkedList;
+import static com.xenoage.zong.core.music.MP.mp;
+import static com.xenoage.zong.core.music.MP.mp0;
+import static com.xenoage.zong.core.music.Pitch.A;
+import static com.xenoage.zong.core.music.Pitch.B;
+import static com.xenoage.zong.core.music.Pitch.C;
+import static com.xenoage.zong.core.music.Pitch.D;
+import static com.xenoage.zong.core.music.Pitch.E;
+import static com.xenoage.zong.core.music.Pitch.F;
+import static com.xenoage.zong.core.music.Pitch.G;
+import static com.xenoage.zong.core.music.Pitch.pi;
+import static com.xenoage.zong.core.music.format.SP.sp;
+import static com.xenoage.zong.io.score.ScoreController.attachElement;
+import static com.xenoage.zong.io.score.ScoreController.writeColumnEndBarline;
+import static com.xenoage.zong.io.score.ScoreController.writeCurvedLine;
 
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Part;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.StavesList;
-import com.xenoage.zong.data.format.StaffLayout;
-import com.xenoage.zong.data.header.ScoreHeader;
-import com.xenoage.zong.data.instrument.Instrument;
-import com.xenoage.zong.data.instrument.PitchedInstrument;
-import com.xenoage.zong.data.music.Articulation;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BracketGroupStyle;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.CurvedLine;
-import com.xenoage.zong.data.music.CurvedLineWaypoint;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.Note;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.data.music.Rest;
-import com.xenoage.zong.data.music.RestData;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.Articulation.Type;
-import com.xenoage.zong.data.music.barline.Barline;
-import com.xenoage.zong.data.music.barline.BarlineGroupStyle;
-import com.xenoage.zong.data.music.barline.BarlineStyle;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.clef.ClefType;
-import com.xenoage.zong.data.music.directions.Crescendo;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.DynamicsType;
-import com.xenoage.zong.data.music.directions.Tempo;
-import com.xenoage.zong.data.music.format.BezierPoint;
-import com.xenoage.zong.data.music.format.Position;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.music.key.TraditionalKey;
-import com.xenoage.zong.data.music.time.CommonTime;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.StaffLayout;
+import com.xenoage.zong.core.instrument.Instrument;
+import com.xenoage.zong.core.instrument.PitchedInstrument;
+import com.xenoage.zong.core.instrument.Transpose;
+import com.xenoage.zong.core.music.ColumnElement;
+import com.xenoage.zong.core.music.Part;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.StavesList;
+import com.xenoage.zong.core.music.barline.Barline;
+import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.music.barline.BarlineStyle;
+import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
+import com.xenoage.zong.core.music.chord.Articulation;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.Note;
+import com.xenoage.zong.core.music.chord.Articulation.Type;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.clef.ClefType;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
+import com.xenoage.zong.core.music.direction.Crescendo;
+import com.xenoage.zong.core.music.direction.Dynamics;
+import com.xenoage.zong.core.music.direction.DynamicsType;
+import com.xenoage.zong.core.music.direction.Tempo;
+import com.xenoage.zong.core.music.format.BezierPoint;
+import com.xenoage.zong.core.music.format.Position;
+import com.xenoage.zong.core.music.key.TraditionalKey;
+import com.xenoage.zong.core.music.rest.Rest;
+import com.xenoage.zong.core.music.time.CommonTime;
+import com.xenoage.zong.io.score.selections.Cursor;
 
 
 /**
- * This class creates a demo score (Revolutionary Etude op. 10/12 Chopin).
+ * This class creates a demo score
+ * (Revolutionary Etude op. 10/12 Chopin).
  * 
  * @author Uli Teschemacher
- *
+ * @author Andreas Wenger
  */
 public class ScoreRevolutionary
 {
 
 	public static Score createScore()
 	{
-		Score score = new Score();
-		Instrument instr = new PitchedInstrument("piano", "Piano", "Pno.", null, 0, 0, null,
-			null, 0);
-		float interlineSpace = score.getScoreFormat().getInterlineSpace();
-		StaffLayout layout = StaffLayout.createEmptyStaffLayout();
-		layout.setStaffDistance(interlineSpace * 9);
-		score.getScoreFormat().setDefaultStaffLayout(1, layout);
+		Score score = Score.empty();
+		Instrument instr = new PitchedInstrument("piano", "Piano", "Pno.", null, 0,
+			Transpose.none(), null, null, 0);
+		float is = score.getScoreFormat().getInterlineSpace();
+		StaffLayout staffLayout = new StaffLayout(is * 9);
+		score = score.withScoreFormat(
+			score.getScoreFormat().withStaffLayoutOther(staffLayout));
 		
+		Articulation[] accent = {new Articulation(Type.Accent)};
+		Articulation[] staccato = {new Articulation(Type.Staccato)};
 		
-		Articulation [] accent = {new Articulation(Type.Accent)};
-		Articulation [] staccato = {new Articulation(Type.Staccato)};
+		Fraction f2 = fr(1, 2);
+		Fraction f4 = fr(1, 4);
+		Fraction f8 = fr(1, 8);
+		Fraction f16 = fr(1, 16);
+		
+		Chord attachC, firstSlurC, lastSlurC;
+		BezierPoint firstSlurB, lastSlurB;
 
-		ScoreHeader header = score.getScoreHeader();
-    		
 		Part pianoPart = new Part("Piano", null, 2, instr);
-		score.addPart(0, pianoPart);
+		score = score.plusPart(pianoPart);
 
-		//Set Barlines and Brackets
+		//set barlines and brackets
 		StavesList stavesList = score.getStavesList();
-		stavesList.addBarlineGroup(0, 1, BarlineGroupStyle.Common);
-		stavesList.addBracketGroup(0, 1, BracketGroupStyle.Brace);
+		stavesList = stavesList.plusBarlineGroup(0, 1, BarlineGroupStyle.Common);
+		stavesList = stavesList.plusBracketGroup(0, 1, BracketGroupStyle.Brace);
+		score = score.withStavesList(stavesList);
 		
+		//use cursor for more convenient input
+		Cursor cursor = new Cursor(score, mp0, true);
 		
-		//first staff: g-clef, c-minor, C (4/4) time and some notes    
-		Staff staff = score.getStaff(score.getPartStartIndex(pianoPart));
-		score.addEmptyMeasures(5);
-		Measure measure = staff.getMeasures().get(0);
-		measure.addNoVoiceElement(new Clef(ClefType.G));
-		measure.addNoVoiceElement(new TraditionalKey(-3));
-		measure.addNoVoiceElement(new CommonTime());
-		Voice voice = measure.getVoices().get(0);
-
-		Fraction f2 = new Fraction(1, 2);
-		Fraction f4 = new Fraction(1, 4);
-		Fraction f8 = new Fraction(1, 8);
-		Fraction f16 = new Fraction(1, 16);
-
-		LinkedList<Chord> b;
-
+		//C minor, C (4/4) time
+		cursor = cursor.write((ColumnElement) new TraditionalKey(-3));
+		cursor = cursor.write(new CommonTime());
 		
-		//Measure 1
-    Tempo tempo = new Tempo(fr(1, 4), 160, "Allegro con fuoco.", new Position(null, 22f, -5f, -5f));
-    header.getMeasureColumnHeader(0).addTempo(tempo, Fraction._0);
-    voice.addElement(tempo);
-    Chord c = createChord(f2,accent, new Pitch(Pitch.B, 0, 4), new Pitch(Pitch.D, 0, 5),
-			new Pitch(Pitch.F, 0, 5), new Pitch(Pitch.G, 0, 5), new Pitch(Pitch.B, 0, 5));
-    c.addDirection(new Dynamics(DynamicsType.f));
-		voice.addElement(c);
-		voice.addElement(new Rest(new RestData(f2)));
+		//first staff: g-clef and some notes
+		cursor = cursor.write(new Clef(ClefType.G));
 
+		//measure 1
+    Tempo tempo = new Tempo(f4, 160, "Allegro con fuoco.", new Position(null, 22f, -5f, -5f));
+    cursor = cursor.write((ColumnElement) tempo);
+    cursor = cursor.write(attachC = chord(f2, accent, pi(B, 4), pi(D, 5),
+    	pi(F, 5), pi(G, 5), pi(B, 5)));
+    cursor = cursor.withScore(
+    	attachElement(cursor.getScore(), attachC, new Dynamics(DynamicsType.f)));
+    cursor = cursor.write(new Rest(f2));
 
-		//Measure 2
-		measure = staff.getMeasures().get(1);
-		voice = measure.getVoices().get(0);
-		voice.addElement(new Rest(new RestData(f2)));
-		voice.addElement(new Rest(new RestData(f4)));
-
-		b = new LinkedList<Chord>();
+		//measure 2
+    cursor = cursor.write(new Rest(f2));
+    cursor = cursor.write(new Rest(f4));
     Crescendo cresc = new Crescendo(null, new Position(null, null, -1f, -2f));
-    voice.addElement(cresc);
-		c = createChord(new Fraction(3, 16),accent, new Pitch(Pitch.A, -1, 4), new Pitch(Pitch.E,
-			-1, 5), new Pitch(Pitch.F, 0, 5), new Pitch(Pitch.A, -1, 5));
-		b.add(c);
-		voice.addElement(c);
-		Chord firstSlurredChord = c;
-		c = createChord(f16, new Pitch(Pitch.G, 0, 4), new Pitch(Pitch.G, 0, 5));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
-		Chord lastSlurredChord = c;
-    voice.addElement(cresc.getWedgeEnd());
-		CurvedLine curvedLine = CurvedLine.createAndConnect(CurvedLine.Type.Slur,
-    	new CurvedLineWaypoint(firstSlurredChord, null), new CurvedLineWaypoint(lastSlurredChord, null));
-		curvedLine.setBezierPoint(curvedLine.getStart(), new BezierPoint(new SP(interlineSpace*0.8f,interlineSpace*7.6f),new SP(interlineSpace,interlineSpace *0.8f)));
-		curvedLine.setBezierPoint(curvedLine.getStop(), new BezierPoint(new SP(0,interlineSpace *6f), new SP(- interlineSpace  , interlineSpace * 1f)));
+    cursor = cursor.write(cresc);
+    cursor = cursor.openBeam();
+		cursor = cursor.write(firstSlurC = chord(fr(3, 16), accent, pi(A, -1, 4),
+			pi(E, -1, 5), pi(F, 0, 5), pi(A, -1, 5)));
+		cursor = cursor.write(lastSlurC = chord(f16, pi(G, 4), pi(G, 5)));
+		cursor = cursor.closeBeam();
+		cursor = cursor.write(cresc.getWedgeEnd());
+		firstSlurB = new BezierPoint(sp(is*0.8f,is*7.6f), sp(is,is*0.8f));
+		lastSlurB = new BezierPoint(sp(0,is*6f), sp(-is,is));
+		CurvedLine curvedLine = new CurvedLine(CurvedLine.Type.Slur,
+			clwp(firstSlurC, firstSlurB), clwp(lastSlurC, lastSlurB), null);
+		cursor = cursor.withScore(writeCurvedLine(cursor.getScore(), curvedLine));
 
-		//Measure 3
-		measure = staff.getMeasures().get(2);
-		voice = measure.getVoices().get(0);
+		//measure 3
+		cursor = cursor.write(attachC = chord(f2, pi(D, 5), pi(F, 5), pi(G, 5), pi(D, 6)));
+		cursor = cursor.withScore(
+    	attachElement(cursor.getScore(), attachC, new Dynamics(DynamicsType.f)));
+    cursor = cursor.write(new Rest(f2));
 
-		c = createChord(f2, new Pitch(Pitch.D, 0, 5), new Pitch(Pitch.F, 0, 5), new Pitch(
-		Pitch.G, 0, 5), new Pitch(Pitch.D, 0, 6));
-    c.addDirection(new Dynamics(DynamicsType.f));
-    voice.addElement(c);
-		voice.addElement(new Rest(new RestData(f2)));
-
-
-		//Measure 4
-		measure = staff.getMeasures().get(3);
-		voice = measure.getVoices().get(0);
-		voice.addElement(new Rest(new RestData(f2)));
-		voice.addElement(new Rest(new RestData(f4)));
-
-		b = new LinkedList<Chord>();
+		//measure 4
+    cursor = cursor.write(new Rest(f2));
+    cursor = cursor.write(new Rest(f4));
     cresc = new Crescendo(null, new Position(null, null, -1f, -2f));
-    voice.addElement(cresc);
-		c = createChord(new Fraction(3, 16),accent, new Pitch(Pitch.A, -1, 4), new Pitch(Pitch.E,
-			-1, 5), new Pitch(Pitch.F, 0, 5), new Pitch(Pitch.A, -1, 5));
-		b.add(c);
-		voice.addElement(c);
-		firstSlurredChord = c;
-		c = createChord(f16, new Pitch(Pitch.G, 0, 4), new Pitch(Pitch.G, 0, 5));
-		voice.addElement(c);
-		b.add(c);
-		lastSlurredChord = c;
-		new Beam(b);
-    voice.addElement(cresc.getWedgeEnd());
-		curvedLine = CurvedLine.createAndConnect(CurvedLine.Type.Slur,
-    	new CurvedLineWaypoint(firstSlurredChord, null), new CurvedLineWaypoint(lastSlurredChord, null));
-		curvedLine.setBezierPoint(curvedLine.getStart(), new BezierPoint(new SP(interlineSpace*0.8f,interlineSpace*7.6f),new SP(interlineSpace,interlineSpace *0.8f)));
-		curvedLine.setBezierPoint(curvedLine.getStop(), new BezierPoint(new SP(0,interlineSpace *6f), new SP(- interlineSpace  , interlineSpace * 1f)));
+    cursor = cursor.write(cresc);
+    cursor = cursor.openBeam();
+    cursor = cursor.write(firstSlurC = chord(fr(3, 16),
+    	accent, pi(A, -1, 4), pi(E, -1, 5), pi(F, 0, 5), pi(A, -1, 5)));
+		cursor = cursor.write(lastSlurC = chord(f16, pi(G, 0, 4), pi(G, 0, 5)));
+		cursor = cursor.closeBeam();
+		cursor = cursor.write(cresc.getWedgeEnd());
+		firstSlurB = new BezierPoint(sp(is*0.8f,is*7.6f), sp(is,is*0.8f));
+		lastSlurB = new BezierPoint(sp(0,is*6f), sp(-is,is));
+		curvedLine = new CurvedLine(CurvedLine.Type.Slur,
+    	clwp(firstSlurC, firstSlurB), clwp(lastSlurC, lastSlurB), null);
+		cursor = cursor.withScore(writeCurvedLine(cursor.getScore(), curvedLine));
 
-
-		//Measure 5
-		measure = staff.getMeasures().get(4);
-		voice = measure.getVoices().get(0);
-
-		c = createChord(f4,staccato, new Pitch(Pitch.F, 0, 5),
-			new Pitch(Pitch.G, 0, 5), new Pitch(Pitch.D, 0, 6), new Pitch(Pitch.F, 0, 6));
-    c.addDirection(new Dynamics(DynamicsType.f));
-		voice.addElement(c);
-		//voice.addRest(f8);
-		voice.addRest(f4);
-		voice.addRest(f2);
-
-		
-		
-		//second staff: f-clef, c-minor, C (4/4) time and some notes
-		staff = score.getStaff(score.getPartStartIndex(pianoPart) + 1);
-		measure = staff.getMeasures().get(0);
-		measure.addNoVoiceElement(new Clef(ClefType.F));
-		measure.addNoVoiceElement(new TraditionalKey(-3));
-		measure.addNoVoiceElement(new CommonTime());
-		voice = measure.getVoices().get(0);
-
+		//measure 5
+		cursor = cursor.write(attachC = chord(f4, staccato, pi(F, 5),
+			pi(G, 5), pi(D, 6), pi(F, 6)));
+		cursor = cursor.withScore(
+			attachElement(cursor.getScore(), attachC, new Dynamics(DynamicsType.f)));
+		cursor = cursor.write(new Rest(f4));
+		cursor = cursor.write(new Rest(f2));
 	
-		//Measure 1
-		
-		voice.addElement(new Rest(new RestData(f8)));
-		b = new LinkedList<Chord>();
-		c = createChord(f16, new Pitch(Pitch.A, -1, 4));
-		b.add(c);
-		voice.addElement(c);
-		firstSlurredChord = c;
-		c = createChord(f16, new Pitch(Pitch.G, 0, 4));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
-		
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.F, 0, 4));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 4));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.E, -1, 4));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 4));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
-
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.B, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.A, -1, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 3));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
-
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.F, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.E, -1, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 3));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
-
-		//Measure 2
-		measure = staff.getMeasures().get(1);
-		voice = measure.getVoices().get(0);
-		
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.B, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.A, -1, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 2));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
-
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.F, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.E, -1, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 2));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
-
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
-
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
-		lastSlurredChord = c;
-		
-		curvedLine = CurvedLine.createAndConnect(CurvedLine.Type.Slur,
-    	new CurvedLineWaypoint(firstSlurredChord, null), new CurvedLineWaypoint(lastSlurredChord, null));
-		curvedLine.setBezierPoint(curvedLine.getStart(), new BezierPoint(new SP(0,interlineSpace*1.5f),new SP(15,5)));
-		curvedLine.setBezierPoint(curvedLine.getStop(), new BezierPoint(new SP(0,interlineSpace *7.5f), new SP(- interlineSpace * 5, interlineSpace * 2)));
-
-		//Measure 3
-		measure = staff.getMeasures().get(2);
-		voice = measure.getVoices().get(0);
+		//second staff: f-clef some notes
+		cursor = new Cursor(cursor.getScore(), mp(1, 0, 0, _0), true);
+		cursor = cursor.write(new Clef(ClefType.F));
 	
-		c = createChord(f8,staccato, new Pitch(Pitch.B,0,1));
-		voice.addElement(c);
-		b = new LinkedList<Chord>();
-		c = createChord(f16, new Pitch(Pitch.A, -1, 4));
-		b.add(c);
-		voice.addElement(c);
-		firstSlurredChord = c;
-		c = createChord(f16, new Pitch(Pitch.G, 0, 4));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
+		//measure 1
+		cursor = cursor.openBeam();
+		cursor = cursor.write(new Rest(f8));
+		cursor = cursor.write(firstSlurC = chord(f16, pi(A, -1, 4)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 4)));
+		cursor = cursor.closeBeam();
 		
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.F, 0, 4));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 4));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.E, -1, 4));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 4));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16, accent, pi(F, 0, 4)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 4)));;
+		cursor = cursor.write(chord(f16, pi(E, -1, 4)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 4)));
+		cursor = cursor.closeBeam();
 
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.B, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.A, -1, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 3));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16, accent, pi(B, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(A, -1, 3)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 3)));	
+		cursor = cursor.closeBeam();
 
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.F, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.E, -1, 3));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 3));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
-		lastSlurredChord = c;
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16, accent, pi(F, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(E, -1, 3)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 3)));
+		cursor = cursor.closeBeam();
 
-		curvedLine = CurvedLine.createAndConnect(CurvedLine.Type.Slur,
-    	new CurvedLineWaypoint(firstSlurredChord, null), new CurvedLineWaypoint(lastSlurredChord, null));
-		curvedLine.setBezierPoint(curvedLine.getStart(), new BezierPoint(new SP(0,interlineSpace*1.5f),new SP(15,3)));
-		curvedLine.setBezierPoint(curvedLine.getStop(), new BezierPoint(new SP(0,interlineSpace *5f), new SP(- interlineSpace * 5.5f, interlineSpace * 2)));
+		//measure 2
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(B, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(A, -1, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 2)));	
+		cursor = cursor.closeBeam();
 
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(F, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(E, -1, 2)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 2)));
+		cursor = cursor.closeBeam();
 
-		//Measure 4
-		measure = staff.getMeasures().get(3);
-		voice = measure.getVoices().get(0);
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(C, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 1)));
+		cursor = cursor.write(chord(f16, pi(C, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 1)));
+		cursor = cursor.closeBeam();
+
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(C, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 1)));
+		cursor = cursor.write(chord(f16, pi(C, 0, 2)));
+		cursor = cursor.write(lastSlurC = chord(f16, pi(G, 0, 1)));
+		cursor = cursor.closeBeam();
+		firstSlurB = new BezierPoint(sp(0,is*1.5f), sp(15,5));
+		lastSlurB = new BezierPoint(sp(0,is*7.5f), sp(-is*5, is*2));
+		curvedLine = new CurvedLine(CurvedLine.Type.Slur,
+    	clwp(firstSlurC, firstSlurB), clwp(lastSlurC, lastSlurB), null);
+		cursor = cursor.withScore(writeCurvedLine(cursor.getScore(), curvedLine));
+
+		//measure 3
+		cursor = cursor.write(chord(f8, staccato, pi(B,0,1)));
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16, pi(A, -1, 4)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 4)));
+		cursor = cursor.closeBeam();
 		
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.B, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		firstSlurredChord = c;
-		c = createChord(f16, new Pitch(Pitch.G, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.A, -1, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 2));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16, accent, pi(F, 0, 4)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 4)));
+		cursor = cursor.write(chord(f16, pi(E, -1, 4)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 4)));		
+		cursor = cursor.closeBeam();
 
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.F, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.E, -1, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.D, 0, 2));
-		voice.addElement(c);
-		b.add(c);		
-		new Beam(b);
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(B, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(A, -1, 3)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 3)));		
+		cursor = cursor.closeBeam();
 
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(F, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 3)));
+		cursor = cursor.write(chord(f16, pi(E, -1, 3)));
+		cursor = cursor.write(lastSlurC = chord(f16, pi(D, 0, 3)));	
+		cursor = cursor.closeBeam();
+		firstSlurB = new BezierPoint(sp(0,is*1.5f), sp(15,3));
+		lastSlurB = new BezierPoint(sp(0,is*5f), sp(-is*5.5f, is*2));
+		curvedLine = new CurvedLine(CurvedLine.Type.Slur,
+    	clwp(firstSlurC, firstSlurB), clwp(lastSlurC, lastSlurB), null);
+		cursor = cursor.withScore(writeCurvedLine(cursor.getScore(), curvedLine));
 
-		b = new LinkedList<Chord>();
-		c = createChord(f16,accent, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.C, 0, 2));
-		voice.addElement(c);
-		b.add(c);
-		c = createChord(f16, new Pitch(Pitch.G, 0, 1));
-		voice.addElement(c);
-		b.add(c);
-		new Beam(b);
-		lastSlurredChord = c;
+		//measure 4
+		cursor = cursor.openBeam();
+		cursor = cursor.write(firstSlurC = chord(f16,accent, pi(B, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(A, -1, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 2)));
+		cursor = cursor.closeBeam();
 
-		curvedLine = CurvedLine.createAndConnect(CurvedLine.Type.Slur,
-    	new CurvedLineWaypoint(firstSlurredChord, null), new CurvedLineWaypoint(lastSlurredChord, null));
-		curvedLine.setBezierPoint(curvedLine.getStart(), new BezierPoint(new SP(-interlineSpace,interlineSpace*8.5f),new SP(15,4)));
-		curvedLine.setBezierPoint(curvedLine.getStop(), new BezierPoint(new SP(0,interlineSpace *7.5f), new SP(- interlineSpace * 5, interlineSpace * 2)));
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(F, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(E, -1, 2)));
+		cursor = cursor.write(chord(f16, pi(D, 0, 2)));	
+		cursor = cursor.closeBeam();
+
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(C, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 1)));
+		cursor = cursor.write(chord(f16, pi(C, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 1)));
+		cursor = cursor.closeBeam();
+
+		cursor = cursor.openBeam();
+		cursor = cursor.write(chord(f16,accent, pi(C, 0, 2)));
+		cursor = cursor.write(chord(f16, pi(G, 0, 1)));
+		cursor = cursor.write(chord(f16, pi(C, 0, 2)));
+		cursor = cursor.write(lastSlurC = chord(f16, pi(G, 0, 1)));
+		cursor = cursor.closeBeam();
+		firstSlurB = new BezierPoint(sp(-is,is*8.5f), sp(15,4));
+		lastSlurB = new BezierPoint(sp(0, is*7.5f), sp(-is*5, is*2));
+		curvedLine = new CurvedLine(CurvedLine.Type.Slur,
+    	clwp(firstSlurC, firstSlurB), clwp(lastSlurC, lastSlurB), null);
+		cursor = cursor.withScore(writeCurvedLine(cursor.getScore(), curvedLine));
 	
-		//Measure 5
-		measure = staff.getMeasures().get(4);
-		voice = measure.getVoices().get(0);
+		//measure 5
+		cursor = cursor.write(chord(f4, staccato, pi(B, 0, 1)));
+		cursor = cursor.write(new Rest(f4));
+		cursor = cursor.write(new Rest(f2));
 		
-		c = createChord(f4,staccato, new Pitch(Pitch.B,0,1));
-		voice.addElement(c);
+		//end line
+		cursor = cursor.withScore(writeColumnEndBarline(cursor.getScore(), 4,
+			Barline.createBarline(BarlineStyle.LightHeavy)));
 
-		//voice.addRest(f8);
-		voice.addRest(f4);
-		voice.addRest(f2);
-
-		
-		//End line
-		score.getScoreHeader().getMeasureColumnHeader(4).setEndBarline(Barline.createBarline(BarlineStyle.LightHeavy));
-
-
-		return score;
+		return cursor.getScore();
 	}
-	
-	
-	public static Score createScoreOnlyFistChord()
+
+
+	private static Chord chord(Fraction fraction, Pitch... pitches)
 	{
-		Score score = new Score();
-		Instrument instr = new PitchedInstrument("piano", "Piano", "Pno.", null, 0, 0, null,
-			null, 0);
-    		
-		Part pianoPart = new Part("Piano", null, 1, instr);
-		score.addPart(0, pianoPart);
-
-		//first staff: g-clef, c-minor, C (4/4) time and some notes    
-		Staff staff = score.getStaff(score.getPartStartIndex(pianoPart));
-		score.addEmptyMeasures(1);
-		Measure measure = staff.getMeasures().get(0);
-		measure.addNoVoiceElement(new Clef(ClefType.G));
-		measure.addNoVoiceElement(new TraditionalKey(-3));
-		measure.addNoVoiceElement(new CommonTime());
-		Voice voice = measure.getVoices().get(0);
-
-		Fraction f2 = new Fraction(1, 2);
-		
-		//Measure 1
-    Chord c = createChord(f2, new Articulation[0], new Pitch(Pitch.B, 0, 4), new Pitch(Pitch.D, 0, 5),
-			new Pitch(Pitch.F, 0, 5), new Pitch(Pitch.G, 0, 5), new Pitch(Pitch.B, 0, 5));
-		voice.addElement(c);
-		voice.addElement(new Rest(new RestData(f2)));
-
-		return score;
+		return chord(fraction, null, pitches);
 	}
 
 
-
-	private static Chord createChord(Fraction fraction, Pitch... pitches)
-	{
-		return createChord(fraction, null, pitches);
-	}
-
-
-	private static Chord createChord(Fraction fraction, Articulation[] articulation,
+	private static Chord chord(Fraction fraction, Articulation[] articulations,
 		Pitch... pitches)
 	{
-		Note[] notes = new Note[pitches.length];
-		for (int i = 0; i < pitches.length; i++)
-		{
-			notes[i] = new Note(pitches[i]);
-		}
-		return new Chord(new ChordData(notes, fraction, articulation));
+		return new Chord(Note.createNotes(pitches), fraction, null,
+			articulations != null ? ivec(articulations) : null);
 	}
+	
+	
+	private static CurvedLineWaypoint clwp(Chord c, BezierPoint bezierPoint)
+	{
+		return new CurvedLineWaypoint(c, null, bezierPoint);
+	}
+
+	
 }

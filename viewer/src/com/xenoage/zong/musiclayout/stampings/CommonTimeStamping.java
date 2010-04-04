@@ -1,11 +1,12 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.music.time.CommonTime;
+import com.xenoage.zong.core.music.time.CommonTime;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
 
@@ -20,7 +21,6 @@ public class CommonTimeStamping
 {
  
   private float positionX;
-  private CommonTime commonTime;
   
   
   /**
@@ -32,8 +32,7 @@ public class CommonTimeStamping
   public CommonTimeStamping(CommonTime commonTime,
     float positionX, StaffStamping parentStaff)
   {
-    super(parentStaff, LEVEL_MUSIC, null);
-    this.commonTime = commonTime;
+    super(parentStaff, LEVEL_MUSIC, commonTime);
     this.positionX = positionX;
     //TODO: bounding shape
   }
@@ -53,7 +52,7 @@ public class CommonTimeStamping
     if (symbol != null)
     {
       StaffSymbolStampingRenderer.paint(symbol, null,
-      	new SP(positionX, linesCount - 1), 1, parentStaff, false, params);
+      	sp(positionX, linesCount - 1), 1, parentStaff, false, params);
     }
   }
 

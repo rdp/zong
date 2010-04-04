@@ -1,13 +1,17 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.alignment;
 
-import static com.xenoage.zong.data.music.StemDirection.*;
+import static com.xenoage.util.iterators.It.it;
 
 import com.xenoage.util.MathTools;
 import com.xenoage.util.iterators.It;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
+import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.BeamedStemAlignmentNotationsStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.BeamedStemDirectionNotationsStrategy;
@@ -47,17 +51,20 @@ public class SingleMeasureSingleStaffStrategy
 	 * direction (like computed by {@link BeamedStemDirectionNotationsStrategy}).
 	 * The updated chord notations are returned.
 	 */
-	public NotationsCache computeNotations(Beam beam,
+	public NotationsCache computeNotations(ScoreLayouterContext lc, Beam beam,
 		MeasureColumnSpacing measureColumnSpacing, NotationsCache notations)
 	{
+		Score score = lc.getScore();
+		Globals globals = score.getGlobals();
 
 		//collect needed information
-		NotesAlignment[] chordNa = new NotesAlignment[beam.getWaypointsCount()];
-		float[] stemX = new float[beam.getWaypointsCount()];
-		int staffLinesCount = beam.getFirstMeasure().getLinesCount();
+		NotesAlignment[] chordNa = new NotesAlignment[beam.getWaypoints().size()];
+		float[] stemX = new float[beam.getWaypoints().size()];
+		MP firstMP = globals.getMP(beam.getFirstWaypoint().getChord());
+		int staffLinesCount = score.getStaff(firstMP).getLinesCount();
 		int beamLinesCount = beam.getMaxBeamLinesCount();
-		int staffIndex = beam.getUpperStaff().getIndex();
-		int voiceIndex = beam.getFirstVoiceIndex();
+		int staffIndex = beam.getUpperStaffIndex(globals);
+		int voiceIndex = firstMP.getVoice();
 		int i = 0;
 		for (BeamWaypoint waypoint : beam.getWaypoints())
 		{
@@ -78,7 +85,7 @@ public class SingleMeasureSingleStaffStrategy
 
 		//compute new notations
 		NotationsCache ret = new NotationsCache();
-		It<BeamWaypoint> waypoints = beam.getWaypoints();
+		It<BeamWaypoint> waypoints = it(beam.getWaypoints());
 		for (BeamWaypoint waypoint : waypoints)
 		{
 			Chord chord = waypoint.getChord();
@@ -151,14 +158,14 @@ public class SingleMeasureSingleStaffStrategy
 		int lastRelevantNoteLP;
 		int chordsCount = chordNotesAlignment.length;
 		int[] relevantNoteLPs = new int[chordsCount];
-		if (stemDirection == Down)
+		if (stemDirection == StemDirection.Down)
 		{
 			for (int i = 0; i < chordsCount; i++)
 			{
 				relevantNoteLPs[i] = chordNotesAlignment[i].getLinePositions().getBottom();
 			}
 		}
-		else if (stemDirection == Up)
+		else if (stemDirection == StemDirection.Up)
 		{
 			for (int i = 0; i < chordsCount; i++)
 			{
@@ -193,8 +200,8 @@ public class SingleMeasureSingleStaffStrategy
 		{
 			float lp = firstRelevantNoteLP + 1f * (lastRelevantNoteLP - firstRelevantNoteLP)
 				* i / (chordsCount - 1);
-			if ((stemDirection == Up && relevantNoteLPs[i] > Math.ceil(lp))
-				|| (stemDirection == Down && relevantNoteLPs[i] < Math.floor(lp)))
+			if ((stemDirection == StemDirection.Up && relevantNoteLPs[i] > Math.ceil(lp))
+				|| (stemDirection == StemDirection.Down && relevantNoteLPs[i] < Math.floor(lp)))
 			{
 				useDefaultSlant = false;
 				break;
@@ -371,7 +378,7 @@ public class SingleMeasureSingleStaffStrategy
 				float startline;
 				float currentStemLength = 0;
 
-				if (stemDirection == Up)
+				if (stemDirection == StemDirection.Up)
 				{
 					startline = lowestNote;
 					currentStemLength = (endline - highestNote) / 2;
@@ -426,7 +433,7 @@ public class SingleMeasureSingleStaffStrategy
 		float firstStemEndLP, float lastStemEndLP, int staffLinesCount, float totalBeamWidthIS)
 	{
 		float maxStaffLP = (staffLinesCount - 1) * 2;
-		if (stemDirection == Up)
+		if (stemDirection == StemDirection.Up)
 		{
 			//beam lines above the staff?
 			if (firstStemEndLP > maxStaffLP + totalBeamWidthIS * 2
@@ -440,7 +447,7 @@ public class SingleMeasureSingleStaffStrategy
 				return true;
 			}
 		}
-		else if (stemDirection == Down)
+		else if (stemDirection == StemDirection.Down)
 		{
 			//beam lines above the staff?
 			if (firstStemEndLP > maxStaffLP && lastStemEndLP > maxStaffLP)

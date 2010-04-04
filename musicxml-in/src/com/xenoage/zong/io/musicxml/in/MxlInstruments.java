@@ -11,9 +11,9 @@ import proxymusic.MidiInstrument;
 import proxymusic.ScoreInstrument;
 import proxymusic.ScorePart;
 
-import com.xenoage.zong.data.instrument.Instrument;
-import com.xenoage.zong.data.instrument.PitchedInstrument;
-import com.xenoage.zong.data.instrument.UnpitchedInstrument;
+import com.xenoage.zong.core.instrument.Instrument;
+import com.xenoage.zong.core.instrument.PitchedInstrument;
+import com.xenoage.zong.core.instrument.UnpitchedInstrument;
 import com.xenoage.util.MathTools;
 import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.util.logging.Log;

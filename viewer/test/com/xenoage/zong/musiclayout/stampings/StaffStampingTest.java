@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.xenoage.util.Delta;
 import com.xenoage.util.math.Point2f;
-import com.xenoage.zong.data.format.ScoreFormat;
+import com.xenoage.zong.core.format.ScoreFormat;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 
 
@@ -26,7 +26,7 @@ public class StaffStampingTest
   
   @Before public void setUp()
   {
-    scoreFormat = new ScoreFormat();
+    scoreFormat = ScoreFormat.getDefault();
   }
   
 

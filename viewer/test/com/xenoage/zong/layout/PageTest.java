@@ -12,9 +12,9 @@ import com.xenoage.util.Delta;
 import com.xenoage.util.MathTools;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.format.PageMargins;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.PageFormat;
+import com.xenoage.zong.core.format.PageMargins;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.layout.frames.Frame;
 import com.xenoage.zong.layout.frames.FramePosition;
@@ -209,7 +209,7 @@ public class PageTest
   
   private static Score createScore()
   {
-    return new Score();
+    return Score.empty();
   }
   
   

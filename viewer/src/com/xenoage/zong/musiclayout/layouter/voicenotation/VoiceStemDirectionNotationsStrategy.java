@@ -1,16 +1,20 @@
 package com.xenoage.zong.musiclayout.layouter.voicenotation;
 
+import static com.xenoage.zong.core.music.MP.atMeasure;
+import static com.xenoage.zong.core.music.chord.StemDirection.Down;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.xenoage.util.RAList;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.StemDirection;
-import com.xenoage.zong.data.music.Voice;
+import com.xenoage.pdlib.Vector;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
+import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
@@ -62,16 +66,16 @@ public class VoiceStemDirectionNotationsStrategy
 		voicechords.put(0, new ArrayList<Chord>());
 		voicechords.put(1, new ArrayList<Chord>());
 		
-		for (int i = 0; i < numberOfMeasures; i++)
+		for (int iMeasure = 0; iMeasure < numberOfMeasures; iMeasure++)
 		{
-			Measure measure = score.getMeasureColumn(i).get(staff);
+			Measure measure = score.getMeasure(atMeasure(staff, iMeasure));
 			List<Voice> voices = measure.getVoices();
 			for (int b = 0; b < 2; b++)
 			{
 				if (b < voices.size())	//check if there are "enough" voices
 				{
 					Voice voice = voices.get(b);
-					RAList<MusicElement> musicElements = voice.getElements();
+					Vector<VoiceElement> musicElements = voice.getElements();
 					for (MusicElement me : musicElements)
 					{
 						if (me instanceof Chord)
@@ -120,11 +124,11 @@ public class VoiceStemDirectionNotationsStrategy
 			}
 			for (Chord chord : voicechords.get(up))
 			{
-				ret.set(notationStrategy.computeChord(chord, StemDirection.Up, lc), chord);
+				ret.set(notationStrategy.computeChord(chord, Up, lc), chord);
 			}
 			for (Chord chord : voicechords.get(down))
 			{
-				ret.set(notationStrategy.computeChord(chord, StemDirection.Down, lc), chord);
+				ret.set(notationStrategy.computeChord(chord, Down, lc), chord);
 			}
 		}
 		return ret;

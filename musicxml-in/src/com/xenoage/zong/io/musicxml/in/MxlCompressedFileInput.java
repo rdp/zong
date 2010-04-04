@@ -160,9 +160,9 @@ public class MxlCompressedFileInput
 	
 	
 	/**
-	 * Loads and returns the {@link com.xenoage.zong.data.Score} at the given path.
+	 * Loads and returns the {@link com.xenoage.zong.core.Score} at the given path.
 	 */
-	public com.xenoage.zong.data.Score loadScore(String path)
+	public com.xenoage.zong.core.Score loadScore(String path)
 		throws InvalidFormatException, IOException
 	{
 		BufferedInputStream bis = new BufferedInputStream(
@@ -187,12 +187,12 @@ public class MxlCompressedFileInput
 	}
 	
 	
-	private com.xenoage.zong.data.Score loadCompressedScore(String path)
+	private com.xenoage.zong.core.Score loadCompressedScore(String path)
 		throws IOException
 	{
 		MxlCompressedFileInput zip = new MxlCompressedFileInput(
 			new FileInputStream(new File(tempFolder, path)), osTempFolder);
-		com.xenoage.zong.data.Score ret = zip.loadScore(((Score) zip.getRootItem()).getHref());
+		com.xenoage.zong.core.Score ret = zip.loadScore(((Score) zip.getRootItem()).getHref());
 		zip.close();
 		return ret;
 	}

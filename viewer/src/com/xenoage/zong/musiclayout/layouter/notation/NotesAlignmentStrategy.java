@@ -1,14 +1,12 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
-import static com.xenoage.zong.data.music.StemDirection.Up;
-
 import java.util.ArrayList;
 
 
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.Constants;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.chord.ChordLinePositions;
@@ -56,7 +54,7 @@ public class NotesAlignmentStrategy
    * the given direction, using the given musical context.
    * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
    */
-	public NotesAlignment computeNotesAlignment(ChordData chord, StemDirection stemDirection,
+	public NotesAlignment computeNotesAlignment(Chord chord, StemDirection stemDirection,
 		MusicContext musicContext)
 	{
 		ChordLinePositions lp = new ChordLinePositions(chord, musicContext);
@@ -79,7 +77,7 @@ public class NotesAlignmentStrategy
 	 */
 	ChordClass computeChordClass(ChordLinePositions lp, StemDirection stemDirection)
 	{
-		int chordClass = (stemDirection == Up) ? 3 : 1;
+		int chordClass = (stemDirection == StemDirection.Up) ? 3 : 1;
     for (int i = 1; i < lp.getNotesCount(); i++)
     {
       if (Math.abs(lp.get(i) - lp.get(i-1)) <= 1)
@@ -138,11 +136,11 @@ public class NotesAlignmentStrategy
     
     //if stem direction is down or none, begin with the highest note,
     //otherwise with the lowest
-    int dir = (sd == Up) ? 1 : -1;
+    int dir = (sd == StemDirection.Up) ? 1 : -1;
     int startIndex = (dir == 1) ? 0 : lp.getNotesCount() - 1;
     int endIndex = lp.getNotesCount() - 1 - startIndex;
     //default side of the stem. 1 = right, 0 = left
-    int stemSide = (sd == Up) ? 1 : 0; 
+    int stemSide = (sd == StemDirection.Up) ? 1 : 0; 
     int lastSide = stemSide;
     for (int i = startIndex; dir * i <= dir * endIndex; i += dir)
     {

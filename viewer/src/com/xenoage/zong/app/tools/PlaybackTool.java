@@ -11,8 +11,8 @@ import com.xenoage.util.math.Rectangle2i;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.language.Voc;
 import com.xenoage.zong.commands.io.StopMidiPlaybackCommand;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.gui.event.ScoreKeyEvent;
 import com.xenoage.zong.io.midi.out.MidiScorePlayer;
@@ -127,7 +127,7 @@ public class PlaybackTool
   }
 
 
-	public void playbackAtScorePosition(ScorePosition position)
+	@Override public void playbackAtMP(MP position)
 	{
 		//TEST
 		//App.getInstance().showMessageDialog(position.toString());
@@ -210,7 +210,7 @@ public class PlaybackTool
 	}
 
 
-	public void playbackStopped(ScorePosition position)
+	public void playbackStopped(MP position)
 	{
 		//TEST
 		//App.getInstance().showMessageDialog("stopped at " + position);

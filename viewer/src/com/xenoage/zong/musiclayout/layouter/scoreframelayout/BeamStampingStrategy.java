@@ -6,11 +6,12 @@ import java.util.List;
 
 import com.xenoage.util.MathTools;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.DurationInfo;
-import com.xenoage.zong.data.music.Beam.VerticalSpan;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.beam.Beam.VerticalSpan;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.util.DurationInfo;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings;
 import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings.OpenBeamMiddleStem;
@@ -42,13 +43,14 @@ public class BeamStampingStrategy
 	/**
 	 * Computes the stampings for the given beam and returns them. 
 	 */
-	public List<Stamping> createBeamStampings(BeamedStemStampings beamedStems)
+	public List<Stamping> createBeamStampings(BeamedStemStampings beamedStems,
+		Globals globals)
 	{
 		//everything needed there?
 		if (beamedStems.getLastStem() == null)
 		{
 			throw new RuntimeException("Missing end stem for beam beginning at " +
-				beamedStems.getFirstStem().getMusicElement().getScorePosition());
+				globals.getMP(beamedStems.getFirstStem().getMusicElement()));
 		}
 		//compute beams
 		Beam beam = beamedStems.getBeam();
@@ -118,13 +120,13 @@ public class BeamStampingStrategy
     	float stemX = openStem.positionX;
     	float f = (stemX - leftX) / (rightX - leftX);
     	float endLP = 0;
-    	if (beam.getVerticalSpan() == VerticalSpan.SingleStaff)
+    	if (beam.getVerticalSpan(globals) == VerticalSpan.SingleStaff)
     	{
     		//single staff beam: LPs are easy to compute
     		endLP = leftLP + f * (rightLP - leftLP);
       	
     	}
-    	else if (beam.getVerticalSpan() == VerticalSpan.TwoAdjacentStaves)
+    	else if (beam.getVerticalSpan(globals) == VerticalSpan.TwoAdjacentStaves)
     	{
     		//two staff beam: LPs are more complicated to compute. we have first to translate
     		//the beam in absolute frame coordinates, then we have to translate it into the
@@ -177,20 +179,20 @@ public class BeamStampingStrategy
 		//groups are consecutive chords/stems with the same number of flags (or
 		//a higher number inbetween) and not divided by a subdivision break.
 		//initialize return array with none-waypoints
-		List<Waypoint> ret = new ArrayList<Waypoint>(beam.getWaypointsCount());
-		for (int i = 0; i < beam.getWaypointsCount(); i++)
+		List<Waypoint> ret = new ArrayList<Waypoint>(beam.getWaypoints().size());
+		for (int i = 0; i < beam.getWaypoints().size(); i++)
 		{
 			ret.add(Waypoint.None);
 		}
 		int lastFlagsCount = -1;
 		int startChord = -1; //start chord of the last group, or -1 if no group is open
 		int stopChord = -1; //stop chord of the last group, or -1 if group is open
-		for (int iChord = 0; iChord <= beam.getWaypointsCount(); iChord++)
+		for (int iChord = 0; iChord <= beam.getWaypoints().size(); iChord++)
 		{
-			if (iChord < beam.getWaypointsCount())
+			if (iChord < beam.getWaypoints().size())
 			{
 				//another chord within the beam
-				Chord chord = beam.getChord(iChord);
+				Chord chord = beam.getWaypoints().get(iChord).getChord();
 				int flagsCount = DurationInfo.getFlagsCount(chord.getDuration());
 				//enough flags for the given level? (e.g. a 8th beam has no 16th line)
 				if (flagsCount >= level + 1)
@@ -256,7 +258,7 @@ public class BeamStampingStrategy
 						//first chord in beam has always hook to the right
 						ret.set(startChord, Waypoint.HookRight);
 					}
-					else if (startChord == beam.getWaypointsCount() - 1)
+					else if (startChord == beam.getWaypoints().size() - 1)
 					{
 						//last chord in beam has always hook to the left
 						ret.set(startChord, Waypoint.HookLeft);

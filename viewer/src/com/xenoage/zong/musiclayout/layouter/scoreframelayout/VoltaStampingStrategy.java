@@ -1,7 +1,7 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
-import com.xenoage.zong.data.music.Volta;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.music.volta.Volta;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextStyle;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;

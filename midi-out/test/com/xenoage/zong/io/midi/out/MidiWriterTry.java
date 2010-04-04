@@ -1,26 +1,22 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
 import java.io.File;
 import java.io.IOException;
 
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.util.demo.ScoreDemo;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.util.demo.ScoreRevolutionary;
 
 
 /**
  * Class to test the {@link MidiWriter}.
  * 
  * @author Uli Teschemacher
- *
  */
 public class MidiWriterTry
 {
 	public static void main(String args[])
 	{
-		Score score = ScoreDemo.createDemoScore32Measures();
+		Score score = ScoreRevolutionary.createScore();
 		File file = new File("test/com/xenoage/zong/io/midi/out/midiwritertry.midi");
 		if(file.exists())
 		{

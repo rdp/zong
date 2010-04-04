@@ -6,15 +6,15 @@ import proxymusic.Sound;
 
 import com.xenoage.util.font.FontInfo;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.directions.Crescendo;
-import com.xenoage.zong.data.music.directions.Diminuendo;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.DynamicsType;
-import com.xenoage.zong.data.music.directions.Pedal;
-import com.xenoage.zong.data.music.directions.Tempo;
-import com.xenoage.zong.data.music.directions.Wedge;
-import com.xenoage.zong.data.music.directions.Words;
-import com.xenoage.zong.data.music.format.Position;
+import com.xenoage.zong.core.music.format.Position;
+import com.xenoage.zong.corex.music.directions.Crescendo;
+import com.xenoage.zong.corex.music.directions.Diminuendo;
+import com.xenoage.zong.corex.music.directions.Dynamics;
+import com.xenoage.zong.corex.music.directions.DynamicsType;
+import com.xenoage.zong.corex.music.directions.Pedal;
+import com.xenoage.zong.corex.music.directions.Tempo;
+import com.xenoage.zong.corex.music.directions.Wedge;
+import com.xenoage.zong.corex.music.directions.Words;
 import com.xenoage.util.exceptions.InvalidFormatException;
 
 

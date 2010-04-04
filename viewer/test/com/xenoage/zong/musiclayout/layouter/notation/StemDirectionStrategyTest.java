@@ -1,10 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
+import static com.xenoage.zong.core.music.chord.StemDirection.Down;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.xenoage.zong.data.music.StemDirection;
 import com.xenoage.zong.musiclayout.notations.chord.ChordLinePositions;
 
 
@@ -30,12 +31,12 @@ public class StemDirectionStrategyTest
 		for (int i = -2; i<=3; i++)
 		{
 			linePositions[0] = i;
-			assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+			assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 		}
 		for (int i = 4; i<=13; i++)
 		{
 			linePositions[0] = i;
-			assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+			assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 		}
 
 		//Chords with 2 notes
@@ -43,93 +44,93 @@ public class StemDirectionStrategyTest
 		linePositions = new int[2];
 		linePositions[0] = 2;
 		linePositions[1] = 7;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 		
 		linePositions[0] = 1;
 		linePositions[1] = 9;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions[0] = 0;
 		linePositions[1] = 9;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions[0] = 3;
 		linePositions[1] = 6;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions[0] = 4;
 		linePositions[1] = 6;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions[0] = 3;
 		linePositions[1] = 7;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions[0] = 2;
 		linePositions[1] = 8;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions[0] = -1;
 		linePositions[1] = 11;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		//stem up
 		linePositions[0] = -1;
 		linePositions[1] = 6;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = 1;
 		linePositions[1] = 5;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = 2;
 		linePositions[1] = 4;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = 0;
 		linePositions[1] = 7;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = -1;
 		linePositions[1] = 8;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = -2;
 		linePositions[1] = 9;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = -4;
 		linePositions[1] = 9;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		//chords with more than 2 notes
 		linePositions = new int[3];
 		linePositions[0] = 1;
 		linePositions[1] = 3;
 		linePositions[2] = 6;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = 3;
 		linePositions[1] = 6;
 		linePositions[2] = 8;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = 2;
 		linePositions[1] = 5;
 		linePositions[2] = 7;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions[0] = 0;
 		linePositions[1] = 4;
 		linePositions[2] = 7;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions = new int[4];
 		linePositions[0] = -4;
 		linePositions[1] = 1;
 		linePositions[2] = 5;
 		linePositions[3] = 8;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		linePositions = new int[5];
 		linePositions[0] = -2;
@@ -137,7 +138,7 @@ public class StemDirectionStrategyTest
 		linePositions[2] = 5;
 		linePositions[3] = 10;
 		linePositions[4] = 14;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 	
 		//chords with the same distance from top and lowest note
 		linePositions = new int[4];
@@ -145,19 +146,19 @@ public class StemDirectionStrategyTest
 		linePositions[1] = 4;
 		linePositions[2] = 6;
 		linePositions[3] = 8;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 		
 		linePositions = new int[3];
 		linePositions[0] = 1;
 		linePositions[1] = 5;
 		linePositions[2] = 7;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions = new int[3];
 		linePositions[0] = -1;
 		linePositions[1] = 6;
 		linePositions[2] = 9;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions = new int[5];
 		linePositions[0] = -2;
@@ -165,20 +166,20 @@ public class StemDirectionStrategyTest
 		linePositions[2] = 5;
 		linePositions[3] = 8;
 		linePositions[4] = 10;
-		assertEquals(StemDirection.Down, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Down, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions = new int[4];
 		linePositions[0] = 0;
 		linePositions[1] = 2;
 		linePositions[2] = 4;
 		linePositions[3] = 8;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions = new int[3];
 		linePositions[0] = 1;
 		linePositions[1] = 3;
 		linePositions[2] = 7;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 
 		linePositions = new int[5];
 		linePositions[0] = -2;
@@ -186,7 +187,7 @@ public class StemDirectionStrategyTest
 		linePositions[2] = 3;
 		linePositions[3] = 8;
 		linePositions[4] = 10;
-		assertEquals(StemDirection.Up, strategy.computeStemDirection(clp(linePositions), linesCount));
+		assertEquals(Up, strategy.computeStemDirection(clp(linePositions), linesCount));
 	}
 
 	

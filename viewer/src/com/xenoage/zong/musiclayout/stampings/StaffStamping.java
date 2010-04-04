@@ -4,7 +4,7 @@ import com.xenoage.util.math.Fraction;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Rectangle2f;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.musiclayout.StaffMarks;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.screen.StaffStampingScreenInfo;
@@ -216,13 +216,13 @@ public class StaffStamping
 
 
 	/**
-	 * See {@link StaffMarks#getScorePositionAt(float)}.
+	 * See {@link StaffMarks#getMP(float)}.
    * Throws an {@link IllegalStateException} if positions are unknown.
 	 */
-	public ScorePosition getScorePositionAtX(float positionX)
+	public MP getMPAtX(float positionX)
 	{
 		ensureStaffMarksSet();
-	  return staffMarks.getScorePositionAt(positionX);
+	  return staffMarks.getMPAt(positionX);
 	}
 
 
@@ -241,10 +241,10 @@ public class StaffStamping
 	 * See {@link StaffMarks#getXMmAt(int, Fraction)}.
 	 * Throws an {@link IllegalStateException} if positions are unknown.
 	 */
-	public Float getXMmAt(ScorePosition sp)
+	public Float getXMmAt(MP mp)
 	{
 		ensureStaffMarksSet();
-	  return staffMarks.getXMmAt(sp.getMeasure(), sp.getBeat());
+	  return staffMarks.getXMmAt(mp.getMeasure(), mp.getBeat());
 	}
   
 

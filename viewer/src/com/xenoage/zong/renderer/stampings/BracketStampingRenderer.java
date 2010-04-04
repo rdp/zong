@@ -3,7 +3,7 @@ package com.xenoage.zong.renderer.stampings;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
-import com.xenoage.zong.data.music.BracketGroupStyle;
+import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
 import com.xenoage.zong.musiclayout.stampings.BracketStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.renderer.RenderingQuality;

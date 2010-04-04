@@ -1,14 +1,15 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import java.util.Hashtable;
 
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.DurationInfo;
-import com.xenoage.zong.data.music.Rest;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.rest.Rest;
+import com.xenoage.zong.core.music.util.DurationInfo;
 
 
 /**
@@ -58,7 +59,7 @@ public class RestStamping
     StaffStamping parentStaff, float positionX, float scaling)
   {
     super(parentStaff, restElement, null,
-      new SP(positionX, getLinePosition(parentStaff, duration)),
+      sp(positionX, getLinePosition(parentStaff, duration)),
       scaling, false);
     this.duration = duration;
     updateBoundingShape();

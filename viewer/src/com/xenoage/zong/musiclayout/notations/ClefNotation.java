@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.notations;
 
-import com.xenoage.zong.data.music.clef.Clef;
+import com.xenoage.zong.core.music.clef.Clef;
 import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
 
 

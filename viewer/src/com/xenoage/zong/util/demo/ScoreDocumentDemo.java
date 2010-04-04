@@ -5,10 +5,10 @@ import com.xenoage.util.font.FontInfo;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.app.App;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.format.PageMargins;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.PageFormat;
+import com.xenoage.zong.core.format.PageMargins;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextParagraph;
 import com.xenoage.zong.data.text.FormattedTextString;
@@ -38,7 +38,7 @@ public class ScoreDocumentDemo
   {
 		//128 measures on 10 pages
 		int pages = 10;
-		Score score = ScoreDemo.createDemoScore(128);
+		Score score = ScoreRevolutionary.createScore(); // ScoreDemo.createDemoScore(128);
 		ScoreDocument document = new ScoreDocument(score, null, scorePanelController);
 		ScoreFrameChain sfc = null;
 		for (int i = 0; i < pages; i++)

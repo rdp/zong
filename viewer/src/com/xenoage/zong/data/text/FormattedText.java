@@ -3,6 +3,7 @@ package com.xenoage.zong.data.text;
 import java.util.LinkedList;
 
 import com.xenoage.util.iterators.It;
+import com.xenoage.zong.core.text.Alignment;
 
 
 /**

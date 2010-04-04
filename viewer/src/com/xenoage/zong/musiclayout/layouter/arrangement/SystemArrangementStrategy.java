@@ -1,19 +1,22 @@
 package com.xenoage.zong.musiclayout.layouter.arrangement;
 
+import static com.xenoage.zong.core.music.MP.atStaff;
+import static com.xenoage.zong.core.music.util.Column.column;
+import static com.xenoage.zong.io.score.ScoreController.getInterlineSpace;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
 import com.xenoage.util.lang.Tuple3;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.MeasureLayout;
-import com.xenoage.zong.data.format.ScoreFormat;
-import com.xenoage.zong.data.format.StaffLayout;
-import com.xenoage.zong.data.format.SystemLayout;
-import com.xenoage.zong.data.header.ScoreHeader;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.layout.SystemBreak;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.Break;
+import com.xenoage.zong.core.format.ScoreFormat;
+import com.xenoage.zong.core.format.StaffLayout;
+import com.xenoage.zong.core.format.SystemLayout;
+import com.xenoage.zong.core.header.ScoreHeader;
+import com.xenoage.zong.core.music.Staff;
+import com.xenoage.zong.core.music.layout.SystemBreak;
 import com.xenoage.zong.musiclayout.SystemArrangement;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
@@ -85,7 +88,8 @@ public class SystemArrangementStrategy
   	for (int iStaff = 0; iStaff < staffHeights.length; iStaff++)
   	{
   		Staff staff = score.getStaff(iStaff);
-  		staffHeights[iStaff] = (staff.getLinesCount() - 1) * staff.getInterlineSpace();
+  		staffHeights[iStaff] = (staff.getLinesCount() - 1) * 
+  			getInterlineSpace(score, atStaff(iStaff));
   	}
   	//compute staff distances
   	for (int iStaff = 1; iStaff < staffHeights.length; iStaff++)
@@ -99,7 +103,7 @@ public class SystemArrangementStrategy
   		else
   		{
   			//use default staff distance
-  			staffDistances[iStaff - 1] = score.getScoreFormat().getDefaultStaffLayoutNotNull(iStaff).getStaffDistance();
+  			staffDistances[iStaff - 1] = score.getScoreFormat().getStaffLayoutNotNull(iStaff).getStaffDistance();
   		}
   	}
   	//enough space?
@@ -133,9 +137,9 @@ public class SystemArrangementStrategy
       { 
       	//first measure within this system: add leading elements (clef, time sig.)
       	Tuple3<MeasureColumnSpacing, VoiceSpacingsCache, NotationsCache> mcsData =
-      		measureColumnSpacingStrategy.computeMeasureColumnSpacing(
-      			score.getMeasureColumn(currentMeasure), true /* leading! */, notations,
-      			score.getScoreHeader().getMeasureColumnHeader(currentMeasure), lc);
+      		measureColumnSpacingStrategy.computeMeasureColumnSpacing(currentMeasure,
+      			column(score, currentMeasure), true /* leading! */, notations,
+      			score.getScoreHeader().getColumnHeader(currentMeasure), lc);
       	currentMCS = mcsData.get1();
       	leadingNotations = mcsData.get3();
       }
@@ -192,12 +196,16 @@ public class SystemArrangementStrategy
   {
   	
   	//if a line break is forced, do it (but one measure is always allowed)
-  	MeasureLayout layout = scoreHeader.getMeasureLayout(measureIndex);
-  	if (layout.systemBreak == SystemBreak.NewSystem && !firstMeasureInSystem)
+  	Break breakInstance = scoreHeader.getColumnHeader(measureIndex).getBreak();
+  	if (breakInstance != null &&
+  		breakInstance.getSystemBreak() == SystemBreak.NewSystem && !firstMeasureInSystem)
+  	{
   		return false;
+  	}
   	
   	//if a line break is prohibited, force the measure to be within this system
-  	boolean force = (layout.systemBreak == SystemBreak.NoNewSystem);
+  	boolean force = (breakInstance != null &&
+  		breakInstance.getSystemBreak() == SystemBreak.NoNewSystem);
   	
     //enough horizontal space?
     float remainingWidth = usableWidth - usedWidth;
@@ -215,7 +223,7 @@ public class SystemArrangementStrategy
 	private float getLeftMargin(int systemIndex, ScoreFormat scoreFormat, ScoreHeader scoreHeader)
 	{
 		SystemLayout systemLayout = scoreHeader.getSystemLayout(systemIndex);
-		if (systemLayout != null && systemLayout.getSystemMarginLeft() != null)
+		if (systemLayout != null)
 		{
 			//use custom system margin
 			return systemLayout.getSystemMarginLeft();
@@ -223,7 +231,7 @@ public class SystemArrangementStrategy
 		else
 		{
 			//use default system margin
-			return scoreFormat.getDefaultSystemLayout().getSystemMarginLeft();
+			return scoreFormat.getSystemLayout().getSystemMarginLeft();
 		}
 	}
 	
@@ -234,7 +242,7 @@ public class SystemArrangementStrategy
 	private float getRightMargin(int systemIndex, ScoreFormat scoreFormat, ScoreHeader scoreHeader)
 	{
 		SystemLayout systemLayout = scoreHeader.getSystemLayout(systemIndex);
-		if (systemLayout != null && systemLayout.getSystemMarginRight() != null)
+		if (systemLayout != null)
 		{
 			//use custom system margin
 			return systemLayout.getSystemMarginRight();
@@ -242,7 +250,7 @@ public class SystemArrangementStrategy
 		else
 		{
 			//use default system margin
-			return scoreFormat.getDefaultSystemLayout().getSystemMarginRight();
+			return scoreFormat.getSystemLayout().getSystemMarginRight();
 		}
 	}
 

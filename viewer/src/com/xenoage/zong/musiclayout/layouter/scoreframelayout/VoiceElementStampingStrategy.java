@@ -1,12 +1,14 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import java.awt.Color;
 
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.DurationInfo;
-import com.xenoage.zong.data.music.StemDirection;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
+import com.xenoage.zong.core.music.util.DurationInfo;
 import com.xenoage.zong.musiclayout.Constants;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings.OpenBeamMiddleStem;
@@ -48,15 +50,16 @@ public class VoiceElementStampingStrategy
 	 * 
 	 * //LAYOUT-PERFORMANCE (needed 2 of 60 seconds)
 	 */
-	public ChordStampings createChordStampings(ChordNotation chord,
-		float positionX, StaffStamping staff)
+	public ChordStampings createChordStampings(ChordNotation chordNot,
+		float positionX, StaffStamping staff, Globals globals)
 	{
 		ChordStampings ret = new ChordStampings(positionX, staff);
 		float interlineSpace = staff.getInterlineSpace();
+		Chord chord = chordNot.getMusicElement();
 		
     //leger lines
     //TODO: suspended notes
-    NotesAlignment cna = chord.getNotesAlignment();
+    NotesAlignment cna = chordNot.getNotesAlignment();
     int topNoteLinePosition = cna.getNoteAlignment(
       cna.getNotesCount() - 1).getLinePosition();
     float topNoteOffset = cna.getNoteAlignment(
@@ -69,7 +72,7 @@ public class VoiceElementStampingStrategy
       //create leger lines above the staff
       for (int line = staffLines * 2; line <= topNoteLinePosition; line+=2)
       {
-        LegerLineStamping legerLineSt = new LegerLineStamping(staff, chord.getMusicElement(),
+        LegerLineStamping legerLineSt = new LegerLineStamping(staff, chord,
           //TODO: 0.5f = half notehead width
           positionX + (topNoteOffset + 0.5f) * interlineSpace, line);
         ret.legerLines.add(legerLineSt);
@@ -80,7 +83,7 @@ public class VoiceElementStampingStrategy
       //create leger lines below the staff
       for (int line = -2; line >= bottomNoteLinePosition; line-=2)
       {
-        LegerLineStamping legerLineSt = new LegerLineStamping(staff, chord.getMusicElement(),
+        LegerLineStamping legerLineSt = new LegerLineStamping(staff, chord,
           //TODO: 0.5f = half notehead width
         	positionX + (bottomNoteOffset + 0.5f) * interlineSpace, line);
         ret.legerLines.add(legerLineSt);
@@ -89,24 +92,24 @@ public class VoiceElementStampingStrategy
     
     //stem
     float stemEndPos = 0;
-    int flagsCount = DurationInfo.getFlagsCount(chord.getMusicElement().getDuration());
-    StemDirection csd = chord.getStemDirection();
+    int flagsCount = DurationInfo.getFlagsCount(chord.getDuration());
+    StemDirection csd = chordNot.getStemDirection();
     if (csd != StemDirection.None)
     {
     	//collect known information
     	float stemX = positionX + cna.getStemOffset() * interlineSpace;
     	
     	//stamp all stems except middle-beam stems
-    	BeamWaypoint beamWaypoint = chord.getMusicElement().getBeamWaypoint();
+    	Beam beam = globals.getBeams().get(chord);
     	boolean stampNow = false;
-    	if (beamWaypoint == null)
+    	if (beam == null)
     	{
     		stampNow = true;
     	}
     	else
     	{
-    		Beam beam = beamWaypoint.getBeam();
-    		if (beam.getFirstWaypoint() == beamWaypoint || beam.getLastWaypoint() == beamWaypoint)
+    		if (beam.getFirstWaypoint().getChord() == chord ||
+    			beam.getLastWaypoint().getChord() == chord)
     		{
     			stampNow = true;
     		}
@@ -116,10 +119,10 @@ public class VoiceElementStampingStrategy
     	if (stampNow)
     	{
     		//stamp it now
-    		StemAlignment csa = chord.getStemAlignment();
+    		StemAlignment csa = chordNot.getStemAlignment();
 	      float stemStartPos = csa.getStartLinePosition();
 	      stemEndPos = csa.getEndLinePosition(); 
-	      StemStamping stemSt = new StemStamping(staff, chord.getMusicElement(),
+	      StemStamping stemSt = new StemStamping(staff, chord,
 	        stemX, stemStartPos, stemEndPos, -1 * csd.getSignum());
 	      ret.stem = stemSt;
     	}
@@ -129,8 +132,8 @@ public class VoiceElementStampingStrategy
     		//but remember it as an open stem
 				OpenBeamMiddleStem openStem = new OpenBeamMiddleStem();
 				openStem.staff = staff;
-				openStem.chord = chord.getMusicElement();
-				openStem.stemDirection = chord.getStemDirection();
+				openStem.chord = chord;
+				openStem.stemDirection = chordNot.getStemDirection();
 				openStem.positionX = stemX;
 				openStem.bottomNoteLP = cna.getBottomNoteAlignment().getLinePosition();
 				openStem.topNoteLP = cna.getTopNoteAlignment().getLinePosition();
@@ -141,7 +144,7 @@ public class VoiceElementStampingStrategy
     //type of notehead
     int noteheadType = NoteheadStamping.NOTEHEAD_WHOLE;
     DurationInfo.Type symbolType = DurationInfo.getNoteheadSymbolType(
-      chord.getMusicElement().getDuration());
+      chord.getDuration());
     if (symbolType == DurationInfo.Type.Half)
       noteheadType = NoteheadStamping.NOTEHEAD_HALF;
     else if (symbolType == DurationInfo.Type.Quarter)
@@ -159,31 +162,32 @@ public class VoiceElementStampingStrategy
       //	chord.getMusicElement().getVoice() ? Color.black : Color.blue);
       
       
-      NoteheadStamping noteSt = new NoteheadStamping(chord.getMusicElement(), noteheadType, color, staff,
-        new SP(positionX + na.getOffset() * interlineSpace, na.getLinePosition()), NoteheadStamping.SIDE_LEFT, 1);
+      NoteheadStamping noteSt = new NoteheadStamping(chord, noteheadType, color, staff,
+      	sp(positionX + na.getOffset() * interlineSpace, na.getLinePosition()), NoteheadStamping.SIDE_LEFT, 1);
       noteheads[iNote] = noteSt;
       ret.noteheads.add(noteSt); 
     }
     
     //flags (only drawn if there is no beam)
-    if (chord.getMusicElement().getBeamWaypoint() == null && flagsCount > 0)
+    Beam beam = globals.getBeams().get(chord);
+    if (beam == null && flagsCount > 0)
     {
       int flag = (csd == StemDirection.Up ?
         FlagsStamping.FLAG_DOWN : FlagsStamping.FLAG_UP);
-      FlagsStamping flagsSt = new FlagsStamping(flag, flagsCount, staff, chord.getMusicElement(),
-        new SP(positionX + cna.getStemOffset() * interlineSpace, stemEndPos));
+      FlagsStamping flagsSt = new FlagsStamping(flag, flagsCount, staff, chord,
+      	sp(positionX + cna.getStemOffset() * interlineSpace, stemEndPos));
       ret.flags = flagsSt;
     }
     
     //accidentals
-    AccidentalsAlignment caa = chord.getAccidentalsAlignment();
+    AccidentalsAlignment caa = chordNot.getAccidentalsAlignment();
     if (caa != null)
     {
 	    for (int iAcc = 0; iAcc < caa.getAccidentals().length; iAcc++)
 	    {
 	      AccidentalAlignment aa = caa.getAccidentals()[iAcc];
-	      AccidentalStamping accSt = new AccidentalStamping(chord.getMusicElement(), aa.getType(), staff,
-	        new SP(positionX + (aa.getOffset() - chord.getWidth().getFrontGap()
+	      AccidentalStamping accSt = new AccidentalStamping(chord, aa.getType(), staff,
+	      	sp(positionX + (aa.getOffset() - chordNot.getWidth().getFrontGap()
 	          +0.5f /* 0.5f: half accidental width - TODO */) * interlineSpace,
 	        aa.getLinePosition()), 1);
 	      ret.accidentals.add(accSt);
@@ -197,22 +201,22 @@ public class VoiceElementStampingStrategy
     {
       for (int iDot = 0; iDot < dotsPerNote; iDot++)
       {
-        ProlongationDotStamping dotSt = new ProlongationDotStamping(staff, chord.getMusicElement(),
-          new SP(positionX + cna.getDotsOffset(iDot) * interlineSpace, dots[iNote]));
+        ProlongationDotStamping dotSt = new ProlongationDotStamping(staff, chord,
+          sp(positionX + cna.getDotsOffset(iDot) * interlineSpace, dots[iNote]));
         ret.dots.add(dotSt);
       }
     }
     
     //articulations
-    ArticulationsAlignment cara = chord.getArticulationsAlignment();
+    ArticulationsAlignment cara = chordNot.getArticulationsAlignment();
     if (cara != null)
     {
 	    for (int iArt = 0; iArt < cara.getArticulations().length; iArt++)
 	    {
 	      ArticulationAlignment ara = cara.getArticulations()[iArt];
-	      ArticulationStamping araSt = new ArticulationStamping(chord.getMusicElement(),
+	      ArticulationStamping araSt = new ArticulationStamping(chordNot.getMusicElement(),
 	      	ara.getType(), staff,
-	      	new SP(positionX + (ara.getXOffsetIS() + (Constants.WIDTH_QUARTER / 2)) * interlineSpace, //TODO
+	      	sp(positionX + (ara.getXOffsetIS() + (Constants.WIDTH_QUARTER / 2)) * interlineSpace, //TODO
 	      	ara.getYLP()), 1);
 	      ret.articulations.add(araSt);
 	    }

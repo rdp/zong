@@ -2,7 +2,6 @@ package com.xenoage.zong.util.math;
 
 import static com.xenoage.util.math.Point2f.p;
 
-import com.xenoage.util.MathTools;
 import com.xenoage.util.enums.VSide;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.QuadraticCurve;
@@ -53,8 +52,6 @@ public class BezierCurveTools
 	 */
 	public static CubicBezierCurve correctBezier(CubicBezierCurve curve, VSide side)
 	{
-		//compute horizontal distance of start and end point
-		float distance = curve.getP2().x - curve.getP1().x;
 		//compute left angle
 		Point2f p1c1 = curve.getC1().sub(curve.getP1());
 		Point2f p1p2 = curve.getP2().sub(curve.getP1());

@@ -3,7 +3,7 @@ package com.xenoage.zong.io.musicxml.in;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import com.xenoage.zong.data.format.StaffLayout;
+import com.xenoage.zong.core.format.StaffLayout;
 
 
 /**

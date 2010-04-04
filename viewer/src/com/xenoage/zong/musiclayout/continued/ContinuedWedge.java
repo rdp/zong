@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.continued;
 
-import com.xenoage.zong.data.music.directions.Wedge;
+import com.xenoage.zong.core.music.direction.Wedge;
 
 
 /**

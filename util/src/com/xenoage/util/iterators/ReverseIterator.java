@@ -1,6 +1,7 @@
 package com.xenoage.util.iterators;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -40,6 +41,16 @@ public final class ReverseIterator<T>
 			this.list = new ArrayList<T>(0);
 		}
 		this.currentIndex = this.list.size();
+	}
+	
+	
+	/**
+	 * Creates a new {@link ReverseIterator} for the given {@link Collection}.
+	 * If null is given, a valid iterator with no elements is returned.
+	 */
+	public static <T> ReverseIterator<T> reverseIt(List<T> list)
+	{
+		return new ReverseIterator<T>(list);
 	}
 
 

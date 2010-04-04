@@ -1,12 +1,12 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.direction;
 
-import static com.xenoage.zong.data.music.StemDirection.*;
-
+import static com.xenoage.zong.core.music.chord.StemDirection.Down;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterTest;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.direction.SingleMeasureSingleStaffStrategy;
 import com.xenoage.zong.musiclayout.notations.beam.BeamStemDirections;

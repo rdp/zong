@@ -1,8 +1,8 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.alignment;
 
 import static com.xenoage.util.Delta.DELTA_FLOAT_2;
-import static com.xenoage.zong.data.music.StemDirection.Down;
-import static com.xenoage.zong.data.music.StemDirection.Up;
+import static com.xenoage.zong.core.music.chord.StemDirection.Down;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 import static com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureSingleStaffStrategy.isBeamOutsideStaff;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.*;
 
 import com.xenoage.util.Delta;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.design.SingleBeamDesign;
 import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.StemAlignment;
@@ -49,7 +49,7 @@ public class SingleMeasureSingleStaffStrategyTest
 		positionX = new float[2];
 		positionX[0] = 2;
 		positionX[1] = 8;
-		dir = StemDirection.Down;
+		dir = Down;
  
 		int[][] notes1 = {{6},{7}};
 		cna = generateChordNotesAlignment(notes1, dir);
@@ -59,14 +59,14 @@ public class SingleMeasureSingleStaffStrategyTest
 		assertEquals(-0.5, alignment[0].getEndLinePosition(), Delta.DELTA_FLOAT_2);
 		assertEquals(0, alignment[1].getEndLinePosition(), Delta.DELTA_FLOAT_2);
 
-		dir = StemDirection.Up;
+		dir = Up;
 		int[][] notes2 = {{-1,1},{-1,1}};
 		cna = generateChordNotesAlignment(notes2, dir);
 		alignment = strategy.computeStemAlignments(cna, positionX, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(8, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(8, alignment[1].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes3 = {{6},{2},{3},{4},{5},{7}};
 		cna = generateChordNotesAlignment(notes3, dir);
 		alignment = strategy.computeStemAlignments(cna, positionX6, linesCount, singlebeam, dir).getStemAlignments();
@@ -76,35 +76,35 @@ public class SingleMeasureSingleStaffStrategyTest
      		
         
     //Attention! In this example, Ted Ross breaks his own rules!
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes4 = {{7},{8},{5},{5}};
 		cna = generateChordNotesAlignment(notes4, dir);
     alignment = strategy.computeStemAlignments(cna, positionX4, linesCount, singlebeam, dir).getStemAlignments();
     assertEquals(-1.0, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(-2.0, alignment[3].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Up;
+		dir = Up;
 		int[][] notes5 = {{1},{-1}};
 		cna = generateChordNotesAlignment(notes5, dir);
     alignment = strategy.computeStemAlignments(cna, positionX, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(7, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(6, alignment[1].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Up;
+		dir = Up;
 		int[][] notes6 = {{0},{-1},{2},{5}};
 		cna = generateChordNotesAlignment(notes6, dir);
     alignment = strategy.computeStemAlignments(cna, positionX4, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(8.5, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(11, alignment[3].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes7 = {{11},{15}};
 		cna = generateChordNotesAlignment(notes7, dir);
     alignment = strategy.computeStemAlignments(cna, positionX, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(3, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(4, alignment[1].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes8 = {{11},{12}};
 		cna = generateChordNotesAlignment(notes8, dir);
     alignment = strategy.computeStemAlignments(cna, positionX, linesCount, singlebeam, dir).getStemAlignments();
@@ -113,7 +113,7 @@ public class SingleMeasureSingleStaffStrategyTest
 		
 		//closer Spacing
 		positionX[1] = 4;
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes9 = {{9},{5}};
 		cna = generateChordNotesAlignment(notes9, dir);
 		alignment = strategy.computeStemAlignments(cna, positionX, linesCount, singlebeam, dir).getStemAlignments();
@@ -122,46 +122,46 @@ public class SingleMeasureSingleStaffStrategyTest
 
 		//normal Spacing again
 		positionX[1] = 8;
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes10 = {{9},{13}};
 		cna = generateChordNotesAlignment(notes10, dir);
     alignment = strategy.computeStemAlignments(cna, positionX, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(3, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(4, alignment[1].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes11 = {{5},{6},{9},{8},{7},{8}};
 		cna = generateChordNotesAlignment(notes11, dir);
     alignment = strategy.computeStemAlignments(cna, positionX6, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(-1, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(1, alignment[5].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Up;
+		dir = Up;
 		cna = generateChordNotesAlignment(notes11, dir);
     alignment = strategy.computeStemAlignments(cna, positionX6, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(0,alignment[5].getEndLinePosition() - alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Up;
+		dir = Up;
 		int[][] notes12 = {{-2},{-5},{-2},{-5}};
 		cna = generateChordNotesAlignment(notes12, dir);
     alignment = strategy.computeStemAlignments(cna, positionX4, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(4, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(4, alignment[3].getEndLinePosition(), DELTA_FLOAT_2);
 
-		dir = StemDirection.Up;
+		dir = Up;
 		cna = generateChordNotesAlignment(notes12, dir);
     alignment = strategy.computeStemAlignments(cna, positionX4, linesCount, doublebeam, dir).getStemAlignments();
 		assertEquals(4.5, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(4.5, alignment[3].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Down;
+		dir = Down;
 		int[][] notes13 = {{13},{11},{12},{11}};
 		cna = generateChordNotesAlignment(notes13, dir);
     alignment = strategy.computeStemAlignments(cna, positionX4, linesCount, singlebeam, dir).getStemAlignments();
 		assertEquals(4, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);
 		assertEquals(4, alignment[3].getEndLinePosition(), DELTA_FLOAT_2);
 		
-		dir = StemDirection.Down;
+		dir = Down;
 		cna = generateChordNotesAlignment(notes13, dir);
     alignment = strategy.computeStemAlignments(cna, positionX4, linesCount, doublebeam, dir).getStemAlignments();
 		assertEquals(4, alignment[0].getEndLinePosition(), DELTA_FLOAT_2);

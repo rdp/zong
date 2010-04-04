@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.exceptions.InvalidFormatException;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 
 
 /**

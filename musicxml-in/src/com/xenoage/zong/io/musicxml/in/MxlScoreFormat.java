@@ -1,11 +1,11 @@
 package com.xenoage.zong.io.musicxml.in;
 
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.format.LayoutFormat;
-import com.xenoage.zong.data.format.PageMargins;
-import com.xenoage.zong.data.format.ScoreFormat;
-import com.xenoage.zong.data.format.LayoutFormat.Side;
+import com.xenoage.zong.core.format.LayoutFormat;
+import com.xenoage.zong.core.format.PageFormat;
+import com.xenoage.zong.core.format.PageMargins;
+import com.xenoage.zong.core.format.ScoreFormat;
+import com.xenoage.zong.core.format.LayoutFormat.Side;
 import com.xenoage.util.exceptions.InvalidFormatException;
 
 import java.awt.Font;
@@ -45,7 +45,7 @@ class MxlScoreFormat
     throws InvalidFormatException
   {
     pageLayoutFormat = new LayoutFormat();
-    scoreFormat = new ScoreFormat();
+    scoreFormat = ScoreFormat.getDefault();
     defaults = new MxlDefaults();
     
     //defaults
@@ -63,11 +63,11 @@ class MxlScoreFormat
       if (mxlSystemLayout != null)
       {
       	MxlSystemLayout sl = new MxlSystemLayout(mxlSystemLayout, tenthMm);
-      	scoreFormat.setDefaultSystemLayout(sl.getSystemLayout()); 
+      	scoreFormat = scoreFormat.withSystemLayout(sl.getSystemLayout()); 
       	Float topSystemDistance = sl.getTopSystemDistance();
       	if (topSystemDistance != null)
       	{
-      		scoreFormat.setDefaultTopSystemDistance(topSystemDistance.floatValue());
+      		scoreFormat = scoreFormat.withTopSystemDistance(topSystemDistance.floatValue());
       	}
       }
       
@@ -78,11 +78,11 @@ class MxlScoreFormat
       	MxlStaffLayout sl = new MxlStaffLayout(mxlStaffLayout, tenthMm);
       	if (sl.getNumber() == null)
       	{
-      		scoreFormat.setDefaultStaffLayoutOther(sl.getStaffLayout());
+      		scoreFormat = scoreFormat.withStaffLayoutOther(sl.getStaffLayout());
       	}
       	else
       	{
-      		scoreFormat.setDefaultStaffLayout(sl.getNumber() - 1, sl.getStaffLayout());
+      		scoreFormat = scoreFormat.withStaffLayout(sl.getNumber() - 1, sl.getStaffLayout());
       	}
       }
       
@@ -106,8 +106,8 @@ class MxlScoreFormat
       
       //apply lyrics font
       Font defaultLyricFont = defaults.getLyricFontInfo().createFont(
-      	scoreFormat.getDefaultLyricFont());
-      scoreFormat.setDefaultLyricFont(defaultLyricFont);
+      	scoreFormat.getLyricFont());
+      scoreFormat.withLyricFont(defaultLyricFont);
     } 
   }
 
@@ -127,7 +127,7 @@ class MxlScoreFormat
       if (tenths <= 0)
         throw new InvalidFormatException("Element \"tenths\" must be greater than 0");
       //compute default interline space
-      scoreFormat.setInterlineSpace(millimeters * 10 / tenths);
+      scoreFormat = scoreFormat.withInterlineSpace(millimeters * 10 / tenths);
     }
   }
   

@@ -16,7 +16,7 @@ import com.xenoage.util.math.Rectangle2i;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.slurs.DefaultSlurShape;
 import com.xenoage.zong.app.symbols.slurs.SlurShape;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextElement;
 import com.xenoage.zong.data.text.FormattedTextParagraph;

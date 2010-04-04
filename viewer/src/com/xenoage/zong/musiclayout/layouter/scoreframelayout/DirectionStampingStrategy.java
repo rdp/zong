@@ -2,6 +2,7 @@ package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
 import static com.xenoage.util.NullTools.notNull;
 import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.format.SP.sp;
 
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -14,19 +15,22 @@ import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Direction;
-import com.xenoage.zong.data.music.directions.Crescendo;
-import com.xenoage.zong.data.music.directions.Diminuendo;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.Pedal;
-import com.xenoage.zong.data.music.directions.Tempo;
-import com.xenoage.zong.data.music.directions.Wedge;
-import com.xenoage.zong.data.music.directions.Words;
-import com.xenoage.zong.data.music.format.Position;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.music.Attachable;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.direction.Crescendo;
+import com.xenoage.zong.core.music.direction.Diminuendo;
+import com.xenoage.zong.core.music.direction.Direction;
+import com.xenoage.zong.core.music.direction.Dynamics;
+import com.xenoage.zong.core.music.direction.Pedal;
+import com.xenoage.zong.core.music.direction.Tempo;
+import com.xenoage.zong.core.music.direction.Wedge;
+import com.xenoage.zong.core.music.direction.Words;
+import com.xenoage.zong.core.music.format.Position;
+import com.xenoage.zong.core.music.format.SP;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextParagraph;
 import com.xenoage.zong.data.text.FormattedTextStyle;
@@ -57,17 +61,15 @@ public class DirectionStampingStrategy
 	 * Creates the {@link StaffTextStamping}s for the {@link Direction}s of
 	 * the given {@link Chord} and its {@link ChordStampings}.
 	 */
-	public List<StaffTextStamping> createForChord(Chord chord, ChordStampings chordStampings)
+	public List<StaffTextStamping> createForChord(Chord chord, ChordStampings chordStampings,
+		Globals globals)
 	{
 		List<StaffTextStamping> ret = new LinkedList<StaffTextStamping>();
-		if (chord.getDirections() != null)
+		for (Attachable attachable : globals.getAttachments().get(chord))
 		{
-			for (Direction direction : chord.getDirections())
+			if (attachable instanceof Dynamics)
 			{
-				if (direction instanceof Dynamics)
-				{
-					ret.add(createDynamics((Dynamics) direction, chord, chordStampings));
-				}
+				ret.add(createDynamics((Dynamics) attachable, chord, chordStampings));
 			}
 		}
 		return ret;
@@ -99,20 +101,20 @@ public class DirectionStampingStrategy
 		}
 		FormattedText text = new FormattedText(paragraph);
 		//create stamping
-		return new StaffTextStamping(staff, chord, text, new SP(chordStampings.positionX, lp));
+		return new StaffTextStamping(staff, chord, text, sp(chordStampings.positionX, lp));
 	}
 	
 	
 	/**
 	 * Creates a {@link StaffTextStamping} for the given {@link Dynamics}s
-	 * at the given {@link ScorePosition} within the given {@link StaffStamping}.
+	 * at the given {@link MP} within the given {@link StaffStamping}.
 	 */
 	public StaffTextStamping createDynamics(Dynamics dynamics,
-		ScorePosition position, StaffStamping staffStamping)
+		MP mp, StaffStamping staffStamping)
 	{
 		//TODO: support dynamics.getPosition()
 		//horizontal position
-		float x = notNull(staffStamping.getXMmAt(position), 0f) + staffStamping.getPosition().x;
+		float x = notNull(staffStamping.getXMmAt(mp), 0f) + staffStamping.getPosition().x;
 		//vertical position: 4 IS below the bottom staff line
 		float lp = -4 * 2;
 		//create text
@@ -125,18 +127,18 @@ public class DirectionStampingStrategy
 		}
 		FormattedText text = new FormattedText(paragraph);
 		//create stamping
-		return new StaffTextStamping(staffStamping, null, text, new SP(x, lp));
+		return new StaffTextStamping(staffStamping, null, text, sp(x, lp));
 	}
 	
 	
 	/**
 	 * Creates a {@link StaffTextStamping} for the given {@link Tempo}
-	 * at the given {@link ScorePosition} within the given {@link StaffStamping}.
+	 * at the given {@link MP} within the given {@link StaffStamping}.
 	 */
-	public StaffTextStamping createTempo(Tempo tempo, ScorePosition position,
+	public StaffTextStamping createTempo(Tempo tempo, MP mp,
 		StaffStamping staffStamping)
 	{
-		SP p = computePosition(tempo, position, staffStamping);
+		SP p = computePosition(tempo, mp, staffStamping);
 		
 		//create text
 		FormattedTextParagraph paragraph = new FormattedTextParagraph(Alignment.Left);
@@ -175,12 +177,12 @@ public class DirectionStampingStrategy
 	
 	/**
 	 * Creates a {@link StaffTextStamping} for the given {@link Words}
-	 * at the given {@link ScorePosition} within the given {@link StaffStamping}.
+	 * at the given {@link MP} within the given {@link StaffStamping}.
 	 */
-	public StaffTextStamping createWords(Words words, ScorePosition position,
+	public StaffTextStamping createWords(Words words, MP mp,
 		StaffStamping staffStamping)
 	{
-		SP p = computePosition(words, position, staffStamping);
+		SP p = computePosition(words, mp, staffStamping);
 		
 		//create text
 		FormattedTextParagraph paragraph = new FormattedTextParagraph(Alignment.Left);
@@ -195,12 +197,12 @@ public class DirectionStampingStrategy
 	
 	/**
 	 * Creates a {@link StaffSymbolStamping} for the given {@link Pedal}
-	 * at the given {@link ScorePosition} within the given {@link StaffStamping}.
+	 * at the given {@link MP} within the given {@link StaffStamping}.
 	 */
-	public StaffSymbolStamping createPedal(Pedal pedal, ScorePosition position,
+	public StaffSymbolStamping createPedal(Pedal pedal, MP mp,
 		StaffStamping staffStamping)
 	{
-		SP p = computePosition(pedal, position, staffStamping);
+		SP p = computePosition(pedal, mp, staffStamping);
 		
 		//create stamping
 		return new PedalStamping(pedal, staffStamping, p, 1);
@@ -209,9 +211,9 @@ public class DirectionStampingStrategy
 	
 	/**
 	 * Computes the position for the given {@link Direction}
-	 * at the given {@link ScorePosition} within the given {@link StaffStamping}.
+	 * at the given {@link MP} within the given {@link StaffStamping}.
 	 */
-	public SP computePosition(Direction direction, ScorePosition position,
+	public SP computePosition(Direction direction, MP mp,
 		StaffStamping staffStamping)
 	{
 		Position customPos = direction.getPosition();
@@ -221,7 +223,7 @@ public class DirectionStampingStrategy
 		if (customPos != null && customPos.x != null)
 			x = customPos.x;
 		else
-			x = notNull(staffStamping.getXMmAt(position), 0f) + staffStamping.getPosition().x;
+			x = notNull(staffStamping.getXMmAt(mp), 0f) + staffStamping.getPosition().x;
 		x += Position.getRelativeX(customPos);
 		
 		//vertical position: 2 IS above the top staff line
@@ -232,7 +234,7 @@ public class DirectionStampingStrategy
 			lp = (staffStamping.getLinesCount() - 1) * 2 + 2 * 2;
 		lp += Position.getRelativeY(customPos);
 		
-		return new SP(x, lp);
+		return sp(x, lp);
 	}
 	
 	
@@ -241,11 +243,14 @@ public class DirectionStampingStrategy
 	 * The start and end measure of the wedge may be outside the staff, then the
 	 * wedge is clipped to the staff.
 	 */
-	public WedgeStamping createWedgeStamping(Wedge wedge, StaffStamping staffStamping)
+	public WedgeStamping createWedgeStamping(Globals globals,
+		Wedge wedge, StaffStamping staffStamping)
 	{
 		//musical positions of wedge
-		ScorePosition p1 = wedge.getScorePosition();
-		ScorePosition p2 = wedge.getWedgeEnd().getScorePosition();
+		MusicElement anchorStart = globals.getAttachments().getAnchor(wedge);
+		MP p1 = globals.getMP(anchorStart);
+		MusicElement anchorStop = globals.getAttachments().getAnchor(wedge.getWedgeEnd());
+		MP p2 = globals.getMP(anchorStop);
 		//clip start to staff
 		float x1Mm;
 		if (p1.getMeasure() < staffStamping.getStartMeasureIndex())

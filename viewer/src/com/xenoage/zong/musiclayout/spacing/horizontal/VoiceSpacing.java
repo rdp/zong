@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.spacing.horizontal;
 
-import com.xenoage.zong.data.music.Voice;
+import com.xenoage.zong.core.music.Voice;
 
 
 
@@ -14,6 +14,7 @@ public final class VoiceSpacing
 {
   
 	private final Voice voice;
+	private final float interlineSpace;
   private final SpacingElement[] spacingElements;
   
   
@@ -21,9 +22,10 @@ public final class VoiceSpacing
    * Creates a {@link MeasurevoiceSpacing} for the given {@link Voice},
    * using the given {@link SpacingElement}s.
    */
-  public VoiceSpacing(Voice voice, SpacingElement[] spacingElements)
+  public VoiceSpacing(Voice voice, float interlineSpace, SpacingElement[] spacingElements)
   {
   	this.voice = voice;
+  	this.interlineSpace = interlineSpace;
     this.spacingElements = spacingElements;
   }
   
@@ -34,6 +36,12 @@ public final class VoiceSpacing
   public Voice getVoice()
   {
   	return voice;
+  }
+  
+  
+  public float getInterlineSpace()
+  {
+  	return interlineSpace;
   }
   
   

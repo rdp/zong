@@ -1,5 +1,7 @@
 package com.xenoage.zong;
 
+import javax.swing.JOptionPane;
+
 
 /**
  * Product and version information.
@@ -30,6 +32,10 @@ public class Zong
   //other information
   public static final String EMAIL_ERROR_REPORTS = "support@zong-music.com";
   
+  //last version, that was "complete" regarding its functions, and not a
+  //current snapshot or "work in progress"
+  public static final String PROJECT_ITERATION_LAST_WORKING = "48";
+  
   
   /**
    * Gets the name of the program as a String,
@@ -37,7 +43,7 @@ public class Zong
    */
   public static String getName(String firstName)
   {
-  	return Zong.PROJECT_FAMILY_NAME + " " + firstName;
+  	return PROJECT_FAMILY_NAME + " " + firstName;
   }
   
   
@@ -47,9 +53,26 @@ public class Zong
    */
   public static String getNameAndVersion(String firstName)
   {
-  	return Zong.PROJECT_FAMILY_NAME + " " + firstName + " " + Zong.PROJECT_VERSION + "." +
-  		Zong.PROJECT_ITERATION + " ALPHA";
+  	return PROJECT_FAMILY_NAME + " " + firstName + " " + PROJECT_VERSION + "." +
+  		PROJECT_ITERATION + " ALPHA";
   }
+  
+  
+  /**
+   * Shows a warning message, that this version is not usable but
+   * "work in progress".
+   */
+  public static void showWorkInProgressWarning()
+  {
+  	JOptionPane.showMessageDialog(null, "Warning: This version of " +
+  		PROJECT_FAMILY_NAME + " is \"work in progress\" any may not work " +
+  		"as expected.\n" +
+  		"If you need a working program, use version " +
+  		Zong.PROJECT_VERSION + "." + Zong.PROJECT_ITERATION_LAST_WORKING,
+  		PROJECT_FAMILY_NAME + " " + PROJECT_VERSION + "." + PROJECT_ITERATION,
+  		JOptionPane.WARNING_MESSAGE);
+  }
+  
 
 
 }

@@ -1,8 +1,7 @@
 package com.xenoage.zong.musiclayout.notations.chord;
 
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.MusicContext;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.chord.Chord;
 
 
 /**
@@ -22,12 +21,12 @@ public class ChordLinePositions
    * Creates a new {@link ChordLinePositions} object from the
 	 * given {@link Chord} and {@link MusicContext}.
    */
-  public ChordLinePositions(ChordData chord, MusicContext context)
+  public ChordLinePositions(Chord chord, MusicContext context)
   {
-    linePositions = new int[chord.getNotes().length];
-    for (int i = 0; i < chord.getNotes().length; i++)
+    linePositions = new int[chord.getNotes().size()];
+    for (int i = 0; i < chord.getNotes().size(); i++)
     {
-      linePositions[i] = context.computeLinePosition(chord.getNotes()[i].getPitch());
+      linePositions[i] = context.computeLinePosition(chord.getNotes().get(i).getPitch());
     }
   }
   

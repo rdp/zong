@@ -3,8 +3,7 @@ package com.xenoage.zong.musiclayout.layouter.cache;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.xenoage.util.InstanceID;
-import com.xenoage.zong.data.music.Beam;
+import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings;
 
 
@@ -18,7 +17,7 @@ public class OpenBeamsCache
 {
 	
 	//beams, which are not stamped yet (key: InstanceID of the Beam)
-	private HashMap<InstanceID, BeamedStemStampings> openBeams = new HashMap<InstanceID, BeamedStemStampings>();
+	private HashMap<Beam, BeamedStemStampings> openBeams = new HashMap<Beam, BeamedStemStampings>();
 	
 	
 	/**
@@ -29,11 +28,11 @@ public class OpenBeamsCache
 	 */
 	public BeamedStemStampings get(Beam beam)
 	{
-		BeamedStemStampings ret = openBeams.get(beam.getInstanceID());
+		BeamedStemStampings ret = openBeams.get(beam);
 		if (ret == null)
 		{
 			ret = new BeamedStemStampings(beam);
-			openBeams.put(beam.getInstanceID(), ret);
+			openBeams.put(beam, ret);
 		}
 		return ret;
 	}

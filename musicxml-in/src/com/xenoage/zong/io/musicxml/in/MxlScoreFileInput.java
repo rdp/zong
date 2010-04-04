@@ -3,7 +3,7 @@ package com.xenoage.zong.io.musicxml.in;
 import com.xenoage.util.FileTools;
 import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.exceptions.InvalidFormatException;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.io.ScoreFileInput;
 import com.xenoage.zong.io.musicxml.in.MxlScoreData;
 import com.xenoage.zong.io.musicxml.in.MxlScoreFormat;

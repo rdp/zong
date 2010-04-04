@@ -1,7 +1,7 @@
 package com.xenoage.zong.musiclayout.layouter.cache.util;
 
 import com.xenoage.util.enums.VSide;
-import com.xenoage.zong.data.music.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
 import com.xenoage.zong.musiclayout.continued.ContinuedCurvedLine;
 import com.xenoage.zong.musiclayout.stampings.NoteheadStamping;
 

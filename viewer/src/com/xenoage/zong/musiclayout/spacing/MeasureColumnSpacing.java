@@ -1,7 +1,11 @@
 package com.xenoage.zong.musiclayout.spacing;
 
+import static com.xenoage.zong.io.score.ScoreController.getInterlineSpace;
+
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.*;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureLeadingSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureSpacing;
@@ -40,6 +44,8 @@ public final class MeasureColumnSpacing
   //width of the leading space (cached for performance reasons) in mm
   private final float leadingWidth;
   
+  private final Score score;
+  
   
   /**
    * Creates a new {@link MeasureColumnSpacing}.
@@ -49,16 +55,23 @@ public final class MeasureColumnSpacing
    *                         at least the position of the start barline and the end barline
    *                         must be given (even if they are invisible).
    */
-  public MeasureColumnSpacing(
+  public MeasureColumnSpacing(Score score,
   	MeasureSpacing[] measureSpacings, BeatOffset[] beatOffsets, BeatOffset[] barlineOffsets)
   {
+  	this.score = score;
   	this.measureSpacings = measureSpacings;
   	this.beatOffsets = beatOffsets;
   	if (barlineOffsets.length < 2)
   		throw new IllegalArgumentException("At least two barline offsets (start and end) must be given");
   	this.barlineOffsets = barlineOffsets;
   	//compute width of the leading and voice space
-  	this.leadingWidth = computeLeadingSpacingWidth();
+  	this.leadingWidth = computeLeadingSpacingWidth(score);
+  }
+  
+  
+  public Score getScore()
+  {
+  	return score;
   }
   
   
@@ -131,7 +144,7 @@ public final class MeasureColumnSpacing
    * Gets the width of the leading spacing in mm.
    * If there is no leading spacing, 1 is returned. TODO
    */
-  private float computeLeadingSpacingWidth()
+  private float computeLeadingSpacingWidth(Score score)
   {
     float ret = 1; //TODO
     //find the maximum width of the leading spacings
@@ -142,7 +155,8 @@ public final class MeasureColumnSpacing
       MeasureLeadingSpacing leadingSpacing = measureSpacing.getLeadingSpacing();
       if (leadingSpacing != null)
       {
-        float width = leadingSpacing.getWidth() * measureSpacing.getMeasure().getInterlineSpace();
+        float width = leadingSpacing.getWidth() *
+        	getInterlineSpace(score, MP.atStaff(i));
         if (width > ret)
           ret = width;
       }

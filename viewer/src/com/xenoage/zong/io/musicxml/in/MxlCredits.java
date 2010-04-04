@@ -12,7 +12,7 @@ import proxymusic.Valign;
 import com.xenoage.util.font.FontInfo;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextElement;
 import com.xenoage.zong.data.text.FormattedTextParagraph;
@@ -32,6 +32,7 @@ import com.xenoage.zong.layout.frames.TextFrame;
 class MxlCredits
 {
 	
+	/* TODO(musicxml-in)
 	private ScoreDocument scoreDoc;
 	private MxlDefaults defaults;
 	
@@ -40,7 +41,7 @@ class MxlCredits
 	 * Reads the top-level credit elements of the given MusicXML 2.0
 	 * document, creates {@link TextFrame}s out of them and adds
 	 * them to the given {@link ScoreDocument}, using the given {@link MxlDefaults}.
-	 */
+	 *-/
 	public static void read(ScorePartwise doc, ScoreDocument scoreDoc, MxlDefaults defaults)
 	{
 		new MxlCredits(scoreDoc, defaults).read(doc);
@@ -56,7 +57,7 @@ class MxlCredits
 	
 	/**
 	 * Do the work.
-	 */
+	 *-/
 	private void read(ScorePartwise doc)
 	{
 		//get all credit elements
@@ -69,7 +70,7 @@ class MxlCredits
 	
 	/**
 	 * Adds the given credit element as a {@link TextFrame}.
-	 */
+	 *-/
 	private void addTextFrame(Credit credit)
 	{
 		//create formatted text
@@ -151,7 +152,7 @@ class MxlCredits
 
 	/**
 	 * Creates a {@link FormattedText} and returns it.
-	 */
+	 *-/
 	private FormattedText createFormattedText(Credit credit)
 	{
 		FormattedText text = new FormattedText();
@@ -231,5 +232,6 @@ class MxlCredits
 		return text;
 	}
 	
+	*/
 
 }

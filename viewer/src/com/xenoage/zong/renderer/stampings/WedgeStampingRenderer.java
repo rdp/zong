@@ -11,8 +11,6 @@ import com.xenoage.util.Units;
 
 import java.awt.Color;
 
-import javax.media.opengl.GL;
-
 
 /**
  * Renderer for the {@link WedgeStamping} class.

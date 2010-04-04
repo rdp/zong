@@ -41,7 +41,6 @@ import com.xenoage.zong.musiclayout.stampings.Stamping;
 import com.xenoage.util.logging.ApplicationLog;
 import com.xenoage.util.logging.Log;
 import com.xenoage.zong.util.LookAndFeel;
-import com.xenoage.zong.util.xml.ZongMarshalling;
 import com.xenoage.zong.view.ScorePageView;
 
 
@@ -136,21 +135,6 @@ public class App
   	
   	Lang.registerToken("{app.name}", getName());
   	
-  	//create JAXBContext for MusicXML 2.0 import/export in a own thread
-  	//as soon as possible, since it needs some seconds (about 3 on Andi's notebook, 2009)
-  	new Thread(){
-  		@Override public void run()
-  		{
-  			try
-  			{
-  				ZongMarshalling.getContext();
-  			}
-  			catch (Exception ex)
-  			{
-  			}
-  		}
-  	}.start();
-  	
   	//create the score input options
     scoreInputOptions = new ScoreInputOptions();
   }
@@ -213,13 +197,8 @@ public class App
   	this.mainFrame = createMainFrame();
   	errorProcessing.setParentFrame(mainFrame);
   	
-		//TEMP: warning on MacOSX: display problems known
-		if (System.getProperty("os.name").indexOf("Mac OS") != -1)
-		{
-			showMessageDialog("You are running Zong! on Mac OS X.\n" +
-				"We are aware of possible display problems on this system and will try\n" +
-				"to fix them as soon as possible.");
-		}
+		//TEMP
+  	Zong.showWorkInProgressWarning();
 		
   }
   

@@ -1,8 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
 
+import static com.xenoage.util.math.Fraction.fr;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
@@ -31,7 +34,8 @@ public class BeatOffsetBasedVoiceSpacingStrategy
    * single voice, based on the given beat offsets, that
    * are used for the result, and the given precomputed voice spacing.
    */
-  public VoiceSpacing computeVoiceSpacing(VoiceSpacing voiceSpacing, ArrayList<BeatOffset> beatOffsets)
+  public VoiceSpacing computeVoiceSpacing(VoiceSpacing voiceSpacing,
+  	PVector<BeatOffset> beatOffsets)
   {
     SpacingElement[] ret = voiceSpacing.getSpacingElements();
     if (ret.length == 0 || beatOffsets.size() == 0)
@@ -43,7 +47,7 @@ public class BeatOffsetBasedVoiceSpacingStrategy
     float lastEndElementPosition = 0;
     int firstElement = 0;
     int lastElement = -1;
-    float interlineSpace = voiceSpacing.getVoice().getInterlineSpace();
+    float interlineSpace = voiceSpacing.getInterlineSpace();
     for (int iGivenBeat = 0; iGivenBeat < sharedBeats.size(); iGivenBeat++)
     {
       //for each given beat: find elements before or at that beat
@@ -89,7 +93,7 @@ public class BeatOffsetBasedVoiceSpacingStrategy
       lastGivenBeatPosition = currentGivenBeatPosition;
       lastEndElementPosition = currentEndElementPosition;
     }
-    return new VoiceSpacing(voiceSpacing.getVoice(), ret);
+    return new VoiceSpacing(voiceSpacing.getVoice(), voiceSpacing.getInterlineSpace(), ret);
   }
   
   
@@ -100,11 +104,11 @@ public class BeatOffsetBasedVoiceSpacingStrategy
    * list is returned.
    */
   public List<BeatOffset> computeSharedBeats(SpacingElement[] spacingElements,
-  	ArrayList<BeatOffset> beatOffsets)
+  	PVector<BeatOffset> beatOffsets)
   {
     ArrayList<BeatOffset> ret = new ArrayList<BeatOffset>(beatOffsets.size());
     int i1 = 0, i2 = 0;
-    Fraction lastAddedBeat = new Fraction(-1);
+    Fraction lastAddedBeat = fr(-1);
     while (i1 < spacingElements.length && i2 < beatOffsets.size())
     {
       Fraction beat1 = spacingElements[i1].getBeat();

@@ -6,10 +6,10 @@ import java.util.TimerTask;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.Synthesizer;
 
-import com.xenoage.zong.data.instrument.Instrument;
-import com.xenoage.zong.data.instrument.PitchedInstrument;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Pitch;
+import com.xenoage.zong.core.instrument.Instrument;
+import com.xenoage.zong.core.instrument.PitchedInstrument;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.chord.Chord;
 
 
 /**
@@ -58,18 +58,14 @@ public class MidiChordPlayer
 
 
 	/**
-	 * Plays a single note.
-	 * 
+	 * Plays a chord.
 	 */
 	public void playChord(Chord chord, Instrument instrument,
 		byte velocity)
 	{
-		for (int i = 0; i < chord.getPitches().length; i++)
+		for (Pitch pitch : chord.getPitches())
 		{
-			for (Pitch pitch : chord.getPitches())
-			{
-				playNote(pitch, instrument, velocity);
-			}
+			playNote(pitch, instrument, velocity);
 		}
 	}
 
@@ -96,8 +92,7 @@ public class MidiChordPlayer
 		final Pitch p = pitch;
 		new Timer().schedule(new TimerTask()
 		{
-
-			public void run()
+			@Override public void run()
 			{
 				stopSingleNote(p);
 			}

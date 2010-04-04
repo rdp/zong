@@ -1,13 +1,17 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.direction;
 
+import static com.xenoage.util.iterators.It.it;
+import static com.xenoage.zong.core.music.chord.StemDirection.Down;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
+
 import java.util.Iterator;
 
 import com.xenoage.util.iterators.It;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
@@ -47,11 +51,11 @@ public class SingleMeasureTwoStavesStrategy
 		NotationsCache notations, ScoreLayouterContext lc)
 	{
 		//do the work
-		BeamStemDirections bsd = computeBeamStemDirections(beam);
+		BeamStemDirections bsd = computeBeamStemDirections(beam, lc.getScore().getGlobals());
 		
 		//return the results as a new NotationsCache
 		NotationsCache ret = new NotationsCache();
-		Iterator<BeamWaypoint> beamWaypoints = beam.getWaypoints();
+		Iterator<BeamWaypoint> beamWaypoints = it(beam.getWaypoints());
 		for (int i = 0; i < bsd.getStemDirections().length; i++)
 		{
 			Chord chord = beamWaypoints.next().getChord();
@@ -75,15 +79,15 @@ public class SingleMeasureTwoStavesStrategy
    * Currently, the stems of the chords of the upper staff always point down, while
    * the stems of the chords of the lower staff always point up.
    */
-  BeamStemDirections computeBeamStemDirections(Beam beam)
+  BeamStemDirections computeBeamStemDirections(Beam beam, Globals globals)
   {
-  	StemDirection[] ret = new StemDirection[beam.getWaypointsCount()];
-  	Staff upperStaff = beam.getUpperStaff();
-  	It<BeamWaypoint> waypoints = beam.getWaypoints();
+  	StemDirection[] ret = new StemDirection[beam.getWaypoints().size()];
+  	int upperStaffIndex = beam.getUpperStaffIndex(globals);
+  	It<BeamWaypoint> waypoints = it(beam.getWaypoints());
   	for (BeamWaypoint waypoint : waypoints)
 		{
-			Staff staff = waypoint.getChord().getVoice().getMeasure().getStaff();
-			ret[waypoints.getIndex()] = (staff == upperStaff ? StemDirection.Down : StemDirection.Up);
+			int staffIndex = globals.getMP(waypoint.getChord()).getStaff();
+			ret[waypoints.getIndex()] = (staffIndex == upperStaffIndex ? Down : Up);
 		}
   	return new BeamStemDirections(ret);
   }

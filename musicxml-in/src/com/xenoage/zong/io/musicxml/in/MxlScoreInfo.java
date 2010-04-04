@@ -1,6 +1,7 @@
 package com.xenoage.zong.io.musicxml.in;
 
-import com.xenoage.zong.data.info.*;
+import com.xenoage.pdlib.PVector;
+import com.xenoage.zong.core.info.*;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import proxymusic.Work;
 class MxlScoreInfo
 {
 	
-	private ScoreInfo scoreInfo;
+	private final ScoreInfo scoreInfo;
   
   
   /**
@@ -28,32 +29,37 @@ class MxlScoreInfo
    */
   public MxlScoreInfo(ScorePartwise doc)
   {
-  	scoreInfo = new ScoreInfo();
-    
-  	scoreInfo.setMovementNumber(doc.getMovementNumber());
-  	scoreInfo.setMovementTitle(doc.getMovementTitle());
+  	String movementNumber = doc.getMovementNumber();
+  	String movementTitle = doc.getMovementTitle();
     
     Work mxlWork = doc.getWork();
+    String workNumber = null;
+    String workTitle = null;
     if (mxlWork != null)
     {
-    	scoreInfo.setWorkNumber(mxlWork.getWorkNumber());
-    	scoreInfo.setWorkTitle(mxlWork.getWorkTitle());
+    	workNumber = mxlWork.getWorkNumber();
+    	workTitle = mxlWork.getWorkTitle();
     }
     
     Identification mxlIdentification = doc.getIdentification();
+    PVector<Creator> creators = PVector.pvec();
+    PVector<Rights> rights = PVector.pvec();
     if (mxlIdentification != null)
     {
     	List<TypedText> mxlCreators = mxlIdentification.getCreator();
     	for (TypedText creator : mxlCreators)
     	{
-    		scoreInfo.addCreator(new Creator(creator.getValue(), creator.getType()));
+    		creators = creators.plus(new Creator(creator.getValue(), creator.getType()));
     	}
     	List<TypedText> mxlRights = mxlIdentification.getRights();
     	for (TypedText right : mxlRights)
     	{
-    		scoreInfo.addRights(new Rights(right.getValue(), right.getType()));
+    		rights = rights.plus(new Rights(right.getValue(), right.getType()));
     	}
     }
+    
+    scoreInfo = new ScoreInfo(workTitle, workNumber, movementTitle, movementNumber,
+    	creators, rights);
   }
   
   

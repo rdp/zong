@@ -7,10 +7,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/proxymusic"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/midi-out"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/musicxml-in"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Gervill"/>
 	<classpathentry kind="lib" path="libtry/playerdata.jar"/>
 	<classpathentry kind="lib" path="libtry/skin.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pdlib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

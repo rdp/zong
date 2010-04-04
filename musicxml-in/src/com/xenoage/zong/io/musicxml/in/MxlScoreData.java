@@ -2,9 +2,20 @@ package com.xenoage.zong.io.musicxml.in;
 
 import static com.xenoage.util.NullTools.notNull;
 import static com.xenoage.util.iterators.It.it;
+import static com.xenoage.util.math.Fraction._0;
+import static com.xenoage.zong.core.music.MP.atMeasure;
+import static com.xenoage.zong.core.music.MP.atStaff;
+import static com.xenoage.zong.core.music.MP.mp;
+import static com.xenoage.zong.core.music.barline.Barline.createBackwardRepeatBarline;
+import static com.xenoage.zong.core.music.barline.Barline.createBarline;
+import static com.xenoage.zong.core.music.barline.Barline.createForwardRepeatBarline;
+import static com.xenoage.zong.core.music.util.BeatInterval.BeforeOrAt;
+import static com.xenoage.zong.core.music.util.VoiceElementSelection.Last;
+import static com.xenoage.zong.core.music.util.VoiceElementSide.Start;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -19,41 +30,49 @@ import proxymusic.RightLeftMiddle;
 import proxymusic.ScorePartwise;
 import proxymusic.YesNo;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.Parser;
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.format.MeasureLayout;
-import com.xenoage.zong.data.format.StaffLayout;
-import com.xenoage.zong.data.format.SystemLayout;
-import com.xenoage.zong.data.header.ScoreHeader;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.NoVoiceElement;
-import com.xenoage.zong.data.music.Rest;
-import com.xenoage.zong.data.music.RestData;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.VoiceElement;
-import com.xenoage.zong.data.music.barline.BarlineStyle;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.clef.ClefType;
-import com.xenoage.zong.data.music.directions.Tempo;
-import com.xenoage.zong.data.music.key.Key;
-import com.xenoage.zong.data.music.key.TraditionalKey;
-import com.xenoage.zong.data.music.layout.PageBreak;
-import com.xenoage.zong.data.music.layout.SystemBreak;
-import com.xenoage.zong.data.music.time.NormalTime;
-import com.xenoage.zong.data.music.time.SenzaMisura;
-import com.xenoage.zong.data.music.time.Time;
-import com.xenoage.zong.data.music.transpose.Transpose;
-import com.xenoage.zong.data.music.util.PositionedVoiceElement;
-import com.xenoage.zong.io.score.ScoreInput;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.Break;
+import com.xenoage.zong.core.format.StaffLayout;
+import com.xenoage.zong.core.format.SystemLayout;
+import com.xenoage.zong.core.header.ScoreHeader;
+import com.xenoage.zong.core.music.Attachable;
+import com.xenoage.zong.core.music.ColumnElement;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.MeasureElement;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.Staff;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
+import com.xenoage.zong.core.music.barline.BarlineStyle;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.clef.ClefType;
+import com.xenoage.zong.core.music.direction.Tempo;
+import com.xenoage.zong.core.music.key.Key;
+import com.xenoage.zong.core.music.key.TraditionalKey;
+import com.xenoage.zong.core.music.layout.PageBreak;
+import com.xenoage.zong.core.music.layout.SystemBreak;
+import com.xenoage.zong.core.music.rest.Rest;
+import com.xenoage.zong.core.music.time.NormalTime;
+import com.xenoage.zong.core.music.time.SenzaMisura;
+import com.xenoage.zong.core.music.time.Time;
+import com.xenoage.zong.core.music.util.BeatE;
+import com.xenoage.zong.core.music.util.BeatInterval;
+import com.xenoage.zong.core.music.util.VoiceElementSelection;
+import com.xenoage.zong.core.music.util.VoiceElementSide;
+import com.xenoage.zong.io.score.ScoreController;
+import com.xenoage.zong.io.score.ScoreInputOptions;
 import com.xenoage.zong.io.score.selections.Cursor;
 import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.exceptions.InvalidFormatException;
-import com.xenoage.zong.util.exceptions.InvalidScorePositionException;
 import com.xenoage.zong.util.exceptions.MeasureFullException;
 
 
@@ -77,29 +96,15 @@ import com.xenoage.zong.util.exceptions.MeasureFullException;
 class MxlScoreData
 {
 
-	private final ScoreInput input;
-	private final MxlScoreFormat scoreFormat;
-	private MxlScoreDataContext context;
-	
-	
-	private MxlScoreData(ScoreInput input, MxlScoreFormat mxlScoreFormat)
-	{
-		this.input = input;
-		this.scoreFormat = mxlScoreFormat;
-		this.context = new MxlScoreDataContext(mxlScoreFormat.getTenthMm());
-	}
-	
   
   /**
-   * Reads the given MusicXML document and
-   * writes the data to the given {@link ScoreInput}.
+   * Reads the given MusicXML document and returns the score.
    */
-  public static void read(ScorePartwise doc, ScoreInput input, MxlScoreFormat mxlScoreFormat,
+  public static Score read(ScorePartwise doc, Score score, MxlScoreFormat mxlScoreFormat,
   	ErrorProcessing err)
     throws InvalidFormatException
   {
-  	MxlScoreData mxlScoreData = new MxlScoreData(input, mxlScoreFormat); 
-    Score score = input.getScore();
+  	MxlScoreDataContext context = new MxlScoreDataContext(score, mxlScoreFormat); 
     
     //read the parts
     int staffIndexOffset = 0;
@@ -108,32 +113,34 @@ class MxlScoreData
     for (proxymusic.ScorePartwise.Part mxlPart : mxlParts)
     {
       //clear part-dependent context values
-      int stavesCount = score.getParts().get(mxlParts.getIndex()).getStavesCount();
-      mxlScoreData.context.beginNewPart(mxlParts.getIndex(), staffIndexOffset, staffIndexOffset + stavesCount - 1);
+      int stavesCount = score.getStavesList().getParts().get(mxlParts.getIndex()).getStavesCount();
+      context.beginNewPart(mxlParts.getIndex(), staffIndexOffset, staffIndexOffset + stavesCount - 1);
       staffIndexOffset += stavesCount;
       //read the measures
       for (proxymusic.ScorePartwise.Part.Measure mxlMeasure : mxlPart.getMeasure())
       {
         try
         {
-        	mxlScoreData.readMeasure(mxlMeasure, err);
+        	readMeasure(context, mxlMeasure, err);
         }
         catch (Exception ex)
         {
-          throw new InvalidFormatException("Error at " + mxlScoreData.context.toString(), ex);
+          throw new InvalidFormatException("Error at " + context.toString(), ex);
         }
-        mxlScoreData.context.incMeasureNumber();
+        context.incMeasureNumber();
     	}
     }
     
     //go through the whole score, and fill empty measures (that means, measures where
     //voice 0 has no single VoiceElement) with rests
     Fraction measureDuration = new Fraction(1, 4);
-    for (Staff staff : input.getScore().getStavesList().getStaves())
+    for (int iStaff = 0; iStaff < context.getScore().getStavesCount(); iStaff++)
     {
-    	for (Measure measure : staff.getMeasures())
+    	Staff staff = context.getScore().getStaff(atStaff(iStaff));
+    	for (int iMeasure = 0; iMeasure < staff.getMeasures().size(); iMeasure++)
     	{
-    		Time newTime = measure.getTime();
+    		Measure measure = staff.getMeasures().get(iMeasure);
+    		Time newTime = context.getScore().getScoreHeader().getColumnHeader(iMeasure).getTime();
     		if (newTime != null)
     		{
     			//time signature has changed
@@ -147,14 +154,16 @@ class MxlScoreData
     			}
     		}
     		Voice voice0 = measure.getVoices().get(0);
-    		if (voice0.getFilledBeats().equals(Fraction._0))
+    		if (voice0.isEmpty())
     		{
     			//TODO: "whole rests" or split. currently, also 3/4 rests are possible
-    			voice0.addElement(new Rest(new RestData(measureDuration)));
+    			context.setScore(ScoreController.writeVoiceElement(
+    				context.getScore(), mp(iStaff, iMeasure, 0, _0), new Rest(measureDuration)));
     		}
     	}
     }
     
+    return context.getScore();
   }
   
   
@@ -163,8 +172,8 @@ class MxlScoreData
    * The context may be changed by this method.
    */
   @SuppressWarnings("unchecked")
-  private void readMeasure(proxymusic.ScorePartwise.Part.Measure mxlMeasure,
-  	ErrorProcessing err)
+  private static void readMeasure(MxlScoreDataContext context,
+  	proxymusic.ScorePartwise.Part.Measure mxlMeasure, ErrorProcessing err)
   	throws InvalidFormatException, MeasureFullException
   {
     //begin a new measure
@@ -177,25 +186,25 @@ class MxlScoreData
     	switch (item.get1())
     	{
     		case Chord:
-    			MxlChord.readChord((List<proxymusic.Note>) data, this, err);
+    			MxlChord.readChord(context, (List<proxymusic.Note>) data, this, err);
     			break;
     		case Attributes:
-          readAttributes((Attributes) data);
+    			readAttributes(context, (Attributes) data);
           break;
     		case Backup:
-    			readBackup((Backup) data);
+    			readBackup(context, (Backup) data);
     			break;
     		case Forward:
-    			readForward((Forward) data);
+    			readForward(context, (Forward) data);
     			break;
     		case Print:
-    			readPrint((proxymusic.Print) data);
+    			readPrint(context, (proxymusic.Print) data);
     			break;
     		case Direction:
-    			MxlDirection.readDirection((proxymusic.Direction) data, this);
+    			MxlDirection.readDirection(context, (proxymusic.Direction) data, this);
     			break;
     		case Barline:
-    			 readBarline((Barline) data);
+    			readBarline(context, (Barline) data);
     	}
     }
   }
@@ -205,8 +214,8 @@ class MxlScoreData
    * Reads the given attributes element and uses the current context.
    * The context may be changed by this method.
    */
-  private void readAttributes(Attributes mxlAttributes)
-  	throws MeasureFullException
+  private static void readAttributes(MxlScoreDataContext context,
+  	Attributes mxlAttributes)
   {
   	
   	//divisions
@@ -230,7 +239,7 @@ class MxlScoreData
         for (int staff = 0; staff < context.getPartStavesIndices().getCount(); staff++)
         {
         	Key key = new TraditionalKey(mxlFifths.intValue());
-        	writeNoVoiceElement(key, staff);
+        	writeColumnElement(context, key, staff);
         	context.getCurrentMusicContext(staff).setKey(key);
         }
       }
@@ -330,11 +339,11 @@ class MxlScoreData
   /**
    * Reads the given backup element.
    */
-  private void readBackup(Backup mxlBackup)
+  private static void readBackup(MxlScoreDataContext context, Backup mxlBackup)
   	throws InvalidFormatException
   {
     //duration
-    Fraction duration = readDuration(mxlBackup.getDuration()).invert();
+    Fraction duration = readDuration(context, mxlBackup.getDuration()).invert();
     //move cursor
     context.moveCurrentBeat(duration);
   }
@@ -343,11 +352,11 @@ class MxlScoreData
   /**
    * Reads the given forward element.
    */
-  private void readForward(Forward mxlForward)
+  private static void readForward(MxlScoreDataContext context, Forward mxlForward)
     throws InvalidFormatException
   {
     //duration
-    Fraction duration = readDuration(mxlForward.getDuration());
+    Fraction duration = readDuration(context, mxlForward.getDuration());
     //move cursor
     context.moveCurrentBeat(duration);
   }
@@ -356,7 +365,7 @@ class MxlScoreData
   /**
    * Returns the duration as a {@link Fraction} from the given duration element.
    */
-  public Fraction readDuration(BigDecimal mxlDuration)
+  public static Fraction readDuration(MxlScoreDataContext context, BigDecimal mxlDuration)
   	throws InvalidFormatException
   {
   	int duration = mxlDuration.intValue(); //we allow only integer values
@@ -371,36 +380,37 @@ class MxlScoreData
   /**
    * Reads the given {@link proxymusic.Print} element.
    */
-  private void readPrint(proxymusic.Print mxlPrint)
+  private void readPrint(MxlScoreDataContext context, proxymusic.Print mxlPrint)
   {
-  	//layout information
-  	MeasureLayout ml = input.getScore().getScoreHeader().getMeasureLayout(context.getMeasureIndex());
   	//system and page break
   	YesNo mxlNewSystem = mxlPrint.getNewSystem();
-  	ml.systemBreak = (mxlNewSystem == null ? null :
+  	SystemBreak systemBreak = (mxlNewSystem == null ? null :
   		(mxlNewSystem == YesNo.YES ? SystemBreak.NewSystem : SystemBreak.NoNewSystem));
   	YesNo mxlNewPage = mxlPrint.getNewPage();
-  	ml.pageBreak = (mxlNewPage == null ? null :
+  	PageBreak pageBreak = (mxlNewPage == null ? null :
   		(mxlNewPage == YesNo.YES ? PageBreak.NewPage : PageBreak.NoNewPage));
+  	context.setScore(ScoreController.writeColumnElement(context.getScore(),
+  		atMeasure(context.getMeasureIndex()), new Break(pageBreak, systemBreak)));
   	
   	//we assume that custom system layout information is just used in combination with
   	//forced system/page breaks. so we ignore system-layout elements which are not combined with system/page breaks.
   	//the first measure of a score is also ok.
-  	if (context.getMeasureIndex() == 0 || ml.systemBreak == SystemBreak.NewSystem || ml.pageBreak == PageBreak.NewPage)
+  	if (context.getMeasureIndex() == 0 || systemBreak == SystemBreak.NewSystem ||
+  		pageBreak == PageBreak.NewPage)
   	{
   		
   		//first page or new page?
-  		boolean pageBreak = ml.pageBreak == PageBreak.NewPage;
-  		boolean pageStarted = (context.getMeasureIndex() == 0 || pageBreak);
-			if (pageBreak)
+  		boolean isPageBreak = pageBreak == PageBreak.NewPage;
+  		boolean isPageStarted = (context.getMeasureIndex() == 0 || isPageBreak);
+			if (isPageBreak)
 			{
 				//increment page index
 				context.incCurrentPageIndex();
 			}
   		
   		//first system or new system?
-			boolean systemBreak = pageBreak || ml.systemBreak == SystemBreak.NewSystem;
-  		if (systemBreak)
+			boolean isSystemBreak = isPageBreak || systemBreak == SystemBreak.NewSystem;
+  		if (isSystemBreak)
   		{
   			//increment system index 
   			context.incCurrentSystemIndex();
@@ -411,18 +421,19 @@ class MxlScoreData
   		if (mxlPrint.getSystemLayout() != null)
   		{
   			mxlSystemLayout = new MxlSystemLayout(mxlPrint.getSystemLayout(),
-    			scoreFormat.getTenthMm());
+    			context.getTenthMm());
   			SystemLayout systemLayout = mxlSystemLayout.getSystemLayout();
   			
   			//for first systems on a page, use top-system-distance
-  			if (pageStarted)
+  			if (isPageStarted)
   			{
-  				systemLayout.setSystemDistance(mxlSystemLayout.getTopSystemDistance());
+  				systemLayout = systemLayout.withSystemDistance(mxlSystemLayout.getTopSystemDistance());
   			}
   			
   			//apply values
-  			input.getScore().getScoreHeader().setSystemLayout(
+  			ScoreHeader scoreHeader =	context.getScore().getScoreHeader().withSystemLayout(
   				context.getCurrentSystemIndex(), systemLayout);
+  			context.setScore(context.getScore().withScoreHeader(scoreHeader));
   		}
   		
   	}
@@ -432,8 +443,10 @@ class MxlScoreData
 		for (proxymusic.StaffLayout mxlStaffLayout : mxlStaffLayouts)
 		{
 			int staffIndex = notNull(mxlStaffLayout.getNumber(), 1).intValue() - 1;
-  		input.getScore().getScoreHeader().setStaffLayout(context.getCurrentSystemIndex(),
-  			context.getPartStavesIndices().getStart() + staffIndex, readStaffLayout(mxlStaffLayout));
+			context.setScore(ScoreController.withStaffLayout(context.getScore(),
+				context.getCurrentSystemIndex(),
+				context.getPartStavesIndices().getStart() + staffIndex,
+				readStaffLayout(context, mxlStaffLayout)));
 		}
 		
   }
@@ -443,12 +456,12 @@ class MxlScoreData
    * Reads the given barline element.
    * Currently only left and right barlines are supported.
    */
-  private void readBarline(Barline mxlBarline)
+  private void readBarline(MxlScoreDataContext context, Barline mxlBarline)
     throws InvalidFormatException
   {
   	RightLeftMiddle location = notNull(mxlBarline.getLocation(), RightLeftMiddle.RIGHT);
   	Repeat repeat = mxlBarline.getRepeat();
-  	ScoreHeader header = input.getScore().getScoreHeader();
+  	ScoreHeader header = context.getScore().getScoreHeader();
   	int measureIndex = context.getMeasureIndex();
   	BarlineStyle style = Util.getBarlineStyle(mxlBarline.getBarStyle());
   	if (repeat != null)
@@ -460,8 +473,8 @@ class MxlScoreData
 	    	if (repeat.getDirection() == BackwardForward.FORWARD)
 	    	{
 	    		style = notNull(style, BarlineStyle.HeavyLight);
-	    		header.getMeasureColumnHeader(measureIndex).setStartBarline(
-	    			com.xenoage.zong.data.music.barline.Barline.createForwardRepeatBarline(style));
+	    		context.setScore(ScoreController.writeColumnStartBarline(context.getScore(),
+	    			measureIndex, createForwardRepeatBarline(style)));
 	    	}
 	    }
 	    else if (location == RightLeftMiddle.RIGHT)
@@ -471,8 +484,8 @@ class MxlScoreData
 	    	{
 	    		style = notNull(style, BarlineStyle.LightHeavy);
 	    		int times = notNull(repeat.getTimes(), 1).intValue();
-	    		header.getMeasureColumnHeader(measureIndex).setEndBarline(
-	    			com.xenoage.zong.data.music.barline.Barline.createBackwardRepeatBarline(style, times));
+	    		context.setScore(ScoreController.writeColumnEndBarline(context.getScore(),
+	    			measureIndex, createBackwardRepeatBarline(style, times)));
 	    	}
 	    }
   	}
@@ -483,14 +496,14 @@ class MxlScoreData
   		if (location == RightLeftMiddle.LEFT)
 	    {
   			//left barline
-    		header.getMeasureColumnHeader(measureIndex).setStartBarline(
-    			com.xenoage.zong.data.music.barline.Barline.createBarline(style));
+  			context.setScore(ScoreController.writeColumnStartBarline(context.getScore(),
+    			measureIndex, createBarline(style)));
 	    }
 	    else if (location == RightLeftMiddle.RIGHT)
 	    {
 	    	//right barline
-	    	header.getMeasureColumnHeader(measureIndex).setEndBarline(
-    			com.xenoage.zong.data.music.barline.Barline.createBarline(style));
+	    	context.setScore(ScoreController.writeColumnEndBarline(context.getScore(),
+    			measureIndex, createBarline(style)));
 	    }
   	}
   }
@@ -499,14 +512,15 @@ class MxlScoreData
   /**
    * Reads the given {@link proxymusic.Print} element and returns it.
    */
-  private StaffLayout readStaffLayout(proxymusic.StaffLayout mxlStaffLayout)
+  private StaffLayout readStaffLayout(MxlScoreDataContext context,
+  	proxymusic.StaffLayout mxlStaffLayout)
   {
-  	StaffLayout ret = StaffLayout.createEmptyStaffLayout();
+  	StaffLayout ret = StaffLayout.getDefault();
 
 		//staff-distance
   	BigDecimal mxlStaffDistance = mxlStaffLayout.getStaffDistance();
 		if (mxlStaffDistance != null)
-			ret.setStaffDistance(mxlStaffDistance.floatValue() * scoreFormat.getTenthMm());
+			ret = ret.withStaffDistance(mxlStaffDistance.floatValue() * context.getTenthMm());
 		
 		return ret;
   }
@@ -516,14 +530,13 @@ class MxlScoreData
    * Writes the given {@link VoiceElement} to the current measure.
    * The given staff (index within part) and voice is used.
    */
-  void writeVoiceElement(VoiceElement element, int staff, int voice)
-    throws InvalidScorePositionException, MeasureFullException
+  static void writeVoiceElement(MxlScoreDataContext context,
+  	VoiceElement element, int staff, int voice)
   {
-  	Cursor cursor = new Cursor(input,
-  		new ScorePosition(context.getPartStavesIndices().getStart() + staff,
-  			context.getMeasureIndex(), context.getCurrentBeat(), voice), false);
-    cursor.write(element);
-    //when in voice 0, we move the "cursor" forward, that is
+    context.setScore(ScoreController.writeVoiceElement(context.getScore(),
+    	mp(context.getPartStavesIndices().getStart() + staff,
+  			context.getMeasureIndex(), voice, context.getCurrentBeat()), element));
+    //we move the "cursor" forward, that is
     //needed when writing time/key signatures and so on.
     if (element.getDuration() != null) 
       context.moveCurrentBeat(element.getDuration());
@@ -531,51 +544,59 @@ class MxlScoreData
   
   
   /**
-   * Writes the given {@link NoVoiceElement} at the given staff (index relative to first
-   * staff in current part), current measure, current beat and voice 0.
+   * Writes the given {@link MeasureElement} at the given staff (index relative to first
+   * staff in current part), current measure and current beat.
    */
-  void writeNoVoiceElement(NoVoiceElement element, int staff)
-  	throws InvalidScorePositionException
+  static void writeMeasureElement(MxlScoreDataContext context,
+  	MeasureElement element, int staff)
   {
   	int staffIndex = context.getPartStavesIndices().getStart() + staff;
   	int measureIndex = context.getMeasureIndex();
   	Fraction beat = context.getCurrentBeat();
-  	ScorePosition pos = new ScorePosition(staffIndex, measureIndex, beat, 0);
-  	//write NoVoiceElements always before the chord to which they belong.
-  	//other than MusicXML, a NoVoiceElement may not be placed "within" the
-  	//duration a chord.
-  	PositionedVoiceElement voiceElement =
-  		input.getScore().getController().getVoiceElementAt(pos);
-  	ScorePosition currectedPos = (voiceElement != null ? voiceElement.getPosition() : pos);
-  	Cursor cursor = new Cursor(input, currectedPos, false);
-    cursor.write(element);
+  	MP pos = mp(staffIndex, measureIndex, 0, beat);
+  	context.setScore(ScoreController.writeMeasureElement(
+  		context.getScore(), pos, element));
   }
   
   
   /**
-   * Writes the given {@link Tempo} at the given staff (index relative to first
-   * staff in current part), current measure, current beat and voice 0,
-   * but also to the measure column header.
+   * Writes the given {@link ColumnElement} at the
+   * current measure and current beat.
    */
-  void writeTempo(Tempo tempo, int staff)
-  	throws InvalidScorePositionException
+  static void writeColumnElement(MxlScoreDataContext context,
+  	ColumnElement element)
   {
-  	writeNoVoiceElement(tempo, staff);
   	int measureIndex = context.getMeasureIndex();
   	Fraction beat = context.getCurrentBeat();
-  	input.getScore().getScoreHeader().getMeasureColumnHeader(measureIndex).addTempo(tempo, beat);
+  	MP pos = mp(0, measureIndex, 0, beat);
+  	context.setScore(ScoreController.writeColumnElement(
+  		context.getScore(), pos, element));
   }
   
   
-  protected MxlScoreDataContext getContext()
+  /**
+   * Creates a beam for the given chords.
+   */
+  static void writeBeam(MxlScoreDataContext context, LinkedList<Chord> chords)
   {
-  	return context;
+  	PVector<BeamWaypoint> waypoints = new PVector<BeamWaypoint>();
+  	for (Chord chord : chords)
+  	{
+  		waypoints = waypoints.plus(new BeamWaypoint(chord, false));
+  	}
+  	context.setScore(ScoreController.writeBeam(context.getScore(),
+  		Beam.beam(waypoints, context.getScore().getGlobals())));
   }
   
   
-  protected MxlScoreFormat getScoreFormat()
+  /**
+   * Writes an attachments to the given element.
+   */
+  static void writeAttachment(MxlScoreDataContext context,
+  	MusicElement anchor, Attachable attachment)
   {
-  	return scoreFormat;
+  	context.setScore(context.getScore().withGlobals(
+  		context.getScore().getGlobals().plusAttachment(anchor, attachment)));
   }
   
   

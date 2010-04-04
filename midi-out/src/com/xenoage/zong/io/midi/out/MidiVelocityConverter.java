@@ -1,32 +1,28 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.xenoage.util.iterators.ReverseIterator.reverseIt;
+import static com.xenoage.util.lang.Tuple2.t;
 
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.MathTools;
-import com.xenoage.util.RAList;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.settings.Settings;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Direction;
-import com.xenoage.zong.data.music.DurationElement;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.directions.Dynamics;
-import com.xenoage.zong.data.music.directions.DynamicsType;
+import com.xenoage.zong.core.music.Attachable;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.Staff;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.direction.Dynamics;
+import com.xenoage.zong.core.music.direction.DynamicsType;
 
 
 /**
- * This class is responsable for the converting of the Dynamics in a MidiScore
+ * This class converts dynamics.
  * 
  * @author Uli Teschemacher
- * 
  */
 public final class MidiVelocityConverter
 {
@@ -37,8 +33,7 @@ public final class MidiVelocityConverter
 	public static int getNumberOfVoicesInStaff(Staff staff)
 	{
 		int voiceCount = 0;
-		ArrayList<Measure> measures = staff.getMeasures();
-		for (Measure measure : measures)
+		for (Measure measure : staff.getMeasures())
 		{
 			int size = measure.getVoices().size();
 			voiceCount = MathTools.clampMin(voiceCount, size);
@@ -47,50 +42,38 @@ public final class MidiVelocityConverter
 	}
 
 
-	public static int getVelocity(Chord chord, int currentVelocity)
+	public static int getVelocity(Chord chord, int currentVelocity,
+		Globals globals)
 	{
-		List<Direction> directions = chord.getDirections();
-		if (directions != null)
+		for (Attachable attachment : globals.getAttachments().get(chord))
 		{
-			for (Direction direction : directions)
+			if (attachment instanceof Dynamics)
 			{
-				if (direction instanceof Dynamics)
-				{
-					Dynamics dynamic = (Dynamics) direction;
-					int setting = Settings.getInstance().getSetting(
-						dynamic.getType().name(), "playback-dynamics", currentVelocity);
-					return convertToMidiVelocity(setting);
-				}
+				Dynamics dynamic = (Dynamics) attachment;
+				int setting = Settings.getInstance().getSetting(
+					dynamic.getType().name(), "playback-dynamics", currentVelocity);
+				return convertToMidiVelocity(setting);
 			}
 		}
 		return currentVelocity;
 	}
 
 
-	private static boolean voiceHasDynamics(Staff staff, int voiceNumber)
+	private static boolean voiceHasDynamics(Staff staff, int voiceIndex,
+		Globals globals)
 	{
-		ArrayList<Measure> measures = staff.getMeasures();
-		for (Measure measure : measures)
+		for (Measure measure : staff.getMeasures())
 		{
-			if (measure.getVoices().size() > voiceNumber)
+			if (measure.getVoices().size() > voiceIndex)
 			{
-				RAList<MusicElement> elements = measure.getVoices().get(voiceNumber)
-					.getElements();
-				for (MusicElement musicElement : elements)
+				Vector<VoiceElement> elements = measure.getVoice(voiceIndex).getElements();
+				for (VoiceElement element : elements)
 				{
-					if (musicElement instanceof DurationElement)
+					for (Attachable attachment : globals.getAttachments().get(element))
 					{
-						DurationElement durationElement = (DurationElement) musicElement;
-						List<Direction> directions = durationElement.getDirections();
-						if (directions != null)
+						if (attachment instanceof Dynamics)
 						{
-							for (Direction direction : directions)
-							{
-								if (direction instanceof Dynamics)
-								{
-									return true;
-								}
-							}
+							return true;
 						}
 					}
 				}
@@ -100,13 +83,13 @@ public final class MidiVelocityConverter
 	}
 
 
-	private static boolean[] voicesInStaffHaveDynamics(Staff staff)
+	private static boolean[] voicesInStaffHaveDynamics(Staff staff, Globals globals)
 	{
 		int numberOfVoices = getNumberOfVoicesInStaff(staff);
 		boolean[] dyn = new boolean[numberOfVoices];
 		for (int i = 0; i < numberOfVoices; i++)
 		{
-			dyn[i] = voiceHasDynamics(staff, i);
+			dyn[i] = voiceHasDynamics(staff, i, globals);
 		}
 		return dyn;
 	}
@@ -138,9 +121,9 @@ public final class MidiVelocityConverter
 	}
 
 
-	public static int[] getVoiceforDynamicsInStaff(Staff staff)
+	public static int[] getVoiceforDynamicsInStaff(Staff staff, Globals globals)
 	{
-		boolean[] voicesInStaffHaveDynamics = voicesInStaffHaveDynamics(staff);
+		boolean[] voicesInStaffHaveDynamics = voicesInStaffHaveDynamics(staff, globals);
 		int[] dynamicVoices = new int[voicesInStaffHaveDynamics.length];
 		// If there are no dynamics in any voice, every voice can use its own
 		// "dynamics"
@@ -179,10 +162,10 @@ public final class MidiVelocityConverter
 	 * velocity of the subsequent chords.
 	 */
 	public static int[] getVelocityAtPosition(Staff staff, int voice,
-		ScorePosition position, int currentVelocity)
+		MP mp, int currentVelocity, Globals globals)
 	{
-		Tuple2<DynamicsType, ScorePosition> latestDynamicsType = getLatestDynamicsType(
-			staff, voice, position);
+		Tuple2<DynamicsType, MP> latestDynamicsType = getLatestDynamicsType(
+			staff, voice, mp, globals);
 		if (latestDynamicsType != null)
 		{
 			int vel[] = new int[2];
@@ -191,7 +174,6 @@ public final class MidiVelocityConverter
 			if (velocityFactorAtBeat == -1)
 			{
 				vel[0] = currentVelocity;
-				
 			}
 			else
 			{
@@ -201,7 +183,7 @@ public final class MidiVelocityConverter
 				latestDynamicsType.get1().name() + "_subsequent", "playback-dynamics",
 				velocityFactorAtBeat);
 
-			if (latestDynamicsType.get2().getBeat().compareTo(position.getBeat()) != 0)
+			if (latestDynamicsType.get2().getBeat().compareTo(mp.getBeat()) != 0)
 			{
 				if (subsequentVelocityFactor != -1)
 				{
@@ -236,47 +218,38 @@ public final class MidiVelocityConverter
 		return MathTools.clamp(velocity, 0, 127);
 	}
 	
-	private static Tuple2<DynamicsType, ScorePosition> getLatestDynamicsType(Staff staff,
-		int voiceNumber, ScorePosition position)
+	
+	private static Tuple2<DynamicsType, MP> getLatestDynamicsType(Staff staff,
+		int voiceNumber, MP mp, Globals globals)
 	{
-		Tuple2<DynamicsType, ScorePosition> latestDynamicsType = getLatestDynamicsBeforePosition(
-			staff, voiceNumber, position);
-		int iMeasure = position.getMeasure() - 1;
+		Tuple2<DynamicsType, MP> latestDynamicsType = getLatestDynamicsBeforePosition(
+			staff, voiceNumber, mp, globals);
+		int iMeasure = mp.getMeasure() - 1;
 		while (iMeasure >= 0 && latestDynamicsType == null)
 		{
-			latestDynamicsType = getLatestDynamicsInMeasure(staff, voiceNumber, iMeasure);
+			latestDynamicsType = getLatestDynamicsInMeasure(staff, voiceNumber, iMeasure, globals);
 			iMeasure--;
 		}
 		return latestDynamicsType;
 	}
 
 
-	private static Tuple2<DynamicsType, ScorePosition> getLatestDynamicsBeforePosition(
-		Staff staff, int voiceNumber, ScorePosition position)
+	private static Tuple2<DynamicsType, MP> getLatestDynamicsBeforePosition(
+		Staff staff, int voiceNumber, MP position, Globals globals)
 	{
 		Measure measure = staff.getMeasures().get(position.getMeasure());
 		Voice voice = measure.getVoices().get(voiceNumber);
-		RAList<MusicElement> elements = voice.getElements();
-		Tuple2<DynamicsType, ScorePosition> type = null;
-		for (MusicElement element : elements)
+		Tuple2<DynamicsType, MP> type = null;
+		for (VoiceElement element : voice.getElements())
 		{
-			if (element instanceof DurationElement)
+			MP elementMP = globals.getMP(element);
+			if (elementMP.getBeat().compareTo(position.getBeat()) < 1)
 			{
-				if (element.getScorePosition().getBeat().compareTo(position.getBeat()) < 1)
+				for (Attachable attachment : globals.getAttachments().get(element))
 				{
-					DurationElement durationElement = (DurationElement) element;
-					List<Direction> directions = durationElement.getDirections();
-					if (directions != null)
+					if (attachment instanceof Dynamics)
 					{
-						for (Direction direction : directions)
-						{
-							if (direction instanceof Dynamics)
-							{
-								type = new Tuple2<DynamicsType, ScorePosition>(
-									((Dynamics) direction).getType(), element
-										.getScorePosition());
-							}
-						}
+						type = t(((Dynamics) attachment).getType(), elementMP);
 					}
 				}
 			}
@@ -285,33 +258,20 @@ public final class MidiVelocityConverter
 	}
 
 
-	private static Tuple2<DynamicsType, ScorePosition> getLatestDynamicsInMeasure(
-		Staff staff, int voiceNumber, int measureNumber)
+	private static Tuple2<DynamicsType, MP> getLatestDynamicsInMeasure(
+		Staff staff, int voiceNumber, int measureNumber, Globals globals)
 	{
 		Measure measure = staff.getMeasures().get(measureNumber);
 		if (voiceNumber < measure.getVoices().size())
 		{
 			Voice voice = measure.getVoices().get(voiceNumber);
-			RAList<MusicElement> elements = voice.getElements();
-			int size = elements.size();
-			for (int i = size - 1; i >= 0; i--)
+			for (VoiceElement element : reverseIt(voice.getElements()))
 			{
-				MusicElement musicElement = elements.get(i);
-				if (musicElement instanceof DurationElement)
+				for (Attachable attachment : globals.getAttachments().get(element))
 				{
-					DurationElement dur = (DurationElement) musicElement;
-					List<Direction> directions = dur.getDirections();
-					if (directions != null)
+					if (attachment instanceof Dynamics)
 					{
-						for (Direction direction : directions)
-						{
-							if (direction instanceof Dynamics)
-							{
-								return new Tuple2<DynamicsType, ScorePosition>(
-									((Dynamics) direction).getType(), musicElement
-										.getScorePosition());
-							}
-						}
+						return t(((Dynamics) attachment).getType(), globals.getMP(element));
 					}
 				}
 			}

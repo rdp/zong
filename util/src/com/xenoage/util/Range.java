@@ -17,7 +17,7 @@ import java.util.Iterator;
  * @author Andreas Wenger
  * @author Uli Teschemacher
  */
-public class Range
+public final class Range
 	implements Iterable<Integer>
 {
 	
@@ -26,8 +26,7 @@ public class Range
 	
 	
 	/**
-	 * Creates a new range between the given two
-	 * values (both inclusive).
+	 * Creates a new range between the given two values (both inclusive).
 	 */
 	public Range(int start, int stop)
 	{
@@ -37,12 +36,38 @@ public class Range
 	
 	
 	/**
+	 * Creates a new range between the given two values (both inclusive).
+	 */
+	public static Range range(int start, int stop)
+	{
+		return new Range(start, stop);
+	}
+	
+	
+	/**
+	 * Creates a new range between 0 and the given value (inclusive).
+	 */
+	public static Range range(int stop)
+	{
+		return new Range(0, stop);
+	}
+	
+	
+	/**
 	 * Creates a new range for all indices within the given collection.
 	 */
-	public <T> Range(Collection<T> collection)
+	public static <T> Range range(Collection<T> collection)
 	{
-		this.start = 0;
-		this.stop = collection.size() - 1;
+		return new Range(0, collection.size() - 1);
+	}
+	
+	
+	/**
+	 * Creates a new range for all indices within the given array.
+	 */
+	public static <T> Range range(T... a)
+	{
+		return new Range(0, a.length - 1);
 	}
 	
 	

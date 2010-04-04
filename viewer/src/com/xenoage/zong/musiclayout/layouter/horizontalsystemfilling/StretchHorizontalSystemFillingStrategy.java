@@ -97,13 +97,14 @@ public class StretchHorizontalSystemFillingStrategy
   					//stretch the offset
   					newSEs[iElement] = oldSE.changeOffset(oldSE.getOffset() * stretch);
   				}
-  				newVSs[iVoice] = new VoiceSpacing(oldVS.getVoice(), newSEs);
+  				newVSs[iVoice] = new VoiceSpacing(oldVS.getVoice(), oldVS.getInterlineSpace(), newSEs);
   			}
-  			newMeasureSpacings[iMeasure] = new MeasureSpacing(oldMS.getMeasure(), newVSs, oldMS.getLeadingSpacing());
+  			newMeasureSpacings[iMeasure] = new MeasureSpacing(
+  				oldMS.getMP(), newVSs, oldMS.getLeadingSpacing());
   		}
   		
-  		newMCSpacings[iColumn] = new MeasureColumnSpacing(newMeasureSpacings,
-  			newBeatOffsets, newBarlineOffsets);
+  		newMCSpacings[iColumn] = new MeasureColumnSpacing(column.getScore(),
+  			newMeasureSpacings, newBeatOffsets, newBarlineOffsets);
   		
   	}
   	

@@ -1,10 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.enums.VSide;
-import com.xenoage.zong.data.music.Articulation;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.StemDirection;
-import com.xenoage.zong.data.music.Articulation.Type;
+import com.xenoage.zong.core.music.chord.Articulation;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
+import com.xenoage.zong.core.music.chord.Articulation.Type;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.chord.ArticulationAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.ArticulationsAlignment;
@@ -28,7 +29,7 @@ public class ArticulationsAlignmentStrategy
 	 * using the given note alignments and the given stem direction (optional),
 	 * and returns it. If there are no articulations, null is returned.
 	 */
-	public ArticulationsAlignment computeArticulationsAlignment(ChordData data,
+	public ArticulationsAlignment computeArticulationsAlignment(Chord chord,
 		StemDirection stemDirection, NotesAlignment notesAlignment, int staffLinesCount)
 	{
 		//depending on the stem direction, place the articulation on the other side.
@@ -38,7 +39,7 @@ public class ArticulationsAlignmentStrategy
 		NoteAlignment outerNote = (side == VSide.Top ? notesAlignment.getTopNoteAlignment() :
 			notesAlignment.getBottomNoteAlignment());
 		//compute alignment of articulations
-		return computeArticulationsAlignment(data.getArticulations(),
+		return computeArticulationsAlignment(chord.getArticulations(),
 			outerNote, side, staffLinesCount);
 	}
 	
@@ -48,19 +49,20 @@ public class ArticulationsAlignmentStrategy
    * at the given side, or null if there are no articulations.
    */
 	ArticulationsAlignment computeArticulationsAlignment(
-  	Articulation[] articulations, NoteAlignment outerNote, VSide side, int staffLinesCount)
+  	Vector<Articulation> articulations, NoteAlignment outerNote, VSide side, int staffLinesCount)
   {
 		//if there are no accidentals, return null
-		if (articulations == null || articulations.length == 0)
+		if (articulations == null || articulations.size() == 0)
 		{
 			return null;
 		}
     //special cases (which appear often): if there is only a single articulation
 		//which is either a staccato or tenuto, we can place it between the staff lines
-		if (articulations.length == 1 &&
-			(articulations[0].getType() == Type.Staccato || articulations[0].getType() == Type.Tenuto))
+		if (articulations.size() == 1 &&
+			(articulations.getFirst().getType() == Type.Staccato ||
+				articulations.getFirst().getType() == Type.Tenuto))
 		{
-			return computeSimpleArticulation(articulations[0], outerNote, side, staffLinesCount);
+			return computeSimpleArticulation(articulations.getFirst(), outerNote, side, staffLinesCount);
 		}
     //otherwise, the articulations a placed above or below the staff
 		else
@@ -100,7 +102,7 @@ public class ArticulationsAlignmentStrategy
 	 * outside the staff lines. The first one is placed as the innermost articulation,
 	 * the last one as the outermost one.
 	 */
-	ArticulationsAlignment computeOtherArticulations(Articulation[] articulations,
+	ArticulationsAlignment computeOtherArticulations(Vector<Articulation> articulations,
 		NoteAlignment outerNote, VSide side, int staffLinesCount)
 	{
 		//compute LP of the first articulation:
@@ -111,11 +113,11 @@ public class ArticulationsAlignmentStrategy
 			lp = (side == VSide.Top ? (staffLinesCount - 1) * 2 + 1 : -1);
 		}
 		//collect ArticulationAlignments
-		ArticulationAlignment[] aa = new ArticulationAlignment[articulations.length];
-		for (int i = 0; i < articulations.length; i++)
+		ArticulationAlignment[] aa = new ArticulationAlignment[articulations.size()];
+		for (int i = 0; i < articulations.size(); i++)
 		{
 			aa[i] = new ArticulationAlignment(lp + 2 * i * side.getDir(),
-				outerNote.getOffset(), articulations[i].getType());
+				outerNote.getOffset(), articulations.get(i).getType());
 		}
 		//total height: 1 IS for each articulation
 		float totalHeightIS = Math.abs(lp - outerNote.getLinePosition()) / 2;

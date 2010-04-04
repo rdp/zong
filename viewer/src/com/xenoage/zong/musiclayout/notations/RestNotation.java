@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.notations;
 
-import com.xenoage.zong.data.music.Rest;
+import com.xenoage.zong.core.music.rest.Rest;
 import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
 
 

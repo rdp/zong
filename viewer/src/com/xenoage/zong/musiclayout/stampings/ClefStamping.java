@@ -1,11 +1,12 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.clef.ClefType;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.clef.ClefType;
 
 
 /**
@@ -35,7 +36,7 @@ public class ClefStamping
     StaffStamping parentStaff, float xPosition, float scaling)
   {
     super(parentStaff, clef, null,
-      new SP(xPosition + clefWidth / 2 *
+      sp(xPosition + clefWidth / 2 *
         parentStaff.getInterlineSpace(),
         clef.getType().getLine()),
       scaling, false);

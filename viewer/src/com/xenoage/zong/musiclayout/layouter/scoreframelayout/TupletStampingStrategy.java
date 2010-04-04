@@ -2,8 +2,8 @@ package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.TupletInfo;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.tuplet.Tuplet;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextParagraph;
 import com.xenoage.zong.data.text.FormattedTextSymbol;
@@ -34,14 +34,14 @@ public class TupletStampingStrategy
 	 * Computes the {@link TupletStamping} for the given {@link ChordStampings}
 	 * and returns it. 
 	 */
-	public TupletStamping createTupletStamping(TupletInfo tuplet, OpenTupletsCache cache)
+	public TupletStamping createTupletStamping(Tuplet tuplet, OpenTupletsCache cache)
 	{
-		StaffStamping ss = cache.getChord(tuplet.getFirstChord()).staffStamping;
+		StaffStamping ss = cache.getChord(tuplet.getChords().getFirst(), tuplet).staffStamping;
 		
 		//horizontal position of the bracket
 		float xDistance = ss.getInterlineSpace() / 4;
-		float x1Mm = cache.getChord(tuplet.getFirstChord()).positionX - xDistance;
-		ChordStampings cs2 = cache.getChord(tuplet.getLastChord());
+		float x1Mm = cache.getChord(tuplet.getChords().getFirst(), tuplet).positionX - xDistance;
+		ChordStampings cs2 = cache.getChord(tuplet.getChords().getLast(), tuplet);
 		float cs2Width = ss.getInterlineSpace() * 1.2f; //TODO: notehead width!
 		float x2Mm = cs2.positionX + cs2Width + xDistance;
 		
@@ -50,7 +50,7 @@ public class TupletStampingStrategy
 		int stemDir = 0;
 		for (Chord chord : tuplet.getChords())
 		{
-			ChordStampings cs = cache.getChord(chord);
+			ChordStampings cs = cache.getChord(chord, tuplet);
 			if (cs.stem != null)
 			{
 				stemDir += cs.stem.getDirection();
@@ -63,8 +63,10 @@ public class TupletStampingStrategy
 		//when there is no stem, the innermost notehead is used
 		//TODO: if stems of inner chords are longer, correct!
 		float distanceLp = 1.5f * 2;
-		float y1Lp = computeBracketLP(cache.getChord(tuplet.getFirstChord()), placement, distanceLp);
-		float y2Lp = computeBracketLP(cache.getChord(tuplet.getLastChord()), placement, distanceLp);
+		float y1Lp = computeBracketLP(cache.getChord(tuplet.getChords().getFirst(), tuplet),
+			placement, distanceLp);
+		float y2Lp = computeBracketLP(cache.getChord(tuplet.getChords().getLast(), tuplet),
+			placement, distanceLp);
 		
 		//bracket always outside of staff lines
 		//at least 2 IS over top barline / under bottom barline

@@ -3,8 +3,7 @@ package com.xenoage.zong.musiclayout.layouter.cache;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.xenoage.util.InstanceID;
-import com.xenoage.zong.data.music.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
 import com.xenoage.zong.musiclayout.layouter.cache.util.CurvedLineCache;
 
 
@@ -18,8 +17,9 @@ public class OpenCurvedLinesCache
 	implements Iterable<CurvedLineCache>
 {
 	
-	//slurs and ties, which are not stamped completely yet (key: InstanceID of the CurvedLine)
-	private HashMap<InstanceID, CurvedLineCache> openCurvedLines = new HashMap<InstanceID, CurvedLineCache>();
+	//slurs and ties, which are not stamped completely yet
+	private HashMap<CurvedLine, CurvedLineCache> openCurvedLines =
+		new HashMap<CurvedLine, CurvedLineCache>();
 	
 	
 	/**
@@ -27,7 +27,7 @@ public class OpenCurvedLinesCache
 	 */
 	public void add(CurvedLineCache tiedChords)
 	{
-		openCurvedLines.put(tiedChords.getCurvedLine().getInstanceID(), tiedChords);
+		openCurvedLines.put(tiedChords.getCurvedLine(), tiedChords);
 	}
 	
 	
@@ -37,7 +37,7 @@ public class OpenCurvedLinesCache
 	 */
 	public CurvedLineCache get(CurvedLine curvedLine)
 	{
-		return openCurvedLines.get(curvedLine.getInstanceID());
+		return openCurvedLines.get(curvedLine);
 	}
 	
 	
@@ -47,7 +47,7 @@ public class OpenCurvedLinesCache
 	 */
 	public void remove(CurvedLine curvedLine)
 	{
-		openCurvedLines.remove(curvedLine.getInstanceID());
+		openCurvedLines.remove(curvedLine);
 	}
 	
 	

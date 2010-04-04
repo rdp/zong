@@ -3,11 +3,11 @@ package com.xenoage.zong.io.musicxml.in;
 import static com.xenoage.util.NullTools.notNull;
 
 import com.xenoage.util.iterators.ClassFilterIt;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.StavesList;
-import com.xenoage.zong.data.instrument.Instrument;
-import com.xenoage.zong.data.music.BracketGroupStyle;
-import com.xenoage.zong.data.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.instrument.Instrument;
+import com.xenoage.zong.core.music.StavesList;
+import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
 import com.xenoage.util.exceptions.InvalidFormatException;
 
 import java.math.BigInteger;
@@ -45,7 +45,6 @@ import proxymusic.ScorePartwise.Part.Measure;
 class MxlStavesList
 {
   
-  //the final StavesList
   private final StavesList stavesList;
   
   
@@ -189,7 +188,7 @@ class MxlStavesList
    */
   private StavesList createStavesList(Score parentScore, List<MxlPartInfo> parts, List<MxlGroupInfo> groups)
   {
-  	StavesList ret = new StavesList(parentScore);
+  	StavesList ret = StavesList.empty();
     //add parts
     for (MxlPartInfo part : parts)
     {
@@ -200,11 +199,11 @@ class MxlStavesList
     		//currently use only one instrument per part
     		instrument = part.getInstruments().get(0); 
     	}
-      com.xenoage.zong.data.Part p = new com.xenoage.zong.data.Part(
+      com.xenoage.zong.core.music.Part p = new com.xenoage.zong.core.music.Part(
       	part.getMxlScorePart().getPartName().getValue(),
       	(mxlPartAbbr != null ? mxlPartAbbr.getValue() : null),
       	part.getMaxStaves(), instrument);
-      ret.addPart(p, part.getMeasuresCount());
+      ret = ret.plusPart(p, part.getMeasuresCount());
     }
     //add groups
     for (MxlGroupInfo group : groups)
@@ -225,7 +224,7 @@ class MxlStavesList
       		case MENSURSTRICH:
       			style = BarlineGroupStyle.Mensurstrich; break;
         }
-      	ret.addBarlineGroup(startIndex, endIndex, style);
+      	ret = ret.plusBarlineGroup(startIndex, endIndex, style);
       }
       if (mxlPartGroup.getGroupSymbol() != null)
       {
@@ -244,7 +243,7 @@ class MxlStavesList
       	}
         if (style != null)
         {
-        	ret.addBracketGroup(startIndex, endIndex, style);
+        	ret = ret.plusBracketGroup(startIndex, endIndex, style);
         }
       }
     }
@@ -256,8 +255,8 @@ class MxlStavesList
       {
         int startIndex = getFirstStaffIndex(i, parts);
         int endIndex = getLastStaffIndex(i, parts);
-        ret.addBarlineGroup(startIndex, endIndex, BarlineGroupStyle.Common);
-        ret.addBracketGroup(startIndex, endIndex, BracketGroupStyle.Brace);
+        ret = ret.plusBarlineGroup(startIndex, endIndex, BarlineGroupStyle.Common);
+        ret = ret.plusBracketGroup(startIndex, endIndex, BracketGroupStyle.Brace);
       }
     }
     return ret;

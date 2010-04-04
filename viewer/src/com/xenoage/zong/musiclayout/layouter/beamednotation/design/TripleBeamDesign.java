@@ -2,7 +2,7 @@ package com.xenoage.zong.musiclayout.layouter.beamednotation.design;
 
 import static com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureSingleStaffStrategy.isBeamOutsideStaff;
 
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.StemDirection;
 
 
 /**

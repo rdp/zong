@@ -1,7 +1,7 @@
 package com.xenoage.zong.commands.input;
 
 import com.xenoage.zong.commands.Command;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 
 
 /**

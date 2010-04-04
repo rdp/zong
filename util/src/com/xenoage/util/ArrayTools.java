@@ -1,5 +1,7 @@
 package com.xenoage.util;
 
+import static com.xenoage.util.Range.range;
+
 import com.xenoage.util.math.Fraction;
 
 import java.util.ArrayList;
@@ -69,6 +71,26 @@ public class ArrayTools
     for (int i = 0; i < a.length; i++)
       ret[i] = a[i];
     return ret;
+  }
+  
+  
+  public static <T> int indexOf(T[] a, T e)
+  {
+  	for (int i : range(a))
+  	{
+  		if (a[i] == null)
+  		{
+  			if (e == null)
+  			{
+  				return i;
+  			}
+  		}
+  		else if (a[i].equals(e))
+  		{
+  			return i;
+  		}
+  	}
+  	return -1;
   }
   
   

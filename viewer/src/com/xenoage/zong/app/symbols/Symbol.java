@@ -2,7 +2,6 @@ package com.xenoage.zong.app.symbols;
 
 import com.xenoage.util.math.*;
 import com.xenoage.zong.renderer.GLGraphicsContext;
-import com.xenoage.zong.renderer.RenderingQuality;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

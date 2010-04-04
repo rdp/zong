@@ -1,109 +1,98 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
+import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.MP.mp0;
+import static com.xenoage.zong.core.music.Pitch.pi;
+import static com.xenoage.zong.core.music.barline.Barline.createBackwardRepeatBarline;
+import static com.xenoage.zong.core.music.barline.Barline.createForwardRepeatBarline;
+import static com.xenoage.zong.core.music.chord.ChordFactory.chord;
+
 import com.xenoage.util.Range;
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Part;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.data.music.Staff;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.Volta;
-import com.xenoage.zong.data.music.barline.Barline;
-import com.xenoage.zong.data.music.barline.BarlineStyle;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.clef.ClefType;
-import com.xenoage.zong.data.music.key.TraditionalKey;
-import com.xenoage.zong.data.music.time.NormalTime;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.ColumnElement;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Part;
+import com.xenoage.zong.core.music.barline.BarlineStyle;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.clef.ClefType;
+import com.xenoage.zong.core.music.key.TraditionalKey;
+import com.xenoage.zong.core.music.time.NormalTime;
+import com.xenoage.zong.core.music.volta.Volta;
+import com.xenoage.zong.io.score.ScoreController;
+import com.xenoage.zong.io.score.selections.Cursor;
 
 
 /**
- * @author Uli
- * 
+ * @author Uli Teschemacher
  */
 public class MidiRepetitionCalculatorTry
 {
 
 	public static Score createRepetitionDemoScore1()
 	{
-		Score ret = new Score();
-		Part pianoPart = ret.addPart(0, 1);
-		Staff staff;
+		Score score = Score.empty();
+		Part pianoPart = new Part("", null, 1, null);
+		score = score.plusPart(pianoPart);
+		//measure 0
+		Cursor cursor = new Cursor(score, mp0, true);
+		cursor = cursor.write(new Clef(ClefType.G));
+		cursor = cursor.write((ColumnElement) new TraditionalKey(-3));
+		cursor = cursor.write(new NormalTime(3, 4));
 
-		ret.addEmptyMeasures(9);
-		staff = ret.getStaff(ret.getPartStartIndex(pianoPart));
+		cursor = cursor.write(chord(pi('C', 0, 4), fr(1, 4)));
+		cursor = cursor.write(createForwardRepeatBarline(BarlineStyle.HeavyLight));
+		cursor = cursor.write(chord(pi('D', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('E', 0, 4), fr(1, 4)));
 
-		Measure measure = staff.getMeasures().get(0);
-		measure.addNoVoiceElement(new Clef(ClefType.G));
-		measure.addNoVoiceElement(new TraditionalKey(-3));
-		measure.addNoVoiceElement(new NormalTime(3, 4));
+		//measure 1
+		cursor = cursor.write(chord(pi('D', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('E', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('F', 0, 4), fr(1, 4)));
+		cursor = cursor.withScore(ScoreController.writeColumnEndBarline(
+			cursor.getScore(), 1, createBackwardRepeatBarline(BarlineStyle.LightHeavy, 2)));
 
-		Voice voice;
+		//measure 2
+		cursor = cursor.withScore(ScoreController.writeColumnEndBarline(
+			cursor.getScore(), 2, createForwardRepeatBarline(BarlineStyle.HeavyLight)));
+		cursor = cursor.write(chord(pi('E', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('F', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('G', 0, 4), fr(1, 4)));
 
-		voice = measure.getVoices().get(0);
-		voice.addNote(new Pitch('C', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('D', 0, 4), new Fraction(1, 4));
-		ret.getScoreHeader().getMeasureColumnHeader(0).addMiddleBarline(Barline.createForwardRepeatBarline(BarlineStyle.HeavyLight), new Fraction(1,4));
-		voice.addNote(new Pitch('E', 0, 4), new Fraction(1, 4));
+		//measure 3
+		cursor = cursor.write(chord(pi('F', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('G', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('A', 0, 4), fr(1, 4)));
 
-		measure = staff.getMeasures().get(1);
-		voice = measure.getVoices().get(0);
-		voice.addNote(new Pitch('D', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('E', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('F', 0, 4), new Fraction(1, 4));
-		ret.getScoreHeader().getMeasureColumnHeader(1).setEndBarline(Barline.createBackwardRepeatBarline(BarlineStyle.LightHeavy, 2));
+		//measure 4
+		cursor = cursor.write(new Volta(1,new Range(1,2),null,true));
+		cursor = cursor.write(chord(pi('B', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('A', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('F', 0, 4), fr(1, 4)));
+		cursor = cursor.withScore(ScoreController.writeColumnEndBarline(
+			cursor.getScore(), 4, createBackwardRepeatBarline(BarlineStyle.LightHeavy, 2)));
 
-		measure = staff.getMeasures().get(2);
-		voice = measure.getVoices().get(0);
-		ret.getScoreHeader().getMeasureColumnHeader(2).setStartBarline(Barline.createForwardRepeatBarline(BarlineStyle.HeavyLight));
-		voice.addNote(new Pitch('E', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('F', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
+		//measure 5
+		cursor = cursor.write(new Volta(1,new Range(3,3),null,true));
+		cursor = cursor.write(chord(pi('E', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('D', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('C', 0, 4), fr(1, 4)));
 
-		measure = staff.getMeasures().get(3);
-		voice = measure.getVoices().get(0);
-		voice.addNote(new Pitch('F', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('A', 0, 4), new Fraction(1, 4));
+		//measure 6
+		cursor = cursor.write(new Volta(2,null,null,false));
+		cursor = cursor.write(chord(pi('E', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('F', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('G', 0, 4), fr(1, 4)));
 
-		measure = staff.getMeasures().get(4);
-		voice = measure.getVoices().get(0);
-		ret.getScoreHeader().getMeasureColumnHeader(4).setVolta(new Volta(1,new Range(1,2),null,true));
-		voice.addNote(new Pitch('B', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('A', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('F', 0, 4), new Fraction(1, 4));
-		ret.getScoreHeader().getMeasureColumnHeader(4).setEndBarline(Barline.createBackwardRepeatBarline(BarlineStyle.LightHeavy, 2));
+		//measure 7
+		cursor = cursor.write(chord(pi('E', 0, 5), fr(1, 4)));
+		cursor = cursor.write(chord(pi('F', 0, 5), fr(1, 4)));
+		cursor = cursor.write(chord(pi('G', 0, 5), fr(1, 4)));
 
-		measure = staff.getMeasures().get(5);
-		voice = measure.getVoices().get(0);
-		ret.getScoreHeader().getMeasureColumnHeader(5).setVolta(new Volta(1,new Range(3,3),null,true));
-		voice.addNote(new Pitch('E', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('D', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('C', 0, 4), new Fraction(1, 4));
+		//measure 8
+		cursor = cursor.write(chord(pi('E', 0, 4), fr(1, 4)));
+		cursor = cursor.write(chord(pi('F', 0, 5), fr(1, 4)));
+		cursor = cursor.write(chord(pi('G', 0, 5), fr(1, 4)));
 
-		measure = staff.getMeasures().get(6);
-		ret.getScoreHeader().getMeasureColumnHeader(6).setVolta(new Volta(2,null,null,false));
-		voice = measure.getVoices().get(0);
-		voice.addNote(new Pitch('E', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('F', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('G', 0, 4), new Fraction(1, 4));
-
-		measure = staff.getMeasures().get(7);
-		voice = measure.getVoices().get(0);
-		voice.addNote(new Pitch('E', 0, 5), new Fraction(1, 4));
-		voice.addNote(new Pitch('F', 0, 5), new Fraction(1, 4));
-		voice.addNote(new Pitch('G', 0, 5), new Fraction(1, 4));
-
-		measure = staff.getMeasures().get(8);
-		voice = measure.getVoices().get(0);
-		voice.addNote(new Pitch('E', 0, 4), new Fraction(1, 4));
-		voice.addNote(new Pitch('F', 0, 5), new Fraction(1, 4));
-		voice.addNote(new Pitch('G', 0, 5), new Fraction(1, 4));
-
-		
-		return ret;
+		return cursor.getScore();
 	}
 }

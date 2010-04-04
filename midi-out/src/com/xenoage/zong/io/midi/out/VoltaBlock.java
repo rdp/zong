@@ -1,20 +1,16 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
 import java.util.HashMap;
 import java.util.Set;
 
 import com.xenoage.util.Range;
-import com.xenoage.zong.data.music.Volta;
+import com.xenoage.zong.core.music.volta.Volta;
 
 
 /**
  * This class packs a number of connected {@link Volta}s to one block.
  * 
  * @author Uli Teschemacher
- * 
  */
 public class VoltaBlock
 {

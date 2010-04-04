@@ -11,6 +11,8 @@ import java.util.Iterator;
  * This is better than just using </code>Collections.unmodifiableList(...)</code>,
  * because trying to call a modification method leads to a compiler
  * error instead of a runtime error.
+ * @deprecated Anyway, use the Vector class instead since it implements the
+ * Collection interface.
  * 
  * @author Andreas
  */

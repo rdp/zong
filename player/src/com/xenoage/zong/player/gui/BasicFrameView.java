@@ -1,7 +1,7 @@
 package com.xenoage.zong.player.gui;
 
 import com.xenoage.util.io.IO;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.player.Player;
 
 import java.awt.Component;

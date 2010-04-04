@@ -6,9 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.io.score.ScoreInput;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.io.score.selections.Cursor;
 import com.xenoage.zong.io.score.selections.Selection;
 import com.xenoage.zong.musiclayout.continued.ContinuedElement;
@@ -55,10 +54,10 @@ public final class ScoreLayout
   
   
   /**
-   * Computes and returns the appropriate score layout position
+   * Computes and returns the appropriate musical position
    * to the given metric position, or null, if unknown.
    */
-  public ScorePosition computeScorePosition(ScoreLayoutPosition coordinates)
+  public MP computeMP(ScoreLayoutPosition coordinates)
   {
     if (coordinates == null)
       return null;
@@ -74,7 +73,7 @@ public final class ScoreLayout
     else
     {
       float posX = coordinates.getX() - staff.getPosition().x;
-      return staff.getScorePositionAtX(posX);
+      return staff.getMPAtX(posX);
     }
   }
   
@@ -82,9 +81,9 @@ public final class ScoreLayout
   /**
    * Computes and returns the staff stamping and the x-coordinate in mm
    * relative to the position of the staff stamping
-   * at the given musical score position.
+   * at the given musical position.
    */
-  public StaffStampingPosition computeStaffStampingPosition(ScorePosition position)
+  public StaffStampingPosition computeStaffStampingPosition(MP mp)
   {
     //go through all staff stampings and look for the given staff index
     //and measure index
@@ -96,11 +95,11 @@ public final class ScoreLayout
       ScoreFrameLayout frame = frames.get(iFrame);
       for (StaffStamping s : frame.getStaffStampings())
       {
-        if (s.getStaffIndex() == position.getStaff())
+        if (s.getStaffIndex() == mp.getStaff())
         {
           //this staff stamping is part of the correct scorewide staff.
           //look if it contains the given musical score position
-          Float posX = s.getXMmAt(position);
+          Float posX = s.getXMmAt(mp);
           if (posX != null)
           {
             //we found it. return staff and position
@@ -146,7 +145,7 @@ public final class ScoreLayout
   /**
    * Updates the selection stampings of this layout.
    */
-  public void updateSelections(ScoreInput input)
+  public void updateSelections()
   {
     //selections
     ArrayList<LinkedList<Stamping>> selections =
@@ -155,12 +154,12 @@ public final class ScoreLayout
     {
     	selections.add(new LinkedList<Stamping>());
     }
-    Selection selection = input.getSelection();
+    Selection selection = null; //TODO input.getSelection();
     if (selection != null && selection instanceof Cursor)
     {
       Cursor cursor = (Cursor) selection;
       StaffStampingPosition ssp =
-        computeStaffStampingPosition(cursor.getScorePosition());
+        computeStaffStampingPosition(cursor.getMP());
       if (ssp != null)
       {
         StaffCursorStamping scs = new StaffCursorStamping(ssp.getStaff(), ssp.getPositionX(), -0.5f);

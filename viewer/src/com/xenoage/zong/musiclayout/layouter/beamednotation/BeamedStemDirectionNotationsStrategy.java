@@ -1,9 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation;
 
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.Beam.HorizontalSpan;
-import com.xenoage.zong.data.music.Beam.VerticalSpan;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.Beam.HorizontalSpan;
+import com.xenoage.zong.core.music.beam.Beam.VerticalSpan;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.direction.SingleMeasureSingleStaffStrategy;
@@ -62,18 +64,20 @@ public class BeamedStemDirectionNotationsStrategy
 	public NotationsCache computeNotations(Beam beam,
 		NotationsCache notations, ScoreLayouterContext lc)
 	{
+		Score score = lc.getScore();
+		Globals globals = score.getGlobals();
+		
 		//choose appropriate strategy
-		if (beam.getHorizontalSpan() == HorizontalSpan.SingleMeasure)
+		if (beam.getHorizontalSpan(globals) == HorizontalSpan.SingleMeasure)
 		{
-			if (beam.getVerticalSpan() == VerticalSpan.SingleStaff)
+			if (beam.getVerticalSpan(globals) == VerticalSpan.SingleStaff)
 			{
-				Measure measure = beam.getFirstMeasure();
-				int measureIndex = beam.getFirstMeasureIndex();
+				MP firstMP = globals.getMP(beam.getFirstWaypoint().getChord());
 				return singleMeasureSingleStaffStrategy.computeNotations(
-					beam, measure.getStaff().getIndex(), measureIndex,
-					notations, measure.getLinesCount(), lc);
+					beam, firstMP.getStaff(), firstMP.getMeasure(),
+					notations, score.getStaff(firstMP).getLinesCount(), lc);
 			}
-			else if (beam.getVerticalSpan() == VerticalSpan.TwoAdjacentStaves)
+			else if (beam.getVerticalSpan(globals) == VerticalSpan.TwoAdjacentStaves)
 			{
 				return singleMeasureTwoStavesStrategy.computeNotations(
 					beam, notations, lc);

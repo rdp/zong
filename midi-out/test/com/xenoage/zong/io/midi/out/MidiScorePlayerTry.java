@@ -1,13 +1,10 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
 import javax.sound.midi.MidiUnavailableException;
 
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.util.demo.ScoreDemo;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.util.demo.ScoreRevolutionary;
 
 
 /**
@@ -23,8 +20,8 @@ public class MidiScorePlayerTry
 	public static void main(String args[])
 		throws MidiUnavailableException
 	{
+		Score score = ScoreRevolutionary.createScore();
 		SynthManager.init(false);
-		Score score = ScoreDemo.createDemoScore32Measures();
 		MidiScorePlayer player = new MidiScorePlayer();
 		player.addPlaybackListener(new MidiScorePlayerTry());
 		player.openScore(score);
@@ -49,13 +46,13 @@ public class MidiScorePlayerTry
 	{
 	}
 
-	@Override public void playbackAtScorePosition(ScorePosition position)
+	@Override public void playbackAtMP(MP position)
 	{
 		System.out.println(position.toString());
 	}
 
 	
-	@Override public void playbackStopped(ScorePosition position)
+	@Override public void playbackStopped(MP position)
 	{
 	}
 	

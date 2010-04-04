@@ -1,11 +1,13 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.util.math.Rectangle2f;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
 
@@ -104,7 +106,7 @@ public class FlagsStamping
   	for (int i = 0; i < flagsCount; i++)
     {
   		StaffSymbolStampingRenderer.paint(symbol, null,
-  			new SP(position.xMm, position.yLp + //TODO: flag position is not correct yet
+  			sp(position.xMm, position.yLp + //TODO: flag position is not correct yet
           flagsDistance * 0.2f /* move a little bit into the stem */ +
             i * 2 * flagsDistance), 1, parentStaff, flagsMirrored, params);
     }

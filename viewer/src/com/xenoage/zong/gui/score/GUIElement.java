@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import com.xenoage.util.math.Point2i;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.util.math.Size2i;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.data.text.FormattedTextStyle;
 import com.xenoage.zong.gui.score.effects.EffectType;

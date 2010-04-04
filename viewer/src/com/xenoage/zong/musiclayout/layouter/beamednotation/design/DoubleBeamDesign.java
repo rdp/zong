@@ -1,9 +1,8 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.design;
 
-import static com.xenoage.zong.data.music.StemDirection.*;
 import static com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureSingleStaffStrategy.isBeamOutsideStaff;
 
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.StemDirection;
 
 
 /**
@@ -55,7 +54,7 @@ public class DoubleBeamDesign
 			//dependent on the staffLinesCount.
 			int linepositionstart = (int) ((startLP * 2 + 1000) % 4);
 			int linepositionend = (int) (((startLP + slantIS * 2) * 2 + 1000) % 4);
-			if (stemDirection == Down)
+			if (stemDirection == StemDirection.Down)
 			{
 				if (startLP <= 4 && startLP + slantIS * 2 <= 4)
 				{

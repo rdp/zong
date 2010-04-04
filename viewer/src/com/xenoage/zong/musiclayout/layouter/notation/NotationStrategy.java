@@ -1,35 +1,41 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
+import static com.xenoage.zong.core.music.Pitch.pi;
+import static com.xenoage.zong.core.music.util.BeatInterval.BeforeOrAt;
+import static com.xenoage.zong.io.score.ScoreController.getInterlineSpace;
+import static com.xenoage.zong.io.score.ScoreController.getMusicContext;
+
 import java.awt.Font;
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.Range;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.util.xml.XMLReader;
 import com.xenoage.zong.app.symbols.SymbolPool;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.controller.ScoreController;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Direction;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.data.music.Rest;
-import com.xenoage.zong.data.music.StemDirection;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.key.TraditionalKey;
-import com.xenoage.zong.data.music.text.Lyric;
-import com.xenoage.zong.data.music.text.Lyric.SyllableType;
-import com.xenoage.zong.data.music.time.NormalTime;
-import com.xenoage.zong.data.music.transpose.Transpose;
-import com.xenoage.zong.data.music.util.Endpoint;
-import com.xenoage.zong.data.music.util.MeasureColumn;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.InstrumentChange;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.direction.Direction;
+import com.xenoage.zong.core.music.key.TraditionalKey;
+import com.xenoage.zong.core.music.rest.Rest;
+import com.xenoage.zong.core.music.text.Lyric;
+import com.xenoage.zong.core.music.text.Lyric.SyllableType;
+import com.xenoage.zong.core.music.time.NormalTime;
+import com.xenoage.zong.core.music.util.BeatInterval;
+import com.xenoage.zong.core.music.util.Column;
+import com.xenoage.zong.io.score.ScoreController;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
@@ -44,7 +50,7 @@ import com.xenoage.zong.musiclayout.notations.chord.ArticulationsAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.StemAlignment;
 import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
-import com.xenoage.zong.util.exceptions.InvalidScorePositionException;
+import com.xenoage.zong.util.exceptions.IllegalMPException;
 import com.xenoage.util.io.IO;
 import com.xenoage.util.logging.Log;
 import com.xenoage.util.text.TextMeasurer;
@@ -158,7 +164,7 @@ public class NotationStrategy
 		Score score = lc.getScore();
 		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
 		{
-			MeasureColumn measureColumn = score.getMeasureColumn(iMeasure);
+			Column measureColumn = Column.column(score, iMeasure);
 			for (Measure measure : measureColumn)
 			{
 				for (Voice voice : measure.getVoices())
@@ -198,10 +204,12 @@ public class NotationStrategy
 		{
 			try
 			{
+				Score score = lc.getScore();
+				MP mp = score.getGlobals().getMP(element);
 				notation = computeTraditionalKey((TraditionalKey) element,
-					lc.getScore().getController().getClef(element.getScorePosition(), Endpoint.AtOrBefore));
+					ScoreController.getClef(lc.getScore(), mp, BeatInterval.At));
 			}
-			catch (InvalidScorePositionException ex)
+			catch (IllegalMPException ex)
 			{
 				Log.log(Log.ERROR, this, ex);
 				notation = computeUnsupported(element);
@@ -212,9 +220,9 @@ public class NotationStrategy
 			//directions need no notations at the moment
 			notation = null;
 		}
-		else if (element instanceof Transpose)
+		else if (element instanceof InstrumentChange)
 		{
-			//ignore transpose
+			//ignore instrument change
 			notation = null;
 		}
 		else
@@ -234,14 +242,14 @@ public class NotationStrategy
 	public ChordNotation computeChord(Chord chord, StemDirection stemDirection,
 		ScoreLayouterContext lc)
 	{
+		Score score = lc.getScore();
+		Globals globals = score.getGlobals();
 		//get the music context and the parent voice
-		ScoreController ctrl = lc.getScore().getController();
-		ScorePosition position = chord.getScorePosition();
-		MusicContext mc = ctrl.getMusicContextAt(position);
-		Voice voice = lc.getScore().getVoice(position.getStaff(), position.getMeasure(), position.getVoice());
+		MP mp = globals.getMP(chord);
+		MusicContext mc = getMusicContext(score, mp, BeforeOrAt);
 		//compute the notation
-		return computeChord(chord, mc, voice.getInterlineSpace(),
-			lc.getScore().getScoreFormat().getDefaultLyricFont(), stemDirection);
+		return computeChord(chord, mc, getInterlineSpace(score, mp),
+			score.getScoreFormat().getLyricFont(), stemDirection, globals);
 	}
 
 
@@ -249,8 +257,8 @@ public class NotationStrategy
 	 * Computes the layout of a {@link Chord}.
 	 * //LAYOUT-PERFORMANCE (needed 6 of 60 seconds)
 	 */
-	public ChordNotation computeChord(Chord chord, MusicContext mc, float interlineSpace, Font lyricsFont,
-		StemDirection stemDirection)
+	public ChordNotation computeChord(Chord chord, MusicContext mc, float interlineSpace,
+		Font lyricsFont, StemDirection stemDirection, Globals globals)
 	{
 		//stem direction
 		if (stemDirection == null)
@@ -258,10 +266,10 @@ public class NotationStrategy
 			stemDirection = stemDirectionStrategy.computeStemDirection(chord, mc);
 		}
 		//notes alignment
-		NotesAlignment notesAlignment = notesAlignmentStrategy.computeNotesAlignment(chord.getData(), stemDirection, mc);
+		NotesAlignment notesAlignment = notesAlignmentStrategy.computeNotesAlignment(chord, stemDirection, mc);
 		//accidentals alignment
 		AccidentalsAlignment accidentalsAlignment = accidentalsAlignmentStrategy.computeAccidentalsAlignment(
-			chord.getData(), notesAlignment, mc);
+			chord, notesAlignment, mc);
 		float accidentalsWidth = (accidentalsAlignment != null ? accidentalsAlignment.getWidth() : 0);
 		
 		//TODO: gap between accidentals and left-suspended note?
@@ -277,41 +285,38 @@ public class NotationStrategy
 		
 		//lyric width
 		float lyricWidth = 0;
-		if (chord.getLyricsCount() > 0)
+		Font lyricFont = lyricsFont;
+		Vector<Lyric> lyrics = globals.getAttachments().getLyrics(chord);
+		for (Lyric lyric : lyrics)
 		{
-			Font lyricFont = lyricsFont;
-			for (int iVerse = 0; iVerse <= chord.getLyricsCount(); iVerse++)
+			if (lyric != null && lyric.getText() != null)
 			{
-				Lyric lyric = chord.getLyric(iVerse);
-				if (lyric != null && lyric.getText() != null)
+				//width of lyric in interline spaces
+				float l = new TextMeasurer(lyricFont, lyric.getText()).getWidth() / interlineSpace;
+				//for start and end syllable, request "-" more space, for middle syllables "--"
+				//TODO: unsymmetric - start needs space on the right, end on the left, ...
+				SyllableType lyricType = lyric.getSyllableType();
+				if (lyricType == SyllableType.Begin || lyricType == SyllableType.End)
 				{
-					//width of lyric in interline spaces
-					float l = new TextMeasurer(lyricFont, lyric.getText()).getWidth() / interlineSpace;
-					//for start and end syllable, request "-" more space, for middle syllables "--"
-					//TODO: unsymmetric - start needs space on the right, end on the left, ...
-					SyllableType lyricType = lyric.getSyllableType();
-					if (lyricType == SyllableType.Begin || lyricType == SyllableType.End)
-					{
-						l += new TextMeasurer(lyricFont, "-").getWidth() / interlineSpace;
-					}
-					else if (lyricType == SyllableType.Middle)
-					{
-						l += new TextMeasurer(lyricFont, "--").getWidth() / interlineSpace;
-					}
-					//save with of the widest lyric
-					lyricWidth = Math.max(lyricWidth, l);
+					l += new TextMeasurer(lyricFont, "-").getWidth() / interlineSpace;
 				}
+				else if (lyricType == SyllableType.Middle)
+				{
+					l += new TextMeasurer(lyricFont, "--").getWidth() / interlineSpace;
+				}
+				//save with of the widest lyric
+				lyricWidth = Math.max(lyricWidth, l);
 			}
 		}
 
 		//compute length of the stem (if any)
 		StemAlignment stemAlignment = stemAlignmentStrategy.computeStemAlignment(chord.getStem(), notesAlignment,
-			stemDirection, mc.getLines());
+			stemDirection, 5); //TODO mc.getLines());
 		
 		//compute articulations
 		ArticulationsAlignment articulationsAlignment =
-			articulationsAlignmentStrategy.computeArticulationsAlignment(chord.getData(), stemDirection,
-				notesAlignment, mc.getLines());
+			articulationsAlignmentStrategy.computeArticulationsAlignment(chord, stemDirection,
+				notesAlignment, 5); //TODO mc.getLines());
 		
 		return new ChordNotation(chord, new ElementWidth(frontGap, symbolWidth, rearGap, lyricWidth), notesAlignment,
 			stemDirection, stemAlignment, accidentalsAlignment, articulationsAlignment);
@@ -382,9 +387,9 @@ public class NotationStrategy
 		{
 			width = -fifth * distanceFlats;
 		}
-		return new TraditionalKeyNotation(key, new ElementWidth(0, width, 1), contextClef
-			.computeLinePosition(new Pitch(0, 0, 4)), contextClef
-			.getKeySignatureLowestLine(fifth));
+		return new TraditionalKeyNotation(key, new ElementWidth(0, width, 1),
+			contextClef.getType().computeLinePosition(pi(0, 0, 4)),
+			contextClef.getType().getKeySignatureLowestLine(fifth));
 	}
 
 

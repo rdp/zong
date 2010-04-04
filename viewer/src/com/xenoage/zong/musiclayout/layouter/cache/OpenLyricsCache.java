@@ -1,11 +1,12 @@
 package com.xenoage.zong.musiclayout.layouter.cache;
 
+import static com.xenoage.util.lang.Tuple3.t3;
+
 import java.util.HashMap;
 
-import com.xenoage.util.InstanceID;
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.lang.Tuple3;
-import com.xenoage.zong.data.music.text.Lyric;
+import com.xenoage.zong.core.music.text.Lyric;
 import com.xenoage.zong.musiclayout.stampings.NoteheadStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffTextStamping;
 
@@ -24,10 +25,9 @@ public class OpenLyricsCache
 	
 	//cache for open underscore lyrics: left syllable (starting point) and currently
 	//rightmost notehead (ending point)
-	//key: InstanceID of the first Lyric
 	//TIDY: own class for Tuple3<StaffTextStamping, NoteheadStamping, Integer>
-	private HashMap<InstanceID, Tuple3<StaffTextStamping, NoteheadStamping, Integer>> openUnderscores =
-		new HashMap<InstanceID, Tuple3<StaffTextStamping, NoteheadStamping, Integer>>();
+	private HashMap<Lyric, Tuple3<StaffTextStamping, NoteheadStamping, Integer>> openUnderscores =
+		new HashMap<Lyric, Tuple3<StaffTextStamping, NoteheadStamping, Integer>>();
 	
 	
 	/**
@@ -36,8 +36,7 @@ public class OpenLyricsCache
 	 */
 	public void setUnderscore(Lyric start, StaffTextStamping leftSyllable, NoteheadStamping rightmostNotehead, int staffIndex)
 	{
-		openUnderscores.put(start.getInstanceID(),
-			new Tuple3<StaffTextStamping, NoteheadStamping, Integer>(leftSyllable, rightmostNotehead, staffIndex));
+		openUnderscores.put(start, t3(leftSyllable, rightmostNotehead, staffIndex));
 	}
 	
 	
@@ -46,7 +45,7 @@ public class OpenLyricsCache
 	 */
 	public Tuple3<StaffTextStamping, NoteheadStamping, Integer> getUnderscore(Lyric lyric)
 	{
-		return openUnderscores.get(lyric.getInstanceID());
+		return openUnderscores.get(lyric);
 	}
 	
 	

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
 import java.io.File;

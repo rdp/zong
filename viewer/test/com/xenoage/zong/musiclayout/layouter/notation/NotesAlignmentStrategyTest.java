@@ -1,11 +1,15 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
 import static com.xenoage.util.Delta.DELTA_FLOAT;
+import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.Pitch.pi;
 import static org.junit.Assert.*;
 
 import com.xenoage.util.Delta;
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.*;
+import com.xenoage.zong.core.music.*;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.ChordFactory;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.Constants;
 import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NoteAlignment;
@@ -39,7 +43,7 @@ public class NotesAlignmentStrategyTest
    */
   @Test public void testSingleNoteC5()
   {
-    ChordData chord = new ChordData(new Note(new Pitch(0, 0, 5)), new Fraction(1, 4));
+    Chord chord = ChordFactory.chord(pi(0, 0, 5), fr(1, 4));
     NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);
     assertEquals(0, cna.getStemOffset(), DELTA_FLOAT);
     assertEquals(Constants.WIDTH_QUARTER, cna.getWidth(), DELTA_FLOAT);
@@ -55,7 +59,7 @@ public class NotesAlignmentStrategyTest
    */
   @Test public void testSingleNoteF4()
   {
-    ChordData chord = new ChordData(new Note(new Pitch(3, 0, 4)), new Fraction(1, 2));
+  	Chord chord = ChordFactory.chord(pi(3, 0, 4), fr(1, 2));
     NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Up, context);
     assertEquals(Constants.WIDTH_HALF, cna.getStemOffset(), DELTA_FLOAT);
     assertEquals(Constants.WIDTH_HALF, cna.getWidth(), DELTA_FLOAT);
@@ -71,8 +75,7 @@ public class NotesAlignmentStrategyTest
    */
   @Test public void testChordC5D5()
   {
-    ChordData chord = new ChordData(Note.createNotes(new Pitch(0, 0, 5), new Pitch(1, 0, 5)),
-      new Fraction(1, 4));
+  	Chord chord = ChordFactory.chord(new Pitch[]{pi(0, 0, 5), pi(1, 0, 5)}, fr(1, 4));
     NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);;
     assertEquals(Constants.WIDTH_QUARTER,
       cna.getStemOffset(), Delta.DELTA_FLOAT);
@@ -93,11 +96,8 @@ public class NotesAlignmentStrategyTest
    */
   @Test public void testChordC4E4G4()
   {
-    ChordData chord = new ChordData(Note.createNotes(
-        new Pitch(0, 0, 4),
-        new Pitch(2, 0, 4),
-        new Pitch(4, 0, 4)
-      ), new Fraction(3, 4));
+  	Chord chord = ChordFactory.chord(new Pitch[]{pi(0, 0, 4), pi(2, 0, 4),
+  		pi(4, 0, 4)}, fr(3, 4));
     NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Up, context);;
     assertEquals(Constants.WIDTH_HALF, cna.getStemOffset(), DELTA_FLOAT);
     assertEquals(Constants.WIDTH_HALF + Constants.WIDTH_DOT_GAP + Constants.WIDTH_DOT,
@@ -119,11 +119,8 @@ public class NotesAlignmentStrategyTest
    */
   @Test public void testChordA4C5D5()
   {
-    ChordData chord = new ChordData(Note.createNotes(
-        new Pitch(5, 0, 4),
-        new Pitch(0, 0, 5),
-        new Pitch(1, 0, 5)
-      ), new Fraction(1, 4));
+  	Chord chord = ChordFactory.chord(new Pitch[]{pi(5, 0, 4), pi(0, 0, 5),
+  		pi(1, 0, 5)}, fr(1, 4));
     NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);;
     float wq = Constants.WIDTH_QUARTER;
     assertEquals(wq, cna.getStemOffset(), DELTA_FLOAT);
@@ -146,31 +143,26 @@ public class NotesAlignmentStrategyTest
   @Test public void testDotPositions()
   {
     //C5: position 6
-  	ChordData chord = new ChordData(Note.createNotes(
-      new Pitch(0, 0, 5)), new Fraction(3, 4));
+  	Chord chord = ChordFactory.chord(pi(0, 0, 5), fr(3, 4));
   	NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);;
     assertEquals(1, cna.getDotsPerNoteCount());
     assertEquals(1, cna.getDotPositions().length);
     assertEquals(5, cna.getDotPositions()[0]);
     //B4: position 6
-    chord = new ChordData(Note.createNotes(
-      new Pitch(6, 0, 4)), new Fraction(7, 8));
+    chord = ChordFactory.chord(pi(6, 0, 4), fr(7, 8));
     cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);;
     assertEquals(2, cna.getDotsPerNoteCount());
     assertEquals(1, cna.getDotPositions().length);
     assertEquals(5, cna.getDotPositions()[0]);
     //F4, F4: position 1
-    chord = new ChordData(Note.createNotes(
-      new Pitch(3, 0, 4), new Pitch(3, 0, 4)),
-      new Fraction(7, 16));
+    chord = ChordFactory.chord(new Pitch[]{pi(3, 0, 4), pi(3, 0, 4)}, fr(7, 16));
     cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);
     assertEquals(2, cna.getDotsPerNoteCount());
     assertEquals(1, cna.getDotPositions().length);
     assertEquals(1, cna.getDotPositions()[0]);
     //F5, A5, B5: positions 7, 9, 11
-    chord = new ChordData(Note.createNotes(
-      new Pitch(3, 0, 5), new Pitch(5, 0, 5), new Pitch(6, 0, 5)),
-      new Fraction(3, 2));
+    chord = ChordFactory.chord(new Pitch[]{
+      pi(3, 0, 5), pi(5, 0, 5), pi(6, 0, 5)}, fr(3, 2));
     cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);;
     assertEquals(1, cna.getDotsPerNoteCount());
     assertEquals(3, cna.getDotPositions().length);
@@ -185,9 +177,8 @@ public class NotesAlignmentStrategyTest
    */
   @Test public void testChordC5C5()
   {
-  	ChordData chord = new ChordData(Note.createNotes(
-      new Pitch(0, 0, 5), new Pitch(0, 0, 5)),
-      new Fraction(1, 4));
+  	Chord chord = ChordFactory.chord(new Pitch[]{
+      pi(0, 0, 5), pi(0, 0, 5)}, fr(1, 4));
     NotesAlignment cna = strategy.computeNotesAlignment(chord, StemDirection.Down, context);
     assertEquals(Constants.WIDTH_QUARTER,
       cna.getStemOffset(), DELTA_FLOAT);

@@ -1,6 +1,8 @@
 package com.xenoage.zong.io.midi.out;
 
-import com.xenoage.zong.data.music.Pitch;
+import static com.xenoage.zong.core.music.Pitch.pi;
+
+import com.xenoage.zong.core.music.Pitch;
 
 
 /**
@@ -39,7 +41,7 @@ public class MidiTools
       case 10: step = 5; alter = 1; break;
       case 11: step = 6; alter = 0; break;
     }
-    return new Pitch(step, alter, octave);
+    return pi(step, alter, octave);
   }
   
   

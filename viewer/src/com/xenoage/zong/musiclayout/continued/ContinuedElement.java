@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.continued;
 
-import com.xenoage.zong.data.music.MusicElement;
+import com.xenoage.zong.core.music.MusicElement;
 
 
 /**

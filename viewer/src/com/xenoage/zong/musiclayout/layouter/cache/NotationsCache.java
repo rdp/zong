@@ -2,9 +2,8 @@ package com.xenoage.zong.musiclayout.layouter.cache;
 
 import java.util.HashMap;
 
-import com.xenoage.util.InstanceID;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.MusicElement;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.musiclayout.notations.ChordNotation;
 import com.xenoage.zong.musiclayout.notations.Notation;
 
@@ -17,7 +16,7 @@ import com.xenoage.zong.musiclayout.notations.Notation;
 public class NotationsCache
 {
 	
-	private HashMap<InstanceID, Notation> cache = new HashMap<InstanceID, Notation>();
+	private HashMap<MusicElement, Notation> cache = new HashMap<MusicElement, Notation>();
 	
 	
 	/**
@@ -28,7 +27,7 @@ public class NotationsCache
 	 */
 	public void set(Notation notation, MusicElement element)
 	{
-		cache.put(element.getInstanceID(), notation);
+		cache.put(element, notation);
 	}
 	
 	
@@ -49,7 +48,7 @@ public class NotationsCache
 	 */
 	public Notation get(MusicElement element)
 	{
-		return cache.get(element.getInstanceID());
+		return cache.get(element);
 	}
 	
 	
@@ -61,7 +60,7 @@ public class NotationsCache
 	 */
 	public ChordNotation getChord(Chord chord)
 	{
-		return (ChordNotation) cache.get(chord.getInstanceID());
+		return (ChordNotation) cache.get(chord);
 	}
 	
 	

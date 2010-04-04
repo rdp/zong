@@ -1,8 +1,8 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.chord.ChordLinePositions;
 
@@ -42,9 +42,9 @@ public class StemDirectionStrategy
 			else
 			{
 				//compute line positions of the notes
-				ChordLinePositions chordLp = new ChordLinePositions(chord.getData(), context);
+				ChordLinePositions chordLp = new ChordLinePositions(chord, context);
 				//number of lines
-				int linesCount = context.getLines();
+				int linesCount = 5; //TODO context.getLines();
 				//do the work
 				direction = computeStemDirection(chordLp, linesCount);
 			}

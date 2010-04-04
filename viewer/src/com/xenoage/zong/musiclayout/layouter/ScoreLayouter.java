@@ -4,7 +4,7 @@ import com.xenoage.zong.Zong;
 import com.xenoage.util.language.Lang;
 import com.xenoage.util.language.VocByString;
 import com.xenoage.zong.app.symbols.SymbolPool;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.layout.frames.ScoreFrame;
 import com.xenoage.zong.layout.frames.ScoreFrameChain;
 import com.xenoage.zong.musiclayout.ScoreFrameLayout;

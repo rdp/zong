@@ -3,8 +3,8 @@ package com.xenoage.zong.layout.frames;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.app.opengl.TextureManager;
-import com.xenoage.zong.data.format.PageFormat;
-import com.xenoage.zong.data.format.PageMargins;
+import com.xenoage.zong.core.format.PageFormat;
+import com.xenoage.zong.core.format.PageMargins;
 import com.xenoage.zong.layout.Layout;
 import com.xenoage.zong.layout.Page;
 

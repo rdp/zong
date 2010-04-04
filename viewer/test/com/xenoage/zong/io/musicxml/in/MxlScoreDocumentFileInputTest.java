@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.xenoage.util.FileTools;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 
 
 /**

@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.xenoage.util.language.Lang;
+import com.xenoage.util.Units;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Point2i;
 import com.xenoage.util.math.Rectangle2f;
@@ -30,7 +30,6 @@ import com.xenoage.zong.layout.observer.LayoutObserver;
 import com.xenoage.zong.renderer.GLGraphicsContext;
 import com.xenoage.zong.renderer.GraphicsContext;
 import com.xenoage.zong.renderer.screen.page.GLPageRenderer;
-import com.xenoage.util.Units;
 
 
 /**

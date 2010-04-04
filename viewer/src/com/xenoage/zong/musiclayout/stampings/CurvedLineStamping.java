@@ -1,7 +1,7 @@
 package com.xenoage.zong.musiclayout.stampings;
 
-import com.xenoage.zong.data.music.CurvedLine;
-import com.xenoage.zong.data.music.format.SP;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
+import com.xenoage.zong.core.music.format.SP;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.*;
 

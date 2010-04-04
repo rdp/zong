@@ -1,6 +1,6 @@
 package com.xenoage.zong.io.musicxml.in;
 
-import com.xenoage.zong.data.instrument.Instrument;
+import com.xenoage.zong.core.instrument.Instrument;
 import com.xenoage.util.exceptions.InvalidFormatException;
 
 import java.util.List;

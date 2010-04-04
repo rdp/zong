@@ -6,8 +6,7 @@ import java.util.List;
 import com.xenoage.util.Range;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.app.App;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.io.score.ScoreInput;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.musiclayout.ScoreLayout;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouter;
 
@@ -230,13 +229,13 @@ public class ScoreFrameChain
 	/**
 	 * Updates the selection stampings in this score frame chain.
 	 */
-	public void updateSelections(ScoreInput input)
+	/* TODO public void updateSelections(ScoreInput input)
 	{
 		for (int i = 0; i < frames.size(); i++)
 		{
 			frames.get(i).getScoreLayout().updateSelections(input);
 		}
-	}
+	} */
 
 
 	public ScoreLayout getScoreLayout()

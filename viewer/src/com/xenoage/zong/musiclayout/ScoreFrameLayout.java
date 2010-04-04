@@ -6,7 +6,7 @@ import java.util.List;
 import com.xenoage.util.iterators.MultiIt;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Rectangle2f;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.musiclayout.continued.ContinuedElement;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.Stamping;
@@ -149,11 +149,11 @@ public final class ScoreFrameLayout
   
   
   /**
-   * Computes and returns the appropriate musical score position
+   * Computes and returns the appropriate musical position
    * to the given metric position, or null, if unknown.
    * @param point  the point in score layout coordinates
    */
-  public ScorePosition computeScorePosition(Point2f point)
+  public MP computeMP(Point2f point)
   {
     if (point == null)
       return null;
@@ -168,7 +168,7 @@ public final class ScoreFrameLayout
     else
     {
       float posX = point.x - staff.getPosition().x;
-      return staff.getScorePositionAtX(posX);
+      return staff.getMPAtX(posX);
     }
   }
   

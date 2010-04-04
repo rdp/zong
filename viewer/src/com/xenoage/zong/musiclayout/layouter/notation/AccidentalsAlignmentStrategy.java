@@ -5,10 +5,11 @@ import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.
 import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.computeAccidentalsMaxWidth;
 import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.getAccidentalWidth;
 
-import com.xenoage.zong.data.music.Accidental;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.Pitch;
+import com.xenoage.pdlib.Vector;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.chord.Accidental;
+import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.chord.AccidentalAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment;
@@ -32,10 +33,11 @@ public class AccidentalsAlignmentStrategy
 	 * using the given note alignments and the given musical context,
 	 * and returns it. If there are no accidentals, null is returned.
 	 */
-	public AccidentalsAlignment computeAccidentalsAlignment(ChordData data,
+	public AccidentalsAlignment computeAccidentalsAlignment(Chord chord,
 		NotesAlignment notesAlignment, MusicContext mc)
 	{
-		return computeAccidentalsAlignment(data.getPitches(), notesAlignment.getNoteAlignments(), mc);
+		return computeAccidentalsAlignment(chord.getPitches(),
+			notesAlignment.getNoteAlignments(), mc);
 	}
 	
 	
@@ -44,7 +46,7 @@ public class AccidentalsAlignmentStrategy
    * or null if there are no accidentals.
    */
   AccidentalsAlignment computeAccidentalsAlignment(
-  	Pitch[] pitches, NoteAlignment[] alignments, MusicContext mc)
+  	Vector<Pitch> pitches, NoteAlignment[] alignments, MusicContext mc)
   {
     //count number of needed accidentals
     int accCount = 0;
@@ -72,12 +74,12 @@ public class AccidentalsAlignmentStrategy
    * Computes the accidentals alignment for a chord
    * with one accidental.
    */
-  private AccidentalsAlignment computeAlignment1Accidental(Pitch[] pitches,
+  private AccidentalsAlignment computeAlignment1Accidental(Vector<Pitch> pitches,
     NoteAlignment[] alignments, MusicContext mc)
   {
-    for (int i = 0; i < pitches.length; i++)
+    for (int i = 0; i < pitches.size(); i++)
     {
-      Accidental.Type at = mc.getAccidentalType(pitches[i]);
+      Accidental.Type at = mc.getAccidentalType(pitches.get(i));
       if (at != null)
       {
       	AccidentalAlignment[] a = {new AccidentalAlignment(
@@ -94,7 +96,7 @@ public class AccidentalsAlignmentStrategy
    * Computes the accidentals alignment for a chord
    * with two accidentals.
    */
-  private AccidentalsAlignment computeAlignment2Accidentals(Pitch[] pitches,
+  private AccidentalsAlignment computeAlignment2Accidentals(Vector<Pitch> pitches,
     NoteAlignment[] alignments, MusicContext context)
   {
     //compute index of top and bottom note with accidental
@@ -104,8 +106,8 @@ public class AccidentalsAlignmentStrategy
     checklist[topNoteIndex] = false;
     int bottomNoteIndex = computeLastTrueEntryIndex(checklist);
     //compute accidental types
-    Accidental.Type atTop = context.getAccidentalType(pitches[topNoteIndex]);
-    Accidental.Type atBottom = context.getAccidentalType(pitches[bottomNoteIndex]);
+    Accidental.Type atTop = context.getAccidentalType(pitches.get(topNoteIndex));
+    Accidental.Type atBottom = context.getAccidentalType(pitches.get(bottomNoteIndex));
     //interval of at least a seventh?
     int distance = alignments[topNoteIndex].getLinePosition() -
       alignments[bottomNoteIndex].getLinePosition();
@@ -161,7 +163,7 @@ public class AccidentalsAlignmentStrategy
    * Computes the accidentals alignment for a chord with three accidentals.
    * The 6 rules are adepted from Ross, page 132 f.
    */
-  private AccidentalsAlignment computeAlignment3Accidentals(Pitch[] pitches,
+  private AccidentalsAlignment computeAlignment3Accidentals(Vector<Pitch> pitches,
     NoteAlignment[] alignments, MusicContext context)
   {
     //compute index of top, middle and bottom note with accidental
@@ -173,9 +175,9 @@ public class AccidentalsAlignmentStrategy
     checklist[middleNoteIndex] = false;
     int bottomNoteIndex = computeLastTrueEntryIndex(checklist);
     //compute accidental types
-    Accidental.Type atTop = context.getAccidentalType(pitches[topNoteIndex]);
-    Accidental.Type atMiddle = context.getAccidentalType(pitches[middleNoteIndex]);
-    Accidental.Type atBottom = context.getAccidentalType(pitches[bottomNoteIndex]);
+    Accidental.Type atTop = context.getAccidentalType(pitches.get(topNoteIndex));
+    Accidental.Type atMiddle = context.getAccidentalType(pitches.get(middleNoteIndex));
+    Accidental.Type atBottom = context.getAccidentalType(pitches.get(bottomNoteIndex));
     //interval of at least a seventh?
     int distance = alignments[topNoteIndex].getLinePosition() -
       alignments[bottomNoteIndex].getLinePosition();
@@ -274,13 +276,13 @@ public class AccidentalsAlignmentStrategy
    * notes, with a true indicating that a accidental is needed
    * for this note, and a false indicating that no accidental is needed.
    */
-  private boolean[] computeAccidentalsChecklist(Pitch[] pitches,
+  private boolean[] computeAccidentalsChecklist(Vector<Pitch> pitches,
     NoteAlignment[] alignments, MusicContext context)
   {
-    boolean[] ret = new boolean[pitches.length];
-    for (int i = 0; i < pitches.length; i++)
+    boolean[] ret = new boolean[pitches.size()];
+    for (int i = 0; i < pitches.size(); i++)
     {
-      ret[i] = (context.getAccidentalType(pitches[i]) != null);
+      ret[i] = (context.getAccidentalType(pitches.get(i)) != null);
     }
     return ret;
   }

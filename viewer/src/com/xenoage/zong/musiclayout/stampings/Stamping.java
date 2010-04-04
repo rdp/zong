@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Shape;
-import com.xenoage.zong.data.music.MusicElement;
+import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.renderer.RenderingParams;
 
 

@@ -11,7 +11,7 @@ import com.xenoage.util.io.IO;
 import com.xenoage.util.language.Lang;
 import com.xenoage.util.language.LanguageInfo;
 import com.xenoage.util.logging.Log;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.io.midi.out.PlaybackListener;
 import com.xenoage.zong.io.midi.out.SynthManager;
 import com.xenoage.zong.player.Player;
@@ -344,12 +344,12 @@ public class PlayerApplet
 	}
 
 
-	@Override public void playbackAtScorePosition(ScorePosition position)
+	@Override public void playbackAtMP(MP position)
 	{
 	}
 
 
-	@Override public void playbackStopped(ScorePosition position)
+	@Override public void playbackStopped(MP position)
 	{
 	}
   

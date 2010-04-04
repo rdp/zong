@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
-import com.xenoage.zong.data.music.time.CommonTime;
+import com.xenoage.zong.core.music.time.CommonTime;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.ClefNotation;
 import com.xenoage.zong.musiclayout.notations.NormalTimeNotation;

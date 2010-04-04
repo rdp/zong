@@ -2,9 +2,12 @@ package com.xenoage.zong.musiclayout.layouter.beamednotation;
 
 import java.util.ArrayList;
 
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.Beam.HorizontalSpan;
-import com.xenoage.zong.data.music.Beam.VerticalSpan;
+import com.xenoage.zong.core.music.Globals;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.Beam.HorizontalSpan;
+import com.xenoage.zong.core.music.beam.Beam.VerticalSpan;
+import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureSingleStaffStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureTwoStavesStrategy;
@@ -34,18 +37,22 @@ public class BeamedStemAlignmentNotationsStrategy
 	 * direction! (like computed by {@link BeamedStemDirectionNotationsStrategy}).
 	 * The updated chord notations are returned.
 	 */
-	public NotationsCache computeNotations(Beam beam, ArrayList<MeasureColumnSpacing> measureColumnSpacings,
+	public NotationsCache computeNotations(ScoreLayouterContext lc, Beam beam,
+		ArrayList<MeasureColumnSpacing> measureColumnSpacings,
 		NotationsCache notations)
 	{
+		Globals globals = lc.getScore().getGlobals();
+		
 		//choose appropriate strategy
-		if (beam.getHorizontalSpan() == HorizontalSpan.SingleMeasure)
+		if (beam.getHorizontalSpan(globals) == HorizontalSpan.SingleMeasure)
 		{
-			if (beam.getVerticalSpan() == VerticalSpan.SingleStaff)
+			if (beam.getVerticalSpan(globals) == VerticalSpan.SingleStaff)
 			{
-				return singleMeasureSingleStaffStrategy.computeNotations(beam,
-					measureColumnSpacings.get(beam.getFirstMeasureIndex()), notations);
+				MP firstMP = globals.getMP(beam.getFirstWaypoint().getChord());
+				return singleMeasureSingleStaffStrategy.computeNotations(lc, beam,
+					measureColumnSpacings.get(firstMP.getMeasure()), notations);
 			}
-			else if (beam.getVerticalSpan() == VerticalSpan.TwoAdjacentStaves)
+			else if (beam.getVerticalSpan(globals) == VerticalSpan.TwoAdjacentStaves)
 			{
 				return singleMeasureTwoStavesStrategy.computeNotations(beam, notations);
 			}

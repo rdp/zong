@@ -7,7 +7,7 @@ import com.xenoage.util.math.Rectangle2i;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.util.math.Size2i;
 import com.xenoage.zong.app.opengl.TextureManager;
-import com.xenoage.zong.data.format.PageFormat;
+import com.xenoage.zong.core.format.PageFormat;
 import com.xenoage.zong.layout.LayoutPosition;
 import com.xenoage.zong.layout.Page;
 import com.xenoage.zong.layout.frames.Frame;

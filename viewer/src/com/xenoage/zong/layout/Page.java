@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.math.Point2f;
+import com.xenoage.zong.core.format.PageFormat;
 import com.xenoage.zong.data.event.ScoreChangedEvent;
-import com.xenoage.zong.data.format.PageFormat;
 import com.xenoage.zong.layout.frames.FrameHandle;
 import com.xenoage.zong.layout.frames.Frame;
 import com.xenoage.zong.layout.frames.FramePosition;

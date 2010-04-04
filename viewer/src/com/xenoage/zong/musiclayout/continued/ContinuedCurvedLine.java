@@ -1,8 +1,8 @@
 package com.xenoage.zong.musiclayout.continued;
 
 import com.xenoage.util.enums.VSide;
-import com.xenoage.zong.data.music.CurvedLine;
-import com.xenoage.zong.data.music.MusicElement;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.curvedline.CurvedLine;
 
 
 /**

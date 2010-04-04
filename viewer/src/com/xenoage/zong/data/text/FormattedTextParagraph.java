@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.StringTools;
+import com.xenoage.zong.core.text.Alignment;
 
 
 /**

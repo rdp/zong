@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
 
 import java.util.ArrayList;
@@ -9,19 +6,18 @@ import java.util.LinkedList;
 import javax.sound.midi.Sequence;
 
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.music.MP;
 
 
 /**
  * @author Uli Teschemacher
- *
  */
 public class SequenceContainer
 {
 
 	private Sequence sequence;
 	private int metronomeBeatTrackNumber;
-	private LinkedList<Tuple2<Long, ScorePosition>> scorePositionTicks;
+	private LinkedList<Tuple2<Long, MP>> mpTicks;
 	private ArrayList<Long> measureStartTicks;
 	private ArrayList<Integer> staffTracks;
 
@@ -46,15 +42,14 @@ public class SequenceContainer
 		return metronomeBeatTrackNumber;
 	}
 
-	public void setScorePositionTicks(
-		LinkedList<Tuple2<Long, ScorePosition>> scorePositionTicks)
+	public void setMPTicks(LinkedList<Tuple2<Long, MP>> mpTicks)
 	{
-		this.scorePositionTicks = scorePositionTicks;
+		this.mpTicks = mpTicks;
 	}
 	
-	public LinkedList<Tuple2<Long, ScorePosition>> getScorePositionTicks()
+	public LinkedList<Tuple2<Long, MP>> getMPTicks()
 	{
-		return scorePositionTicks;
+		return mpTicks;
 	}
 
 	public void setMeasureStartTicks(ArrayList<Long> measureStartTicks)

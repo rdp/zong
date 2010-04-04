@@ -17,7 +17,6 @@ import com.xenoage.zong.app.symbols.slurs.DefaultSlurShape;
 import com.xenoage.zong.app.symbols.slurs.SlurShape;
 import com.xenoage.zong.data.text.FormattedText;
 import com.xenoage.zong.renderer.GLGraphicsContext;
-import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.RenderTarget;
 import com.xenoage.util.MathTools;
 import com.xenoage.util.Units;

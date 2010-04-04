@@ -1,10 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter;
 
-import java.util.ArrayList;
+import static com.xenoage.zong.core.music.MP.atStaff;
 
 import com.xenoage.zong.app.symbols.SymbolPool;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.layout.frames.ScoreFrame;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.io.score.ScoreController;
 import com.xenoage.zong.layout.frames.ScoreFrameChain;
 
 
@@ -23,7 +24,7 @@ public final class ScoreLayouterContext
 	private final SymbolPool symbolPool;
 	
 	//cache
-	private float maxInterlineSpace;
+	private final float maxInterlineSpace;
 	
 	
 	/**
@@ -36,6 +37,14 @@ public final class ScoreLayouterContext
 		this.score = scoreFrameChain.getScore();
 		this.scoreFrameChain = scoreFrameChain;
 		this.symbolPool = symbolPool;
+		//cache
+		float maxInterlineSpace = 0;
+		for (int staff = 0; staff < score.getStavesCount(); staff++)
+		{
+			maxInterlineSpace = Math.max(maxInterlineSpace,
+				ScoreController.getInterlineSpace(score, atStaff(staff)));
+		}
+		this.maxInterlineSpace = maxInterlineSpace;
 	}
 	
 	
@@ -71,13 +80,7 @@ public final class ScoreLayouterContext
 	 */
 	public float getMaxInterlineSpace()
 	{
-		//TODO: visible staves
-		float ret = 0;
-		for (int staff = 0; staff < score.getStavesCount(); staff++)
-		{
-			ret = Math.max(ret, score.getStaff(staff).getInterlineSpace());
-		}
-		return ret;
+		return maxInterlineSpace;
 	}
 	
 

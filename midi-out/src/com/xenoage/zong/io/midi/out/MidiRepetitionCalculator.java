@@ -1,22 +1,25 @@
-/**
- * 
- */
 package com.xenoage.zong.io.midi.out;
+
+import static com.xenoage.util.math.Fraction._0;
+import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.MP.mp;
+import static com.xenoage.zong.io.score.ScoreController.getMeasureBeats;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.xenoage.util.Range;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.header.MeasureColumnHeader;
-import com.xenoage.zong.data.header.ScoreHeader;
-import com.xenoage.zong.data.music.Volta;
-import com.xenoage.zong.data.music.barline.Barline;
-import com.xenoage.zong.data.music.barline.BarlineRepeat;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.header.ColumnHeader;
+import com.xenoage.zong.core.header.ScoreHeader;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.barline.Barline;
+import com.xenoage.zong.core.music.barline.BarlineRepeat;
+import com.xenoage.zong.core.music.util.BeatE;
+import com.xenoage.zong.core.music.util.BeatEList;
+import com.xenoage.zong.core.music.volta.Volta;
 
 
 /**
@@ -32,14 +35,14 @@ public class MidiRepetitionCalculator
 	 * Creates a "JumpList" of the Score. The returned Tuples have the form
 	 * <jumpfrom, jumpto>
 	 */
-	private static ArrayList<Tuple2<ScorePosition, ScorePosition>> createJumpList(
+	private static ArrayList<Tuple2<MP, MP>> createJumpList(
 		Score score)
 	{
-		ArrayList<Tuple2<ScorePosition, ScorePosition>> list = new ArrayList<Tuple2<ScorePosition, ScorePosition>>();
+		ArrayList<Tuple2<MP, MP>> list = new ArrayList<Tuple2<MP, MP>>();
 
 		HashMap<Integer, VoltaBlock> voltaBlocks = createVoltaBlocks(score);
 
-		ScorePosition pos = new ScorePosition(1, 0, new Fraction(0, 1), -1);
+		MP pos = mp(1, 0, -1, fr(0, 1));
 
 		int measuresCount = score.getMeasuresCount();
 		for (int i = 0; i < measuresCount; i++)
@@ -52,67 +55,59 @@ public class MidiRepetitionCalculator
 				while (voltatime <= voltaBlock.getRepeatCount())
 				{
 					Range range = voltaBlock.getRange(voltatime);
-					ScorePosition stopPosition = new ScorePosition(-1, range.getStop(),
-						score.getController().getMeasureBeats(i), -1);
+					MP stopPosition = mp(-1, range.getStop(), -1,
+						getMeasureBeats(score, i));
 					if (i != range.getStart())
 					{
-						ScorePosition currentPosition = new ScorePosition(-1, i,
-							new Fraction(0, 1), -1);
-						ScorePosition startPosition = new ScorePosition(-1, range
-							.getStart(), new Fraction(0, 1), -1);
-						list.add(new Tuple2<ScorePosition, ScorePosition>(
-							currentPosition, startPosition));
+						MP currentPosition = mp(-1, i, -1, _0);
+						MP startPosition = mp(-1, range.getStart(), -1, _0);
+						list.add(new Tuple2<MP, MP>(currentPosition, startPosition));
 					}
 					if (!voltaBlock.isLastTime(voltatime))
 					{
-						list.add(new Tuple2<ScorePosition, ScorePosition>(stopPosition,
-							pos));
+						list.add(new Tuple2<MP, MP>(stopPosition, pos));
 					}
 					voltatime++;
 				}
 
 				i += voltaBlock.getBlockLength() - 1;
-				pos = new ScorePosition(-1, i, new Fraction(0, 1), -1);
+				pos = mp(-1, i, -1, _0);
 			}
 			else
 			// normal Barline repetition
 			{
-				MeasureColumnHeader measureHeader = score.getScoreHeader().getMeasureColumnHeader(i);
+				ColumnHeader columnHeader = score.getScoreHeader().getColumnHeader(i);
 
-				List<Tuple2<Fraction, Barline>> barlines = measureHeader
-					.getMiddleBarlines();
+				BeatEList<Barline> barlines = columnHeader.getMiddleBarlines();
 				if (barlines == null)
 				{
-					barlines = new ArrayList<Tuple2<Fraction, Barline>>();
+					barlines = new BeatEList<Barline>();
 				}
-				if (measureHeader.getStartBarline() != null)
+				if (columnHeader.getStartBarline() != null)
 				{
-					barlines.add(0, new Tuple2<Fraction, Barline>(new Fraction(0, 1),
-						measureHeader.getStartBarline()));
+					barlines = barlines.plus(columnHeader.getStartBarline(), _0);
 				}
-				if (measureHeader.getEndBarline() != null)
+				if (columnHeader.getEndBarline() != null)
 				{
-					barlines.add(new Tuple2<Fraction, Barline>(score.getController()
-						.getMeasureBeats(i), measureHeader.getEndBarline()));
+					barlines = barlines.plus(columnHeader.getEndBarline(), getMeasureBeats(score, i));
 				}
 
-				for (Tuple2<Fraction, Barline> tuple : barlines)
+				for (BeatE<Barline> barline : barlines.getElements())
 				{
-					BarlineRepeat repeat = tuple.get2().getRepeat();
+					BarlineRepeat repeat = barline.getElement().getRepeat();
 					if (repeat == BarlineRepeat.Backward || repeat == BarlineRepeat.Both)
 					{
 						// Jump back to last forward repeat sign or beginning
-						ScorePosition barlinePosition = new ScorePosition(-1, i, tuple
-							.get1(), -1);
-						for (int a = 0; a < tuple.get2().getRepeatTimes(); a++)
+						MP barlinePosition = mp(-1, i, -1, barline.getBeat());
+						for (int a = 0; a < barline.getElement().getRepeatTimes(); a++)
 						{
-							list.add(new Tuple2<ScorePosition, ScorePosition>(
+							list.add(new Tuple2<MP, MP>(
 								barlinePosition, pos));
 						}
 					}
 					if (repeat == BarlineRepeat.Forward || repeat == BarlineRepeat.Both)
 					{
-						pos = new ScorePosition(-1, i, tuple.get1(), -1);
+						pos = mp(-1, i, -1, barline.getBeat());
 					}
 				}
 			}
@@ -126,40 +121,37 @@ public class MidiRepetitionCalculator
 	 * Creates a playlist from the given score. the tuples contain <playfrom,
 	 * playto>
 	 */
-	public static ArrayList<Tuple2<ScorePosition, ScorePosition>> createPlayList(
-		Score score)
+	public static ArrayList<Tuple2<MP, MP>> createPlayList(Score score)
 	{
-		ArrayList<Tuple2<ScorePosition, ScorePosition>> playlist = new ArrayList<Tuple2<ScorePosition, ScorePosition>>();
+		ArrayList<Tuple2<MP, MP>> playlist = new ArrayList<Tuple2<MP, MP>>();
 
-		ScorePosition start = new ScorePosition(-1, 0, new Fraction(0, 1), -1);
-		Fraction lastMeasure = score.getController().getMeasureBeats(
-			score.getMeasuresCount() - 1);
-		ScorePosition end = new ScorePosition(-1, score.getMeasuresCount() - 1,
-			lastMeasure, -1);
+		MP start = mp(-1, 0, -1, _0);
+		Fraction lastMeasure = getMeasureBeats(score, score.getMeasuresCount() - 1);
+		MP end = mp(-1, score.getMeasuresCount() - 1, -1, lastMeasure);
 
-		ArrayList<Tuple2<ScorePosition, ScorePosition>> jumplist = createJumpList(score);
+		ArrayList<Tuple2<MP, MP>> jumplist = createJumpList(score);
 		int size = jumplist.size();
 
 		if (size == 0)
 		{
-			playlist.add(new Tuple2<ScorePosition, ScorePosition>(start, end));
+			playlist.add(new Tuple2<MP, MP>(start, end));
 		}
 
 		if (size > 0)
 		{
-			ScorePosition pos1 = jumplist.get(0).get1();
-			playlist.add(new Tuple2<ScorePosition, ScorePosition>(start, pos1));
+			MP pos1 = jumplist.get(0).get1();
+			playlist.add(new Tuple2<MP, MP>(start, pos1));
 		}
 		for (int i = 1; i < size; i++)
 		{
-			ScorePosition pos1 = jumplist.get(i - 1).get2();
-			ScorePosition pos2 = jumplist.get(i).get1();
-			playlist.add(new Tuple2<ScorePosition, ScorePosition>(pos1, pos2));
+			MP pos1 = jumplist.get(i - 1).get2();
+			MP pos2 = jumplist.get(i).get1();
+			playlist.add(new Tuple2<MP, MP>(pos1, pos2));
 		}
 		if (size > 0)
 		{
-			ScorePosition pos1 = jumplist.get(size - 1).get2();
-			playlist.add(new Tuple2<ScorePosition, ScorePosition>(pos1, end));
+			MP pos1 = jumplist.get(size - 1).get2();
+			playlist.add(new Tuple2<MP, MP>(pos1, end));
 		}
 
 		return playlist;
@@ -167,7 +159,7 @@ public class MidiRepetitionCalculator
 
 
 	/**
-	 * Looks for VoltaBlocks in the score and creates a list of them
+	 * Looks for {@link VoltaBlock}s in the score and creates a list of them
 	 */
 	private static HashMap<Integer, VoltaBlock> createVoltaBlocks(Score score)
 	{
@@ -175,7 +167,7 @@ public class MidiRepetitionCalculator
 		ScoreHeader scoreHeader = score.getScoreHeader();
 		for (int i = 0; i < score.getMeasuresCount(); i++)
 		{
-			if (scoreHeader.getMeasureColumnHeader(i).getVolta() != null)
+			if (scoreHeader.getColumnHeader(i).getVolta() != null)
 			{
 				VoltaBlock voltaBlock = createVoltaBlock(score, i);
 				map.put(i, voltaBlock);
@@ -196,7 +188,7 @@ public class MidiRepetitionCalculator
 		int iMeasure = startMeasure;
 		while (iMeasure < score.getMeasuresCount())
 		{
-			Volta volta = scoreHeader.getMeasureColumnHeader(iMeasure).getVolta();
+			Volta volta = scoreHeader.getColumnHeader(iMeasure).getVolta();
 			if (volta != null)
 			{
 				block.addVolta(volta, iMeasure);

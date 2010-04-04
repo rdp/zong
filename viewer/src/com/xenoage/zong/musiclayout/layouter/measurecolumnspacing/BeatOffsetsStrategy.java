@@ -1,20 +1,22 @@
 package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
 
-import java.util.ArrayList;
+import static com.xenoage.util.math.Fraction.fr;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.SortedList;
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.Measure;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.util.MeasureColumn;
+import com.xenoage.zong.core.music.Measure;
+import com.xenoage.zong.core.music.MusicElement;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
+import com.xenoage.zong.core.music.util.Column;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.VoiceSpacingsCache;
-
 import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
 import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
@@ -42,8 +44,8 @@ public class BeatOffsetsStrategy
    * (or that needs accidentals) dictate the spacing.
    * See "Ross: The Art of Music Engraving", page 79.
    */
-  public ArrayList<BeatOffset> computeBeatOffsets(
-  	MeasureColumn measureColumn, VoiceSpacingsCache voiceSpacings, Fraction measureBeats)
+  public PVector<BeatOffset> computeBeatOffsets(
+  	Column measureColumn, VoiceSpacingsCache voiceSpacings, Fraction measureBeats)
   {
   	//collect voices
   	LinkedList<VoiceSpacing> vss = new LinkedList<VoiceSpacing>();
@@ -65,7 +67,7 @@ public class BeatOffsetsStrategy
   }
 	
 	
-  ArrayList<BeatOffset> computeBeatOffsetsFromVoiceSpacings(
+  PVector<BeatOffset> computeBeatOffsetsFromVoiceSpacings(
   	LinkedList<VoiceSpacing> voiceSpacings, Fraction measureBeats)
   {
   	
@@ -86,13 +88,13 @@ public class BeatOffsetsStrategy
     if (voiceSpacings.size() == 1)
     {
       //only one voice
-    	Voice voice = voiceSpacings.get(0).getVoice();
-      for (SpacingElement se : voiceSpacings.get(0).getSpacingElements())
+    	float interlineSpace = voiceSpacings.getFirst().getInterlineSpace();
+      for (SpacingElement se : voiceSpacings.getFirst().getSpacingElements())
       {
       	//if last beatoffset has same beat, overwrite it
       	if (ret.getLast().getBeat().equals(se.getBeat()))
       		ret.removeLast();
-        ret.add(new BeatOffset(se.getBeat(), se.getOffset() * voice.getInterlineSpace()));
+        ret.add(new BeatOffset(se.getBeat(), se.getOffset() * interlineSpace));
       }
     }
     else
@@ -113,7 +115,7 @@ public class BeatOffsetsStrategy
     		float minimalDistance = 0;
     		for (VoiceSpacing voiceSpacing : voiceSpacings)
     		{
-    			float interlineSpace = voiceSpacing.getVoice().getInterlineSpace();
+    			float interlineSpace = voiceSpacing.getInterlineSpace();
     			float voiceMinimalDistance = computeMinimalDistance(lastBeat, beat, beat.equals(measureBeats),
     				voiceSpacing.getVoice(), voiceSpacing.getSpacingElements(), ret, interlineSpace);
     			minimalDistance = Math.max(minimalDistance, voiceMinimalDistance);
@@ -138,7 +140,7 @@ public class BeatOffsetsStrategy
     //TEST
     //for (BeatOffset b : ret) System.out.println(b.getBeat() + ": " + b.getOffsetMm());
     
-    return new ArrayList<BeatOffset>(ret);
+    return new PVector<BeatOffset>(ret);
   }
   
   
@@ -157,12 +159,12 @@ public class BeatOffsetsStrategy
       for (SpacingElement spacingElement : voiceSpacing.getSpacingElements())
       {
       	MusicElement element = spacingElement.getElement();
-      	if (element != null)
+      	if (element != null && element instanceof VoiceElement)
       	{
 	        //add beat
 	      	beats.add(beat);
 	        //find the next beat
-        	beat = beat.add(element.getDuration());
+        	beat = beat.add(((VoiceElement)element).getDuration());
       	}
       }
       //do not add beat here, because the ending beat of a incomplete measure
@@ -305,8 +307,7 @@ public class BeatOffsetsStrategy
     for (VoiceSpacing voiceSpacing : voiceSpacings)
     {
       SpacingElement[] elements = voiceSpacing.getSpacingElements();
-      float offset = getLastOffset(elements, new Fraction(0)) *
-      	voiceSpacing.getVoice().getInterlineSpace();
+      float offset = getLastOffset(elements, fr(0)) * voiceSpacing.getInterlineSpace();
       if (offset > maxOffset)
         maxOffset = offset;
     }

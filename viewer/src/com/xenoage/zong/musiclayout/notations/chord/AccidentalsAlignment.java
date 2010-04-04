@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.notations.chord;
 
-import com.xenoage.zong.data.music.*;
+import com.xenoage.zong.core.music.chord.Accidental;
 
 
 /**

@@ -9,12 +9,13 @@ import java.util.List;
 import com.xenoage.util.Range;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.CurvedLineWaypoint;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.data.music.CurvedLine.Type;
-import com.xenoage.zong.data.music.directions.Wedge;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
+import com.xenoage.zong.core.music.curvedline.CurvedLine.Type;
+import com.xenoage.zong.core.music.direction.Wedge;
 import com.xenoage.util.enums.VSide;
 import com.xenoage.util.exceptions.InvalidFormatException;
 
@@ -31,8 +32,10 @@ import com.xenoage.util.exceptions.InvalidFormatException;
 class MxlScoreDataContext
 {
 	
+	private Score score;
+	private final MxlScoreFormat scoreFormat;
+	
   private int divisions = 1;
-  private float tenthMm = 1;
   
   private int partIndex = 0;
   private Range partStavesIndices = null;
@@ -50,7 +53,7 @@ class MxlScoreDataContext
   //musicXMLVoice == voiceMappings.get(musicXMLStaff).get(scoreVoice)
   private ArrayList<ArrayList<Integer>> voiceMappings = null; 
   
-  private List<LinkedList<Chord>> openBeams;
+  private List<LinkedList<com.xenoage.zong.core.music.chord.Chord>> openBeams;
   private List<Tuple2<CurvedLineWaypoint, VSide>> openSlurs;
   private List<Tuple2<CurvedLineWaypoint, VSide>> openTies;
   private Hashtable<Pitch, Tuple2<CurvedLineWaypoint, VSide>> openUnnumberedTies;
@@ -64,11 +67,13 @@ class MxlScoreDataContext
   
   /**
    * Creates a new context.
-   * @param tenthMm  the global value of a tenth in mm
+   * @param score        the score to start with
+   * @param scoreFormat  the format of the score
    */
-  public MxlScoreDataContext(float tenthMm)
+  public MxlScoreDataContext(Score score, MxlScoreFormat scoreFormat)
   {
-  	this.tenthMm = tenthMm;
+  	this.score = score;
+  	this.scoreFormat = scoreFormat;
     //6 levels of beaming
     openBeams = new ArrayList<LinkedList<Chord>>(6);
     for (int i = 0; i < 6; i++)
@@ -83,6 +88,24 @@ class MxlScoreDataContext
     openWedges = Arrays.asList(new Wedge[6]);
     //infinite number of unnumbered tied elements, identified by pitch
     openUnnumberedTies = new Hashtable<Pitch, Tuple2<CurvedLineWaypoint, VSide>>();
+  }
+  
+  
+  public Score getScore()
+  {
+  	return score;
+  }
+  
+  
+  public void setScore(Score score)
+  {
+  	this.score = score;
+  }
+  
+  
+  public MxlScoreFormat getScoreFormat()
+  {
+  	return scoreFormat;
   }
   
   
@@ -144,7 +167,7 @@ class MxlScoreDataContext
    */
   public float getTenthMm()
   {
-    return tenthMm;
+    return scoreFormat.getTenthMm();
   }
 
 

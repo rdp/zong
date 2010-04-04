@@ -31,7 +31,7 @@ Ant scripts for all Zong! projects.
 	<!-- * main targets                  * -->
 	<!-- ********************************* -->
 	
-	<target name="clean" depends="util-clean,core-clean,musicxml-in-clean,player-clean,viewer-clean,editor-clean">
+	<target name="clean" depends="pdlib-clean,util-clean,core-clean,player-clean,viewer-clean,editor-clean"> <!-- TODO: after core-clean: musicxml-in-clean, -->
 		<delete dir="dist"/>
 	</target>
 	
@@ -53,7 +53,7 @@ Ant scripts for all Zong! projects.
 		
 	
 	<!-- create the player and pack it for all OSes -->
-	<target name="player-dist" depends="clean,util-jar,core-jar,midi-out-jar,musicxml-in-jar,player-jar">
+	<target name="player-dist" depends="clean,pdlib-jar,util-jar,core-jar,midi-out-jar,player-jar"> <!-- TODO musicxml-in-jar, -->
 		<!-- *** shared files *** -->
 		<mkdir dir="dist/share/player"/>
 		<copy file="player/readme.txt" todir="dist/share/player"/>
@@ -97,10 +97,11 @@ Ant scripts for all Zong! projects.
 		<!-- combine contents of util.jar, core.jar, midi-out.jar, musicxml-in.jar and player.jar to the single file player.jar
 		     (because it is nicer and because the security manager seems not to accept classes in the same package but in different jars) -->
 		<mkdir dir="dist/share/player/temp"/>
+		<unzip src="pdlib/dist/pdlib.jar" dest="dist/share/player/temp"/>
 		<unzip src="util/dist/util.jar" dest="dist/share/player/temp"/>
 		<unzip src="core/dist/core.jar" dest="dist/share/player/temp"/>
 		<unzip src="midi-out/dist/midi-out.jar" dest="dist/share/player/temp"/>
-		<unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/player/temp"/>
+		<!-- TODO <unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/player/temp"/> -->
 		<unzip src="player/dist/player.jar" dest="dist/share/player/temp"/>
 		<delete dir="dist/share/player/temp/META-INF"/>
 		<jar destfile="dist/share/player/lib/player.jar">
@@ -115,7 +116,7 @@ Ant scripts for all Zong! projects.
 	
 	
 	<!-- create the viewer and pack it for all OSes -->
-	<target name="viewer-dist" depends="clean,util-jar,core-jar,midi-out-jar,musicxml-in-jar,player-jar,viewer-jar">
+	<target name="viewer-dist" depends="clean,pdlib-jar,util-jar,core-jar,midi-out-jar,player-jar,viewer-jar"> <!-- TODO musicxml-in-jar, -->
 		<!-- shared files -->
 		<mkdir dir="dist/share/viewer"/>
 		<copy file="viewer/readme.txt" todir="dist/share/viewer"/>
@@ -165,10 +166,11 @@ Ant scripts for all Zong! projects.
 		<!-- combine contents of util.jar, core.jar, midi-out.jar, musicxml-in.jar and viewer.jar to the single file viewer.jar
 		     (because it is nicer and because the security manager seems not to accept classes in the same package but in different jars) -->
 		<mkdir dir="dist/share/viewer/temp"/>
+		<unzip src="pdlib/dist/pdlib.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="util/dist/util.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="core/dist/core.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="midi-out/dist/midi-out.jar" dest="dist/share/viewer/temp"/>
-		<unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/viewer/temp"/>
+		<!-- TODO <unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/viewer/temp"/> -->
 		<unzip src="player/dist/player.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="viewer/dist/viewer.jar" dest="dist/share/viewer/temp"/>
 		<delete dir="dist/share/viewer/temp/META-INF"/>
@@ -183,7 +185,7 @@ Ant scripts for all Zong! projects.
 	</target>
 	
 	
-	<target name="test" depends="util-test,core-test,musicxml-in-test,midi-out-test,player-test,viewer-test"> <!-- ,editor-test -->
+	<target name="test" depends="pdlib-test,util-test,core-test,midi-out-test,player-test,viewer-test"> <!-- TODO musicxml-in-test, ,editor-test -->
 	</target>
 	
 	
@@ -244,6 +246,7 @@ Ant scripts for all Zong! projects.
 	<!-- ********************************* -->
 	
 	<path id="core.classpath">
+		<pathelement location="pdlib/dist/pdlib.jar"/>
 		<pathelement location="util/dist/util.jar"/>
 	</path>
 	<target name="core-clean"><antcall target="project-clean"><param name="project" value="core"/></antcall></target>
@@ -259,6 +262,7 @@ Ant scripts for all Zong! projects.
 	<target name="editor-test" depends="viewer-jar"><antcall target="project-test"><param name="project" value="editor"/></antcall></target>
 	
 	<path id="midi-out.classpath">
+		<pathelement location="pdlib/dist/pdlib.jar"/>
 		<pathelement location="util/dist/util.jar"/>
 		<pathelement location="core/dist/core.jar"/>
 		<path refid="gervill.classpath"/>
@@ -275,21 +279,29 @@ Ant scripts for all Zong! projects.
 	<target name="musicxml-in-clean"><antcall target="project-clean"><param name="project" value="musicxml-in"/></antcall></target>
 	<target name="musicxml-in-jar" depends="util-jar,core-jar"><antcall target="project-jar"><param name="project" value="musicxml-in"/></antcall></target>
 	<target name="musicxml-in-test" depends="util-jar,core-jar"><antcall target="project-test"><param name="project" value="musicxml-in"/></antcall></target>
+
+	<path id="pdlib.classpath">
+	</path>
+	<target name="pdlib-clean"><antcall target="project-clean"><param name="project" value="pdlib"/></antcall></target>
+	<target name="pdlib-jar"><antcall target="project-jar"><param name="project" value="pdlib"/></antcall></target>
+	<target name="pdlib-test"><antcall target="project-test"><param name="project" value="pdlib"/></antcall></target>
 	
 	<path id="player.classpath">
+		<pathelement location="pdlib/dist/pdlib.jar"/>
 		<pathelement location="util/dist/util.jar"/>
 		<pathelement location="core/dist/core.jar"/>
 		<pathelement location="midi-out/dist/midi-out.jar"/>
-		<pathelement location="musicxml-in/dist/musicxml-in.jar"/>
+		<!-- TODO <pathelement location="musicxml-in/dist/musicxml-in.jar"/> -->
 		<path refid="gervill.classpath"/>
 		<path refid="jogl.classpath"/>
 		<path refid="proxymusic.classpath"/>
 	</path>
 	<target name="player-clean"><antcall target="project-clean"><param name="project" value="player"/></antcall></target>
-	<target name="player-jar" depends="util-jar,core-jar,midi-out-jar,musicxml-in-jar"><antcall target="project-jar"><param name="project" value="player"/></antcall></target>
-	<target name="player-test" depends="util-jar,core-jar,midi-out-jar,musicxml-in-jar"><antcall target="project-test"><param name="project" value="player"/></antcall></target>
+	<target name="player-jar" depends="util-jar,core-jar,midi-out-jar"><!-- TODO ,musicxml-in-jar --><antcall target="project-jar"><param name="project" value="player"/></antcall></target>
+	<target name="player-test" depends="util-jar,core-jar,midi-out-jar"><!-- TODO ,musicxml-in-jar --><antcall target="project-test"><param name="project" value="player"/></antcall></target>
 	
 	<path id="util.classpath">
+		<pathelement location="pdlib/dist/pdlib.jar"/>
 	</path>
 	<target name="util-clean"><antcall target="project-clean"><param name="project" value="util"/></antcall></target>
 	<target name="util-jar"><antcall target="project-jar"><param name="project" value="util"/></antcall></target>
@@ -297,9 +309,10 @@ Ant scripts for all Zong! projects.
 	
 	<path id="viewer.classpath">
 		<pathelement location="core/dist/core.jar"/>
+		<pathelement location="pdlib/dist/pdlib.jar"/>
 		<pathelement location="util/dist/util.jar"/>
 		<pathelement location="midi-out/dist/midi-out.jar"/>
-		<pathelement location="musicxml-in/dist/musicxml-in.jar"/>
+		<!-- TODO <pathelement location="musicxml-in/dist/musicxml-in.jar"/> -->
 		<pathelement location="player/dist/player.jar"/>
 		<path refid="gervill.classpath"/>
 		<path refid="jogl.classpath"/>
@@ -307,8 +320,8 @@ Ant scripts for all Zong! projects.
 		<path refid="tablelayout.classpath"/>
 	</path>
 	<target name="viewer-clean"><antcall target="project-clean"><param name="project" value="viewer"/></antcall></target>
-	<target name="viewer-jar" depends="util-jar,core-jar,musicxml-in-jar,player-jar"><antcall target="project-jar"><param name="project" value="viewer"/></antcall></target>
-	<target name="viewer-test" depends="util-jar,core-jar,musicxml-in-jar,player-jar"><antcall target="project-test"><param name="project" value="viewer"/></antcall></target>
+	<target name="viewer-jar" depends="util-jar,core-jar,player-jar"><!-- TODO musicxml-in-jar, --><antcall target="project-jar"><param name="project" value="viewer"/></antcall></target>
+	<target name="viewer-test" depends="util-jar,core-jar,player-jar"><!-- TODO musicxml-in-jar, --><antcall target="project-test"><param name="project" value="viewer"/></antcall></target>
 
 
 	<!-- ********************************* -->

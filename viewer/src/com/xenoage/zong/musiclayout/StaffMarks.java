@@ -1,7 +1,9 @@
 package com.xenoage.zong.musiclayout;
 
+import static com.xenoage.zong.core.music.MP.mp;
+
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 
 
@@ -13,7 +15,7 @@ import com.xenoage.zong.musiclayout.stampings.StaffStamping;
  * measure is saved here (there may be gaps in the staff,
  * so also the end position is interesting).
  * 
- * It contains also the relevant ScorePositions
+ * It contains also the relevant {@link MP}s
  * and their horizontal positions within the staff in mm.
  * Coordinates can be converted to ScorePositions and backwards.
  * The voice of the positions are not relevant.
@@ -92,7 +94,7 @@ public final class StaffMarks
   
   
   /**
-   * Gets the score position at the given horizontal position in mm.
+   * Gets the musical position at the given horizontal position in mm.
    * 
    * If it is between two marks (which will be true almost ever), the
    * the right mark is selected (like it is usual e.g. in text
@@ -101,7 +103,7 @@ public final class StaffMarks
    * 
    * If it is not within the boundaries of a measure, null is returned.
    */
-  public ScorePosition getScorePositionAt(float xMm)
+  public MP getMPAt(float xMm)
   {
   	//find the measure
   	int measureIndex = getMeasureIndexAt(xMm);
@@ -111,7 +113,7 @@ public final class StaffMarks
     //get the beat at the given position
   	Fraction beat = measureMarks[measureIndex].getBeatAt(xMm);
     //create and return the score position
-    return new ScorePosition(staffIndex, measureIndex, beat, 0);
+    return mp(staffIndex, measureIndex, 0, beat);
   }
 
   

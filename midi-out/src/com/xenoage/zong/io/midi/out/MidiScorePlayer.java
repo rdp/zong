@@ -13,8 +13,9 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
+import com.xenoage.zong.Zong;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
 
 
 /**
@@ -46,6 +47,8 @@ public class MidiScorePlayer
 	public MidiScorePlayer()
 		throws MidiUnavailableException
 	{
+		Zong.showWorkInProgressWarning(); //TEMP
+		
     setVolume(volume);
     SynthManager.removeAllControllerEventListeners();
 
@@ -123,11 +126,11 @@ public class MidiScorePlayer
 	
 	/**
 	 * Changes the position of the playback cursor to the given
-	 * {@link ScorePosition}.
+	 * {@link MP}.
 	 */
-	public void setScorePosition(ScorePosition sp)
+	public void setMP(MP mp)
 	{
-		long tickPosition = calculateTickFromScorePosition(sp,
+		long tickPosition = calculateTickFromMP(mp,
 			sequenceContainer.getMeasureStartTicks(), sequenceContainer.getSequence().getResolution());
 		SynthManager.getSequencer().setTickPosition(tickPosition);
 		currentPosition = 0; //As we don't know the real position, we set it 0, because the playback will automatically jump to the correct position.
@@ -157,7 +160,7 @@ public class MidiScorePlayer
 			sequencer.stop();
 			for (PlaybackListener listener : listeners)
 			{
-				listener.playbackStopped(sequenceContainer.getScorePositionTicks().getFirst().get2());
+				listener.playbackStopped(sequenceContainer.getMPTicks().getFirst().get2());
 			}
 		}
 	}
@@ -188,7 +191,7 @@ public class MidiScorePlayer
 	}
 
 
-	private long calculateTickFromScorePosition(ScorePosition pos,
+	private long calculateTickFromMP(MP pos,
 		ArrayList<Long> measureTicks, int resolution)
 	{
 		if (pos == null)
@@ -205,30 +208,29 @@ public class MidiScorePlayer
 	
 	/**
 	 * The Method which catches the ControllerChangedEvent from the sequencer.
-	 * The Method decides, which {@link ScorePosition} is the right one and
+	 * The Method decides, which {@link MP} is the right one and
 	 * notifies the listener.
 	 */
 	public void controlChange(ShortMessage message)
 	{
-		LinkedList<Tuple2<Long, ScorePosition>> scorePositionTicks = sequenceContainer
-			.getScorePositionTicks();
+		LinkedList<Tuple2<Long, MP>> mpTicks = sequenceContainer.getMPTicks();
 		if (message.getData1() == NOTE_ON_EVENT)
 		{
 			// calls the listener with the most actual tick
 			long currentTick = SynthManager.getSequencer().getTickPosition();
 			//if playback is ahead: return nothing
-			if (scorePositionTicks.get(currentPosition).get1() > currentTick)
+			if (mpTicks.getFirst().get1() > currentTick)
 			{
 				return;
 			}
 			//if the program hung up but the player continued, there programm would always be to late.
 			//So the algorithm deletes all aruments before the current Element.
-			while (scorePositionTicks.get(currentPosition + 1).get1() <= currentTick)
+			while (mpTicks.get(currentPosition + 1).get1() <= currentTick)
 				currentPosition++;
-			ScorePosition pos = scorePositionTicks.get(currentPosition).get2();
+			MP pos = mpTicks.get(currentPosition).get2();
 			for (PlaybackListener listener : listeners)
 			{
-				listener.playbackAtScorePosition(pos);
+				listener.playbackAtMP(pos);
 			}
 		}
 		else if (message.getData1() == PLAYBACK_END_EVENT)

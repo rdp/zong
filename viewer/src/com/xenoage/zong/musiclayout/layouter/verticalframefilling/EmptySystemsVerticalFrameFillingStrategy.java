@@ -1,9 +1,12 @@
 package com.xenoage.zong.musiclayout.layouter.verticalframefilling;
 
+import static com.xenoage.zong.core.music.MP.atStaff;
+
 import com.xenoage.util.math.Size2f;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.SystemLayout;
-import com.xenoage.zong.data.music.Staff;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.SystemLayout;
+import com.xenoage.zong.core.music.Staff;
+import com.xenoage.zong.io.score.ScoreController;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangement;
 import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
@@ -56,7 +59,7 @@ public class EmptySystemsVerticalFrameFillingStrategy
     }
     
     //compute height of an additional system
-    SystemLayout defaultSystemLayout = score.getScoreFormat().getDefaultSystemLayout();
+    SystemLayout defaultSystemLayout = score.getScoreFormat().getSystemLayout();
     float defaultSystemDistance = defaultSystemLayout.getSystemDistance();
     float defaultMargin = defaultSystemLayout.getSystemMarginLeft() + defaultSystemLayout.getSystemMarginRight();
     SystemArrangement newSystem = createEmptySystem(score, usableSize.width, 0);
@@ -97,15 +100,16 @@ public class EmptySystemsVerticalFrameFillingStrategy
   	for (int iStaff = 0; iStaff < staffHeights.length; iStaff++)
   	{
   		Staff staff = score.getStaff(iStaff);
-  		staffHeights[iStaff] = (staff.getLinesCount() - 1) * staff.getInterlineSpace();
+  		staffHeights[iStaff] = (staff.getLinesCount() - 1) *
+  			ScoreController.getInterlineSpace(score, atStaff(iStaff));
   	}
   	//compute staff distances 
   	for (int iStaff = 1; iStaff < staffHeights.length; iStaff++)
   	{
-  		staffDistances[iStaff - 1] = score.getScoreFormat().getDefaultStaffLayoutNotNull(iStaff).getStaffDistance();
+  		staffDistances[iStaff - 1] = score.getScoreFormat().getStaffLayoutNotNull(iStaff).getStaffDistance();
   	}
   	//create and returns system
-  	SystemLayout defaultSystemLayout = score.getScoreFormat().getDefaultSystemLayout();
+  	SystemLayout defaultSystemLayout = score.getScoreFormat().getSystemLayout();
   	return new SystemArrangement(-1, -1, new MeasureColumnSpacing[0],
   		defaultSystemLayout.getSystemMarginLeft(), defaultSystemLayout.getSystemMarginRight(),
   		width, staffHeights, staffDistances, offsetY);

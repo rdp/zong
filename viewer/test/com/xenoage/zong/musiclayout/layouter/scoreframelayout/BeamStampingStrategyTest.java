@@ -1,6 +1,8 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
 import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.Pitch.pi;
+import static com.xenoage.zong.core.music.beam.Beam.beam;
 import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.*;
 import static org.junit.Assert.*;
 
@@ -10,11 +12,10 @@ import java.util.List;
 import org.junit.Test;
 
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.ChordData;
-import com.xenoage.zong.data.music.Note;
-import com.xenoage.zong.data.music.Pitch;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.Note;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint;
 
 
@@ -132,7 +133,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 16)));
 		chords.add(chordC(fr(1, 8)));
 		chords.add(chordC(fr(1, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -142,7 +143,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordF(fr(1, 16)));
 		chords.add(chordF(fr(1, 8)));
 		chords.add(chordF(fr(1, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -153,7 +154,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 8)));
 		chords.add(chordC(fr(1, 8)));
 		chords.add(chordC(fr(1, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -164,7 +165,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordF(fr(1, 8)));
 		chords.add(chordF(fr(1, 8)));
 		chords.add(chordF(fr(1, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -173,7 +174,7 @@ public class BeamStampingStrategyTest
 		LinkedList<Chord> chords = new LinkedList<Chord>();
 		chords.add(chordC(fr(3, 16)));
 		chords.add(chordC(fr(1, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -182,7 +183,7 @@ public class BeamStampingStrategyTest
 		LinkedList<Chord> chords = new LinkedList<Chord>();
 		chords.add(chordF(fr(3, 16)));
 		chords.add(chordF(fr(1, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -193,7 +194,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 32)));
 		chords.add(chordC(fr(3, 32)));
 		chords.add(chordC(fr(1, 32)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -204,7 +205,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordF(fr(1, 32)));
 		chords.add(chordF(fr(3, 32)));
 		chords.add(chordF(fr(1, 32)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -214,7 +215,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 8)));
 		chords.add(chordC(fr(1, 32)));
 		chords.add(chordC(fr(3, 32)));;
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -224,7 +225,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordF(fr(1, 8)));
 		chords.add(chordF(fr(1, 32)));
 		chords.add(chordF(fr(3, 32)));;
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -235,7 +236,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 8)));
 		chords.add(chordC(fr(1, 16)));
 		chords.add(chordC(fr(1, 8)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -245,7 +246,7 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 8)));
 		chords.add(chordC(fr(1, 16)));
 		chords.add(chordC(fr(3, 16)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
@@ -256,19 +257,19 @@ public class BeamStampingStrategyTest
 		chords.add(chordC(fr(1, 32)));
 		chords.add(chordC(fr(3, 32)));
 		chords.add(chordC(fr(1, 32)));
-		return new Beam(chords);
+		return beam(chords);
 	}
 	
 	
 	private Chord chordC(Fraction duration)
 	{
-		return new Chord(new ChordData(new Note(new Pitch(0, 0, 5)), duration));
+		return Chord.createMinimal(new Note(pi(0, 0, 5)), duration);
 	}
 	
 	
 	private Chord chordF(Fraction duration)
 	{
-		return new Chord(new ChordData(new Note(new Pitch(3, 0, 4)), duration));
+		return Chord.createMinimal(new Note(pi(3, 0, 4)), duration);
 	}
 	
 	

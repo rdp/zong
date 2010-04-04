@@ -1,7 +1,6 @@
 package com.xenoage.zong.musiclayout.notations.beam;
 
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.chord.StemDirection;
 
 
 /**

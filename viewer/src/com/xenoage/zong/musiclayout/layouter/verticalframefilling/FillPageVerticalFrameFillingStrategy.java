@@ -1,6 +1,6 @@
 package com.xenoage.zong.musiclayout.layouter.verticalframefilling;
 
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangement;
 

@@ -1,14 +1,14 @@
 package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
 
+import static com.xenoage.util.math.Fraction.fr;
+
 import java.util.ArrayList;
 
 
-import com.xenoage.util.RAList;
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.MusicElement;
-import com.xenoage.zong.data.music.Voice;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.key.Key;
+import com.xenoage.zong.core.music.Voice;
+import com.xenoage.zong.core.music.VoiceElement;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.notations.Notation;
@@ -44,6 +44,7 @@ public class SeparateVoiceSpacingStrategy
 	 * which is computed separately, regardless of the spacing of other
 	 * voices or staves.
 	 * @param voice           the voice to compute
+	 * @param interlineSpace  interline space of the voice
 	 * @param leadingSpacing  true, if there is a leading spacing at the beginning
 	 *                        of this measure
 	 * @param notations       the already computed notations (all elements within the
@@ -52,13 +53,14 @@ public class SeparateVoiceSpacingStrategy
 	 * 
 	 * //LAYOUT-PERFORMANCE (needed 2 of 60 seconds)
 	 */
-  public VoiceSpacing computeVoiceSpacing(Voice voice, boolean leadingSpacing,
+  public VoiceSpacing computeVoiceSpacing(Voice voice, float interlineSpace,
+  	boolean leadingSpacing,
   	NotationsCache notations, Fraction measureBeats)
   {
     ArrayList<SpacingElement> ret = new ArrayList<SpacingElement>();
     
     int elementsCount = voice.getElements().size();
-    RAList<MusicElement> elements = voice.getElements();
+    Vector<VoiceElement> elements = voice.getElements();
     
     //real offset where the last element ended, and no following
     //elements may be placed behind this line
@@ -72,7 +74,7 @@ public class SeparateVoiceSpacingStrategy
     //use 8 spaces.
     if (elementsCount == 0)
     {
-      return new VoiceSpacing(voice, new SpacingElement[]{
+      return new VoiceSpacing(voice, interlineSpace, new SpacingElement[]{
         new SpacingElement(null, Fraction._0, 0),
         new SpacingElement(null, measureBeats, 8)});
     }
@@ -84,15 +86,15 @@ public class SeparateVoiceSpacingStrategy
     //*/
     
     //iterate through the elements
-    Fraction curBeat = new Fraction(0);
-    for (MusicElement element : elements)
+    Fraction curBeat = fr(0);
+    for (VoiceElement element : elements)
     {
     	
       //if we are at beat 0 and a leading spacing was used
-      //for this voice and the element is a clef or
+      //for this voice and OBSOLETE: the element is a clef or
       //a key signature, do not use it again
-      if (curBeat.getNumerator() == 0 && leadingSpacing &&
-        (element instanceof Clef || element instanceof Key))
+      if (curBeat.getNumerator() == 0 && leadingSpacing) // OBSOLETE: &&
+        //(element instanceof Clef || element instanceof Key))
       {
         continue;
       }
@@ -138,7 +140,7 @@ public class SeparateVoiceSpacingStrategy
     }
     ret.add(new SpacingElement(null, curBeat, softOffset));
     
-    return new VoiceSpacing(voice, ArrayTools.toSpacingElementArray(ret));
+    return new VoiceSpacing(voice, interlineSpace, ArrayTools.toSpacingElementArray(ret));
   }
 
 }

@@ -1,11 +1,12 @@
 package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
 
+import static com.xenoage.util.math.Fraction.fr;
+
 import com.xenoage.util.lang.Tuple2;
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.MusicContext;
-import com.xenoage.zong.data.music.clef.Clef;
-import com.xenoage.zong.data.music.key.Key;
-import com.xenoage.zong.data.music.key.TraditionalKey;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.key.Key;
+import com.xenoage.zong.core.music.key.TraditionalKey;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.layouter.notation.NotationStrategy;
@@ -67,7 +68,7 @@ public class MeasureLeadingSpacingStrategy
     ClefNotation clefNotation = new ClefNotation(
     	clef, new ElementWidth(0, NotationStrategy.clefWidthIS, 0), musicContext.getClef().getType().getLine(), 1);
     notations.set(clefNotation, clef);
-    elements[0] = new SpacingElement(clef, new Fraction(0), xOffset);
+    elements[0] = new SpacingElement(clef, fr(0), xOffset);
     xOffset += NotationStrategy.clefWidthIS;
     
     if (useKey)
@@ -75,7 +76,7 @@ public class MeasureLeadingSpacingStrategy
       TraditionalKeyNotation keyNotation =
       	notationStrategy.computeTraditionalKey((TraditionalKey) key, clef);
       notations.set(keyNotation, key);
-      elements[1] = new SpacingElement(key, new Fraction(0), xOffset);
+      elements[1] = new SpacingElement(key, fr(0), xOffset);
       xOffset += keyNotation.getWidth().getWidth();
     }
     

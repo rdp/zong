@@ -1,23 +1,24 @@
 package com.xenoage.zong.io.midi.out;
 
+import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.zong.core.music.Pitch.pi;
+
 import java.io.File;
 import java.io.IOException;
 
 import javax.sound.midi.MidiUnavailableException;
 
-import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.ScorePosition;
-import com.xenoage.zong.data.music.Pitch;
-import com.xenoage.zong.io.midi.out.MIDIOutput;
-import com.xenoage.zong.util.demo.ScoreDemo;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.music.MP;
+import com.xenoage.zong.core.music.Pitch;
+import com.xenoage.zong.util.demo.ScoreRevolutionary;
 
 
 /**
  * 
  * @author Uli Teschemacher
  */
-public class MidiOutputTry
+@Deprecated public class MidiOutputTry
 {
 
 	/**
@@ -27,7 +28,7 @@ public class MidiOutputTry
 		throws MidiUnavailableException
 	{
 
-		Pitch pitch = new Pitch(2,0,4);
+		Pitch pitch = pi(2,0,4);
 		MIDIOutput.getInstance().playSingleNote(pitch);
 		try
 		{
@@ -39,7 +40,7 @@ public class MidiOutputTry
 			e.printStackTrace();
 		}
 
-		Score score = ScoreDemo.createDemoScore32Measures();
+		Score score = ScoreRevolutionary.createScore();
 		
 		//Save file
 		File file = new File("C:/Users/Uli/Desktop/demoscore.midi");
@@ -54,7 +55,7 @@ public class MidiOutputTry
 
 		//Play Score
 		
-		ScorePosition pos = new ScorePosition(0,2,new Fraction(1,4),0);
+		MP pos = MP.mp(0,2,0, fr(1,4));
 		MIDIOutput.getInstance().playScore(score,pos,null,120);
 	}
 }

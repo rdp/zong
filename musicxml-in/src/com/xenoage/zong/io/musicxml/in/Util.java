@@ -1,6 +1,7 @@
 package com.xenoage.zong.io.musicxml.in;
 
 import static com.xenoage.util.NullTools.notNull;
+import static com.xenoage.zong.core.music.format.SP.sp;
 
 import java.awt.Color;
 import java.math.BigDecimal;
@@ -11,12 +12,12 @@ import javax.xml.bind.JAXBElement;
 
 import com.xenoage.util.Parser;
 import com.xenoage.util.enums.VSide;
-import com.xenoage.zong.data.music.barline.BarlineStyle;
-import com.xenoage.zong.data.music.directions.DynamicsType;
-import com.xenoage.zong.data.music.format.BezierPoint;
-import com.xenoage.zong.data.music.format.Position;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.text.Alignment;
+import com.xenoage.zong.core.music.barline.BarlineStyle;
+import com.xenoage.zong.core.music.direction.DynamicsType;
+import com.xenoage.zong.core.music.format.BezierPoint;
+import com.xenoage.zong.core.music.format.Position;
+import com.xenoage.zong.core.music.format.SP;
+import com.xenoage.zong.core.text.Alignment;
 import com.xenoage.zong.musiclayout.Constants;
 
 import proxymusic.AboveBelow;
@@ -171,14 +172,14 @@ class Util
 			float fpy = notNull(py, 0).floatValue();
 			//default-x is relative to left side of note. thus, substract the half width
 			//of a note (TODO: note type. e.g., whole note is wider)
-			point = new SP((fpx / 10 - halfNoteWidth) * tenthsMm,
+			point = sp((fpx / 10 - halfNoteWidth) * tenthsMm,
 				(staffLinesCount - 1) * 2 + fpy / 10 * 2 - noteLP);
 		}
 		if (cx != null && cy != null)
 		{
 			float fcx = notNull(cx, 0).floatValue();
 			float fcy = notNull(cy, 0).floatValue();
-			control =	new SP((fcx / 10 - halfNoteWidth) * tenthsMm, fcy / 10 * 2);
+			control =	sp((fcx / 10 - halfNoteWidth) * tenthsMm, fcy / 10 * 2);
 		}
 		if (point != null || control != null)
 			return new BezierPoint(point, control);

@@ -15,7 +15,6 @@ import com.xenoage.zong.data.text.FormattedTextString;
 import com.xenoage.zong.data.text.FormattedTextStyle;
 import com.xenoage.zong.data.text.FormattedTextSymbol;
 import com.xenoage.zong.renderer.GLGraphicsContext;
-import com.xenoage.zong.renderer.RenderingQuality;
 
 
 /**

@@ -1,13 +1,14 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.alignment;
 
-import static com.xenoage.zong.data.music.StemDirection.Up;
+import static com.xenoage.util.iterators.It.it;
+import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 
 import com.xenoage.util.iterators.It;
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.Stem;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.Stem;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.design.BeamDesign;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.design.DoubleBeamDesign;
@@ -43,7 +44,7 @@ public class SingleMeasureTwoStavesStrategy
 	 */
 	public NotationsCache computeNotations(Beam beam, NotationsCache notations)
 	{
-		NotesAlignment[] chordNa = new NotesAlignment[beam.getWaypointsCount()];
+		NotesAlignment[] chordNa = new NotesAlignment[beam.getWaypoints().size()];
 		int beamlines = beam.getMaxBeamLinesCount();
 		int i = 0;
 		for (BeamWaypoint waypoint : beam.getWaypoints())
@@ -65,7 +66,7 @@ public class SingleMeasureTwoStavesStrategy
 		
 		//compute new notations
 		NotationsCache ret = new NotationsCache();
-		It<BeamWaypoint> waypoints = beam.getWaypoints();
+		It<BeamWaypoint> waypoints = it(beam.getWaypoints());
 		for (BeamWaypoint waypoint : waypoints)
 		{
 			Chord chord = waypoint.getChord();

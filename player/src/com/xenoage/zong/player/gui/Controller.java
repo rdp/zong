@@ -13,11 +13,9 @@ import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.util.filter.Filter;
 import com.xenoage.util.language.Lang;
 import com.xenoage.util.language.VocabularyID;
-import com.xenoage.zong.data.Score;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.io.midi.out.MidiScorePlayer;
 import com.xenoage.zong.io.midi.out.PlaybackListener;
-import com.xenoage.zong.io.musicxml.in.FileReader;
-import com.xenoage.zong.io.musicxml.in.MxlScoreFileInput;
 import com.xenoage.zong.player.Player;
 import com.xenoage.zong.player.language.Voc;
 
@@ -110,7 +108,7 @@ public class Controller
   public void loadScore(ScorePartwise doc)
   	throws InvalidFormatException
   {
-		Score score = new MxlScoreFileInput().read(doc, null);
+		Score score = Score.empty(); //TODO(musicxml-in) new MxlScoreFileInput().read(doc, null);
 
 		if (score != null)
 		{
@@ -132,7 +130,7 @@ public class Controller
 	{
 		try
 		{
-			return FileReader.loadScores(path, filter);
+			return new LinkedList<Score>(); //TODO(musicxml-in) FileReader.loadScores(path, filter);
 		}
 		catch (Exception ex)
 		{

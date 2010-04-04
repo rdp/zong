@@ -1,8 +1,8 @@
 package com.xenoage.zong.player.gui;
 
-import com.xenoage.zong.data.Score;
-
 import javax.swing.JFrame;
+
+import com.xenoage.zong.core.Score;
 
 
 /**

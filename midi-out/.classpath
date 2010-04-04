@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/util"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JUnit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Gervill"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pdlib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

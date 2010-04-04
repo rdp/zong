@@ -1,12 +1,13 @@
 package com.xenoage.zong.musiclayout.stampings;
 
+import static com.xenoage.zong.core.music.format.SP.sp;
+
 import com.xenoage.util.MathTools;
 import com.xenoage.util.math.Rectangle2f;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.data.music.format.SP;
-import com.xenoage.zong.data.music.key.TraditionalKey;
+import com.xenoage.zong.core.music.key.TraditionalKey;
 import com.xenoage.zong.musiclayout.layouter.notation.NotationStrategy;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
@@ -155,7 +156,7 @@ public class KeySignatureStamping
     {
       int linePosition = getLinePosition(i, useSharps);
       StaffSymbolStampingRenderer.paint(symbol, null,
-      	new SP(positionX + i * distance * interlineSpace, linePosition),
+      	sp(positionX + i * distance * interlineSpace, linePosition),
       	1, parentStaff, false, params);
     }
   }

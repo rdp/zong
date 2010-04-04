@@ -3,9 +3,8 @@ package com.xenoage.zong.musiclayout.layouter.cache;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.xenoage.util.InstanceID;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.TupletInfo;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.tuplet.Tuplet;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.util.ChordStampings;
 
 
@@ -15,39 +14,40 @@ import com.xenoage.zong.musiclayout.layouter.scoreframelayout.util.ChordStamping
  * @author Andreas Wenger
  */
 public class OpenTupletsCache
-	implements Iterable<TupletInfo>
+	implements Iterable<Tuplet>
 {
 	
 	//tuplets, whose bracket/number are not stamped yet
-	//first key: TupletInfo. second key: InstanceID of the chord
-	private HashMap<TupletInfo, HashMap<InstanceID, ChordStampings>> openChords = new HashMap<TupletInfo, HashMap<InstanceID, ChordStampings>>();
+	private HashMap<Tuplet, HashMap<Chord, ChordStampings>> openChords =
+		new HashMap<Tuplet, HashMap<Chord, ChordStampings>>();
 	
 	
 	/**
 	 * Adds the given {@link ChordStampings} belonging to the given {@link Chord}
-	 * to the cache.
+	 * with the given {@link Tuplet} to the cache.
 	 */
-	public void addChord(Chord chord, ChordStampings chordStampings)
+	public void addChord(Chord chord, Tuplet tuplet, ChordStampings chordStampings)
 	{
-		HashMap<InstanceID, ChordStampings> tupletData = openChords.get(chord.getTupletInfo());
+		HashMap<Chord, ChordStampings> tupletData = openChords.get(tuplet);
 		if (tupletData == null)
 		{
-			tupletData = new HashMap<InstanceID, ChordStampings>();
-			openChords.put(chord.getTupletInfo(), tupletData);
+			tupletData = new HashMap<Chord, ChordStampings>();
+			openChords.put(tuplet, tupletData);
 		}
-		tupletData.put(chord.getInstanceID(), chordStampings);
+		tupletData.put(chord, chordStampings);
 	}
 	
 	
 	/**
-	 * Gets the {@link ChordStampings} for the given chord, or null if unknown.
+	 * Gets the {@link ChordStampings} for the given {@link Chord}
+	 * with the given {@link Tuplet}, or null if unknown.chord.getTuplet()
 	 */
-	public ChordStampings getChord(Chord chord)
+	public ChordStampings getChord(Chord chord, Tuplet tuplet)
 	{
-		HashMap<InstanceID, ChordStampings> tupletData = openChords.get(chord.getTupletInfo());
+		HashMap<Chord, ChordStampings> tupletData = openChords.get(tuplet);
 		if (tupletData != null)
 		{
-			return tupletData.get(chord.getInstanceID());
+			return tupletData.get(chord);
 		}
 		else
 		{
@@ -59,7 +59,7 @@ public class OpenTupletsCache
 	/**
 	 * Gets an iterator for all open tuplets.
 	 */
-	public Iterator<TupletInfo> iterator()
+	public Iterator<Tuplet> iterator()
 	{
 		return openChords.keySet().iterator();
 	}

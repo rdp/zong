@@ -11,8 +11,7 @@ import com.xenoage.util.Units;
 
 
 /**
- * Abstract base class for all views of
- * score documents.
+ * Abstract base class for all views of score documents.
  * 
  * @author Andreas Wenger
  */

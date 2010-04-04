@@ -1,7 +1,7 @@
 package com.xenoage.zong.musiclayout.spacing.horizontal;
 
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.data.music.MusicElement;
+import com.xenoage.zong.core.music.MusicElement;
 
 
 /**

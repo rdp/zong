@@ -1,11 +1,14 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation.direction;
 
+import static com.xenoage.util.iterators.It.it;
+
 import java.util.Iterator;
 
-import com.xenoage.zong.data.music.Beam;
-import com.xenoage.zong.data.music.BeamWaypoint;
-import com.xenoage.zong.data.music.Chord;
-import com.xenoage.zong.data.music.StemDirection;
+import com.xenoage.util.iterators.It;
+import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
+import com.xenoage.zong.core.music.chord.Chord;
+import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
@@ -49,7 +52,7 @@ public class SingleMeasureSingleStaffStrategy
 	{
 		//pre-requirements: beam spans over only one measure (not tested here),
 		//and line positions and the stem direction of each chord are known (tested here)
-		int chordsCount = beam.getWaypointsCount();
+		int chordsCount = beam.getWaypoints().size();
 		ChordLinePositions[] chordsLp = new ChordLinePositions[chordsCount];
 		StemDirection[] stemDirections = new StemDirection[chordsCount];
 		int iChord = 0;
@@ -73,7 +76,7 @@ public class SingleMeasureSingleStaffStrategy
 		
 		//return the results as a new NotationsCache
 		NotationsCache ret = new NotationsCache();
-		Iterator<BeamWaypoint> beamWaypoints = beam.getWaypoints();
+		Iterator<BeamWaypoint> beamWaypoints = it(beam.getWaypoints());
 		for (int i = 0; i < bsd.getStemDirections().length; i++)
 		{
 			Chord chord = beamWaypoints.next().getChord();

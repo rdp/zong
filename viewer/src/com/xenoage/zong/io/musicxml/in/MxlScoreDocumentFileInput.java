@@ -5,27 +5,18 @@ import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.app.App;
-import com.xenoage.zong.data.Score;
-import com.xenoage.zong.data.format.LayoutFormat;
+import com.xenoage.zong.core.Score;
+import com.xenoage.zong.core.format.LayoutFormat;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.io.ScoreDocumentFileInput;
-import com.xenoage.zong.io.musicxml.in.MxlCredits;
-import com.xenoage.zong.io.musicxml.in.MxlScoreData;
-import com.xenoage.zong.io.musicxml.in.MxlScoreFormat;
-import com.xenoage.zong.io.musicxml.in.MxlScoreInfo;
-import com.xenoage.zong.io.musicxml.in.MxlStavesList;
-import com.xenoage.zong.io.score.ScoreInput;
 import com.xenoage.zong.layout.Page;
 import com.xenoage.zong.layout.frames.ScoreFrame;
 import com.xenoage.zong.layout.frames.ScoreFrameChain;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouter;
-import com.xenoage.zong.player.gui.FilenameFilterDialog;
-import com.xenoage.zong.util.xml.ZongMarshalling;
 
 import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
-
-import javax.xml.bind.UnmarshalException;
 
 import proxymusic.ScorePartwise;
 
@@ -81,7 +72,7 @@ public class MxlScoreDocumentFileInput
   {
   	Score score;
   	
-  	List<Score> scores = FileReader.loadScores(filePath, new FilenameFilterDialog());
+  	List<Score> scores = new LinkedList<Score>(); //TODO(musicxml-in) FileReader.loadScores(filePath, new FilenameFilterDialog());
 		if (scores.size() > 0)
 			score = scores.get(0);
 		else
@@ -91,7 +82,7 @@ public class MxlScoreDocumentFileInput
     ScoreDocument ret = new ScoreDocument(score, filePath, null);
     
     //page format
-    Object layoutFormat = score.getMetaData("layoutformat");
+    Object layoutFormat = score.getMetaData().get("layoutformat");
     if (layoutFormat != null && layoutFormat instanceof LayoutFormat)
     {
     	ret.getDefaultLayout().setFormat((LayoutFormat) layoutFormat);
@@ -123,11 +114,11 @@ public class MxlScoreDocumentFileInput
     chain.clearAdditionalFrames();
     
     //add credit elements
-    Object xmlDoc = score.getMetaData("xmldoc");
+    Object xmlDoc = score.getMetaData().get("xmldoc");
     if (xmlDoc != null && xmlDoc instanceof ScorePartwise)
     {
-    	ScorePartwise doc = (ScorePartwise) xmlDoc;
-    	MxlCredits.read(doc, ret, new MxlScoreFormat(doc).getDefaults());
+    	//ScorePartwise doc = (ScorePartwise) xmlDoc;
+    	//TODO(musicxml-in) MxlCredits.read(doc, ret, new MxlScoreFormat(doc).getDefaults());
     }
     
     return ret;

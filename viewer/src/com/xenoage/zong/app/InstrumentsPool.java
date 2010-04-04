@@ -1,5 +1,7 @@
 package com.xenoage.zong.app;
 
+import static com.xenoage.pdlib.PVector.pvec;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,14 +11,16 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.FileTools;
 import com.xenoage.util.error.ErrorLevel;
 import com.xenoage.util.xml.XMLReader;
 import com.xenoage.zong.app.language.Voc;
-import com.xenoage.zong.data.instrument.Instrument;
-import com.xenoage.zong.data.instrument.InstrumentGroup;
-import com.xenoage.zong.data.instrument.PitchedInstrument;
-import com.xenoage.zong.data.instrument.UnpitchedInstrument;
+import com.xenoage.zong.core.instrument.Instrument;
+import com.xenoage.zong.core.instrument.InstrumentGroup;
+import com.xenoage.zong.core.instrument.PitchedInstrument;
+import com.xenoage.zong.core.instrument.Transpose;
+import com.xenoage.zong.core.instrument.UnpitchedInstrument;
 import com.xenoage.util.logging.Log;
 
 
@@ -81,7 +85,7 @@ public class InstrumentsPool
 				//assign groups
 				List<Element> eGroups = XMLReader.elements(
           XMLReader.element(eInstrument, "groups"), ("group"));
-				ArrayList<InstrumentGroup> iGroups = new ArrayList<InstrumentGroup>(eGroups.size());
+				PVector<InstrumentGroup> iGroups = pvec();
 				for (int a=0; a<eGroups.size();a++)
 				{
 					Element eGroup = eGroups.get(a);
@@ -92,7 +96,7 @@ public class InstrumentsPool
 					}
 					else
 					{
-						iGroups.add(group);
+						iGroups = iGroups.plus(group);
 					}
 				}
 				
@@ -113,9 +117,9 @@ public class InstrumentsPool
 					int iTranspose = Integer.parseInt(
 	          XMLReader.elementText(eInstrument, "transpose"));
 				
-					//TODO: parse iPitchBottom and iPitchTop
+					//TODO: parse iPitchBottom and iPitchTop, diatonic
 					instrument = new PitchedInstrument(iID, iName, iAbbr, iGroups,
-						iMidiProgram, iTranspose, null, null, iPolyphon);
+						iMidiProgram, new Transpose(iTranspose, 0, 0, false), null, null, iPolyphon);
 				}
 				else
 				{

@@ -3,7 +3,6 @@ package com.xenoage.zong.app.symbols.beams;
 import java.awt.Color;
 
 import com.xenoage.util.math.Point2f;
-import com.xenoage.zong.data.music.Beam;
 import com.xenoage.zong.renderer.GLGraphicsContext;
 
 
