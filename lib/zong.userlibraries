@@ -3,6 +3,9 @@
     <library name="Gervill" systemlibrary="false">
         <archive path="/lib/gervill.jar"/>
     </library>
+    <library name="iText" systemlibrary="false">
+        <archive path="/lib/iText-5.0.2.jar" source="/lib/dev/iText/iText-src-5.0.2.zip"/>
+    </library>
     <library name="JOGL" systemlibrary="false">
         <archive path="/lib/gluegen-rt.jar"/>
         <archive javadoc="jar:platform:/resource/lib/dev/jogl/jogl-1.1.1a-docs.zip!/jogl-1.1.1-docs" path="/lib/jogl.jar" source="/lib/dev/jogl/jogl-1.1.1a-src.zip"/>

@@ -3,14 +3,19 @@ package com.xenoage.util.xml;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
@@ -85,21 +90,9 @@ public class XMLReader
   
   
   /**
-   * Gets the text of the given element, or "".
-   */
-  public static String text(Element element)
-  {
-    if (element == null)
-      return "";
-    else
-      return element.getTextContent();
-  }
-  
-  
-  /**
    * Gets the trimmed text of the given element, or "".
    */
-  public static String textTrim(Element element)
+  public static String text(Element element)
   {
     if (element == null)
       return "";
@@ -109,18 +102,23 @@ public class XMLReader
   
   
   /**
+   * Gets the untrimmed trimmed text of the given element, or "".
+   */
+  public static String textUntrimmed(Element element)
+  {
+    if (element == null)
+      return "";
+    else
+      return element.getTextContent();
+  }
+  
+  
+  /**
    * Reads and returns the value of the attribute with the
    * given name of the given element, or null if not found.
    */
   public static String attribute(Element element, String name)
   {
-  	/* OBSOLETE
-    if (element == null) return null;
-    NamedNodeMap attributes = element.getAttributes();
-    if (attributes == null) return null;
-    Node value = attributes.getNamedItem(name);
-    if (value == null) return null;
-    return value.getTextContent(); */
   	String ret = attributeNotNull(element, name);
   	return (ret.length() > 0 ? ret : null);
   }
@@ -132,12 +130,21 @@ public class XMLReader
    */
   public static String attributeNotNull(Element element, String name)
   {
-  	/* OBSOLETE
-    String ret = attribute(element, name);
-    if (ret == null)
-      ret = "";
-    return ret; */
   	return element.getAttribute(name);
+  }
+  
+  
+  /**
+   * Gets the first child element of the given node, or null if not found.
+   */
+  public static Element element(Node parent)
+  {
+  	for(Node node = parent.getFirstChild(); node != null; node = node.getNextSibling())
+    {
+      if (node instanceof Element)
+        return (Element) node;
+    }
+    return null;
   }
   
   
@@ -145,11 +152,11 @@ public class XMLReader
    * Gets the first child element of the given node with
    * the given name, or null if not found.
    */
-  public static Element element(Node parent, String name)
+  public static Element element(Element parent, String name)
   {
   	for(Node node = parent.getFirstChild(); node != null; node = node.getNextSibling())
     {
-      if (node.getNodeName().equals(name))
+      if (node instanceof Element && node.getNodeName().equals(name))
         return (Element) node;
     }
     return null;
@@ -177,9 +184,9 @@ public class XMLReader
    * Gets the a list of all child elements of the given node.
    * If no such elements are found, the returned list is empty. 
    */
-  public static List<Element> elements(Node parent)
+  public static ArrayList<Element> elements(Element parent)
   {
-  	LinkedList<Element> ret = new LinkedList<Element>();
+  	ArrayList<Element> ret = new ArrayList<Element>(parent.getChildNodes().getLength());
   	for(Node node = parent.getFirstChild(); node != null; node = node.getNextSibling())
     {
       if (node.getNodeType() == Node.ELEMENT_NODE)

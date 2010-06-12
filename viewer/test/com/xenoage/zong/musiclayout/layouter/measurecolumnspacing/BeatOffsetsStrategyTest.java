@@ -1,5 +1,6 @@
 package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
 
+import static com.xenoage.util.Range.range;
 import static com.xenoage.util.math.Fraction._0;
 import static com.xenoage.util.math.Fraction.fr;
 import static com.xenoage.zong.core.ScoreFactory.create1Staff;
@@ -19,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.xenoage.util.Delta;
-import com.xenoage.util.Range;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.instrument.PitchedInstrument;
@@ -330,7 +330,7 @@ public class BeatOffsetsStrategyTest
   private Score createTestScore3Voices()
   {
   	Score score = Score.empty().plusPart(
-			new Part("", null, 2, PitchedInstrument.getDefaultInstrument()));
+			new Part("", null, 2, PitchedInstrument.defaultValue));
     score = score.withScoreFormat(score.getScoreFormat().withInterlineSpace(10));
     Cursor cursor = new Cursor(score, mp0, true);
     cursor = cursor.write(new NormalTime(4, 4));
@@ -370,7 +370,7 @@ public class BeatOffsetsStrategyTest
   private Score createTestScore3VoicesIncomplete()
   {
   	Score score = Score.empty().plusPart(
-			new Part("", null, 2, PitchedInstrument.getDefaultInstrument()));
+			new Part("", null, 2, PitchedInstrument.defaultValue));
     score = score.withScoreFormat(score.getScoreFormat().withInterlineSpace(2));
     Cursor cursor = new Cursor(score, mp0, true);
     cursor = cursor.write(new NormalTime(4, 4));
@@ -412,7 +412,7 @@ public class BeatOffsetsStrategyTest
   private LinkedList<VoiceSpacing> createVoiceSpacings(Score score)
   {
   	LinkedList<VoiceSpacing> ret = new LinkedList<VoiceSpacing>();
-  	for (int iStaff : new Range(0, score.getStavesCount() - 1))
+  	for (int iStaff : range(0, score.getStavesCount() - 1))
   	{
 	  	Measure measure = score.getMeasure(atMeasure(iStaff, 0));
   		for (Voice voice : measure.getVoices())

@@ -11,6 +11,7 @@ import java.util.EnumSet;
  */
 public enum FontStyle
 {
+	
 	Bold,
 	Italic,
 	Underline,

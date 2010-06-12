@@ -1,12 +1,16 @@
 package com.xenoage.zong.core.music.chord;
 
 import static com.xenoage.pdlib.IVector.ivec;
+import static com.xenoage.pdlib.PVector.pvec;
+import static com.xenoage.util.NullTools.notNull;
 import static com.xenoage.util.Range.range;
 
 import java.util.ArrayList;
 
 import com.xenoage.pdlib.Vector;
 import com.xenoage.util.NullTools;
+import com.xenoage.util.annotations.MaybeEmpty;
+import com.xenoage.util.annotations.MaybeNull;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.Globals;
 import com.xenoage.zong.core.music.Pitch;
@@ -21,6 +25,10 @@ import com.xenoage.zong.core.music.VoiceElement;
  * 
  * A chord can have a stem and articulations.
  * It can also be part of a tuplet. Currently, tuplets can not be nested.
+ * 
+ * A chord may be a normal chord (default case), a cue chord (printed small,
+ * but has a duration like normal chords) or a grace chord, which duration
+ * is 0 (the grace duration is saved in the {@link Grace} class).
  * 
  * A chord can be part of a tuplet and can be attached to a beam and one or
  * more lyrics, directions and slurs, but this is stored in the
@@ -40,33 +48,53 @@ public final class Chord
   
   //stem, or null for default stem
 	private final Stem stem;
+	
+	//cue and grace (or null)
+	private final boolean cue;
+	private final Grace grace;
   
   //the accidentals within this chord, sorted by ascending distance to the chord
   private final Vector<Articulation> articulations;
+  private static final Vector<Articulation> emptyArticulations = pvec();
   
   
-	/**
-   * Creates a chord with the given notes, duration, stem (or null) and articulations (or null).
+  /**
+   * Creates a chord with the given notes, duration, stem (or null), cue or grace type (or null)
+   * and articulations (or null).
    * The pitches must be sorted ascending (begin with the lowest pitch,
    * end with the highest pitch), otherwise an {@link IllegalArgumentException} is thrown.
    */
-  public Chord(Vector<Note> notes, Fraction duration, Stem stem, Vector<Articulation> articulations)
+  public Chord(Vector<Note> notes, Fraction duration, Stem stem, boolean cue, Grace grace,
+  	Vector<Articulation> articulations)
   {
   	NullTools.throwNullArg(notes, duration);
   	checkNotesOrder(notes);
     this.notes = notes;
     this.duration = duration;
     this.stem = stem;
-    this.articulations = articulations;
+    this.cue = cue;
+    this.grace = grace;
+    this.articulations = notNull(articulations, emptyArticulations);
   }
   
   
   /**
-   * Creates a chord with the given note and duration.
+   * Creates a normal chord with the given notes, duration, stem (or null) and articulations (or null).
+   * The pitches must be sorted ascending (begin with the lowest pitch,
+   * end with the highest pitch), otherwise an {@link IllegalArgumentException} is thrown.
+   */
+  public Chord(Vector<Note> notes, Fraction duration, Stem stem, Vector<Articulation> articulations)
+  {
+  	this(notes, duration, stem, false, null, articulations);
+  }
+  
+  
+  /**
+   * Creates a normal chord with the given note and duration.
    */
   public static Chord createMinimal(Note note, Fraction duration)
   {
-  	return new Chord(ivec(note), duration, null, null);
+  	return new Chord(ivec(note), duration, null, false, null, null);
   }
 
 
@@ -80,11 +108,20 @@ public final class Chord
   
   
   /**
-   * Gets the duration of this chord. Never null.
+   * Gets the duration of this chord.
    */
   @Override public Fraction getDuration()
   {
     return duration;
+  }
+  
+  
+  /**
+   * Sets the duration of this chord.
+   */
+  public Chord withDuration(Fraction duration)
+  {
+  	return new Chord(notes, duration, stem, cue, grace, articulations);
   }
   
   
@@ -102,17 +139,63 @@ public final class Chord
    */
   public Chord withStem(Stem stem)
   {
-  	return new Chord(notes, duration, stem, articulations);
+  	return new Chord(notes, duration, stem, cue, grace, articulations);
   }
   
   
   /**
-   * Gets the articulations of this chord, which may also be null
-   * if there are none.
+   * Returns true, if this chord has cue size, otherwise false.
    */
-  public Vector<Articulation> getArticulations()
+  public boolean isCue()
+  {
+  	return cue;
+  }
+  
+  
+  /**
+   * Sets the cue size.
+   */
+  public Chord withCue(boolean cue)
+  {
+  	return new Chord(notes, duration, stem, cue, grace, articulations);
+  }
+  
+  
+  /**
+   * Gets the grace value of this chord, or null if it is a normal chord.
+   */
+  @MaybeNull public Grace getGrace()
+  {
+  	return grace;
+  }
+  
+  
+  /**
+   * Sets the grace value of this chord, or null if it is a normal chord.
+   */
+  public Chord withGrace(Grace grace)
+  {
+  	return new Chord(notes, duration, stem, cue, grace, articulations);
+  }
+  
+  
+  /**
+   * Gets the articulations of this chord.
+   */
+  @MaybeEmpty public Vector<Articulation> getArticulations()
   {
     return articulations;
+  }
+  
+  
+  /**
+   * Sets the articulations of this chord, which may also be null
+   * if there are none.
+   */
+  public Chord withArticulations(Vector<Articulation> articulations)
+  {
+    articulations = notNull(articulations, emptyArticulations);
+    return new Chord(notes, duration, stem, cue, grace, articulations);
   }
   
   
@@ -151,7 +234,7 @@ public final class Chord
   	int i = 0;
   	for (; i < notes.size(); i++)
   	{
-  		if (notes.get(i).getPitch().compareTo(note.getPitch()) < 0)
+  		if (notes.get(i).getPitch().compareTo(note.getPitch()) > 0)
   			break;
   	}
   	notes.add(i, note);
@@ -172,20 +255,12 @@ public final class Chord
       lastPitch = currentPitch;
     }
 	}
-	
-	
-	/**
-   * Returns this element but with the given duration.
-   */
-  public Chord withDuration(Fraction duration)
-  {
-  	return new Chord(notes, duration, stem, articulations);
-  }
   
   
   @Override public String toString()
   {
-  	return "Chord (first note: " + notes.get(0).toString() + ")";
+  	return "chord(" + notes.get(0).toString() + (notes.size() > 1 ? ",..." : "") +
+  		";dur:" + duration + ")";
   }
   
 

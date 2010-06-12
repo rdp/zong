@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="libtry/playerdata.jar"/>
 	<classpathentry kind="lib" path="libtry/skin.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pdlib"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/musicxml"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/musicxml-in"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

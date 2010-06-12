@@ -6,7 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.xenoage.util.Delta;
+import com.xenoage.util.io.IO;
 import com.xenoage.util.language.Lang;
+import com.xenoage.util.logging.Log;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Point2i;
 import com.xenoage.util.math.Size2f;
@@ -35,6 +37,8 @@ public class ScorePageViewTest
   
   @Before public void setUp()
   {
+  	IO.initTest();
+  	Log.initNoLog();
     Layout layout = new ScoreDocument().getDefaultLayout();
     //3 pages:
     // ----          --------

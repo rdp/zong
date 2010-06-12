@@ -14,7 +14,7 @@ import com.xenoage.zong.core.Score;
 
 
 /**
- * Tests for the {@link MxlScoreDocumentFileInput} class.
+ * Tests for the {@link MusicXMLScoreDocumentFileInput} class.
  * 
  * @author Andreas Wenger
  */
@@ -38,7 +38,7 @@ public class MxlScoreDocumentFileInputTest
     {
     	try
     	{
-	      new MxlScoreDocumentFileInput().read(file);
+	      new MusicXMLScoreDocumentFileInput().read(file);
     	}
       catch (Exception ex)
       {
@@ -82,7 +82,7 @@ public class MxlScoreDocumentFileInputTest
   	try
   	{
   		String filepath = "data/test/scores/" + filename;
-  		return new MxlScoreDocumentFileInput().read(filepath).getScore(0);
+  		return new MusicXMLScoreDocumentFileInput().read(filepath).getScore(0);
   	}
   	catch (Exception ex)
   	{

@@ -25,8 +25,9 @@ public final class ScoreFormat
   private final Font lyricFont;
   private final MeasureNumbering measureNumbering;
   
-  private static ScoreFormat defaultInstance = new ScoreFormat(1.6f, //default: Rastralgröße Nr. 4
-  	15, SystemLayout.getDefault(), null, StaffLayout.getDefault(), 
+  //default: Rastralgröße Nr. 4
+  public static ScoreFormat defaultValue = new ScoreFormat(1.6f, 
+  	15, SystemLayout.defaultValue, null, StaffLayout.defaultValue, 
   	DEFAULT_FONT, MeasureNumbering.System);
   
   
@@ -52,15 +53,6 @@ public final class ScoreFormat
   	this.staffLayoutOther = staffLayoutOther;
   	this.lyricFont = lyricFont;
   	this.measureNumbering = measureNumbering;
-  }
-  
-  
-  /**
-   * Creates a default score format.
-   */
-  public static ScoreFormat getDefault()
-  {
-  	return defaultInstance;
   }
 
 

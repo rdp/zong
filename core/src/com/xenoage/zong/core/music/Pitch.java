@@ -18,21 +18,21 @@ public final class Pitch
   implements Comparable<Pitch>
 {
   
-  public static final byte C = 0;
-  public static final byte D = 1;
-  public static final byte E = 2;
-  public static final byte F = 3;
-  public static final byte G = 4;
-  public static final byte A = 5;
-  public static final byte B = 6;
+  public static final int C = 0;
+  public static final int D = 1;
+  public static final int E = 2;
+  public static final int F = 3;
+  public static final int G = 4;
+  public static final int A = 5;
+  public static final int B = 6;
   
   
-  private final byte step;
-  private final byte alter;
-  private final byte octave;
+  private final int step;
+  private final int alter;
+  private final int octave;
   
   
-  private Pitch(byte step, byte alter, byte octave)
+  private Pitch(int step, int alter, int octave)
   {
   	if (step < 0 || step > 6)
   		throw new IllegalArgumentException("Invalid step: " + step);
@@ -42,7 +42,7 @@ public final class Pitch
   }
   
   
-  private Pitch(char step, byte alter, byte octave)
+  private Pitch(char step, int alter, int octave)
   {
     switch (step)
     {
@@ -60,15 +60,9 @@ public final class Pitch
   }
   
   
-  public static Pitch pi(byte step, byte alter, byte octave)
-  {
-  	return new Pitch(step, alter, octave);
-  }
-  
-  
   public static Pitch pi(int step, int alter, int octave)
   {
-  	return new Pitch((byte) step, (byte) alter, (byte) octave);
+  	return new Pitch(step, alter, octave);
   }
   
   
@@ -99,19 +93,19 @@ public final class Pitch
   }
 
   
-  public byte getStep()
+  public int getStep()
   {
     return step;
   }
 
   
-  public byte getAlter()
+  public int getAlter()
   {
     return alter;
   }
 
   
-  public byte getOctave()
+  public int getOctave()
   {
     return octave;
   }
@@ -187,7 +181,7 @@ public final class Pitch
   }
   
   
-  private int getStepSemitones(byte step)
+  private int getStepSemitones(int step)
   {
     switch (step)
     {

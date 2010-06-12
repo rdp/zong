@@ -154,6 +154,25 @@ public class ApplicationIO
   
   
   /**
+   * Removes the data file with the given relative path.
+   * @param system  if true, not only the user's private settings file is deleted
+   *                but also the system data file
+   */
+  public void deleteDataFile(String filepath, boolean system)
+  {
+  	File file = new File(userDir, filepath);
+  	if (file.exists())
+  		file.delete();
+  	if (system)
+  	{
+  		file = new File(systemDir, filepath);
+    	if (file.exists())
+    		file.delete();
+  	}
+  }
+  
+  
+  /**
    * Finds and returns the data files in the given directory.
    */
   public Set<String> listDataFiles(String directory)

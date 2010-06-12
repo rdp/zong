@@ -29,9 +29,7 @@ import com.xenoage.zong.core.music.Part;
 import com.xenoage.zong.core.music.Pitch;
 import com.xenoage.zong.core.music.StavesList;
 import com.xenoage.zong.core.music.barline.Barline;
-import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
 import com.xenoage.zong.core.music.barline.BarlineStyle;
-import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
 import com.xenoage.zong.core.music.chord.Articulation;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.chord.Note;
@@ -46,6 +44,8 @@ import com.xenoage.zong.core.music.direction.DynamicsType;
 import com.xenoage.zong.core.music.direction.Tempo;
 import com.xenoage.zong.core.music.format.BezierPoint;
 import com.xenoage.zong.core.music.format.Position;
+import com.xenoage.zong.core.music.group.BarlineGroup;
+import com.xenoage.zong.core.music.group.BracketGroup;
 import com.xenoage.zong.core.music.key.TraditionalKey;
 import com.xenoage.zong.core.music.rest.Rest;
 import com.xenoage.zong.core.music.time.CommonTime;
@@ -88,8 +88,8 @@ public class ScoreRevolutionary
 
 		//set barlines and brackets
 		StavesList stavesList = score.getStavesList();
-		stavesList = stavesList.plusBarlineGroup(0, 1, BarlineGroupStyle.Common);
-		stavesList = stavesList.plusBracketGroup(0, 1, BracketGroupStyle.Brace);
+		stavesList = stavesList.plusBarlineGroup(0, 1, BarlineGroup.Style.Common);
+		stavesList = stavesList.plusBracketGroup(0, 1, BracketGroup.Style.Bracket);
 		score = score.withStavesList(stavesList);
 		
 		//use cursor for more convenient input
@@ -228,7 +228,7 @@ public class ScoreRevolutionary
 		//measure 3
 		cursor = cursor.write(chord(f8, staccato, pi(B,0,1)));
 		cursor = cursor.openBeam();
-		cursor = cursor.write(chord(f16, pi(A, -1, 4)));
+		cursor = cursor.write(firstSlurC = chord(f16, pi(A, -1, 4)));
 		cursor = cursor.write(chord(f16, pi(G, 0, 4)));
 		cursor = cursor.closeBeam();
 		

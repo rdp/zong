@@ -3,6 +3,7 @@ package com.xenoage.util.language;
 import static org.junit.Assert.*;
 
 import com.xenoage.util.FileTools;
+import com.xenoage.util.io.IO;
 import com.xenoage.util.language.Lang;
 import com.xenoage.util.language.LanguageInfo;
 
@@ -27,6 +28,7 @@ public class LanguageInfoTest
   @Before public void setUp()
   	throws Exception
   {
+  	IO.initTest();
     langs = LanguageInfo.getAvailableLanguages(Lang.defaultLangPath);
     assertTrue("There must be at least one language pack!", langs.size() > 0);
   }

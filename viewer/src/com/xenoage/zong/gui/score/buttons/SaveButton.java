@@ -51,12 +51,12 @@ public class SaveButton
 	{
 		if (App.getInstance().isDesktopApp())
 		{
-			//viewer app: export as Midi
-			setTooltipText(Lang.get(Voc.ButtonPanel_SaveDocumentAsMidi));
+			//viewer app: export
+			setTooltipText(Lang.get(Voc.ButtonPanel_SaveDocumentAs));
 		}
 		else
 		{
-			//viewer applet: download MusicXML or save as Midi
+			//viewer applet: download MusicXML or export
 			setTooltipText(Lang.get(Voc.ButtonPanel_DownloadDocument));
 		}
 	}

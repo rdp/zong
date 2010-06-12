@@ -194,7 +194,7 @@ public class Measure
    * @return a map with the pitches that have accidentals (without alter)
    *   as keys and their corresponding alter values as values.
    */
-  public PMap<Pitch, Byte> getAccidentals(Fraction beat, BeatInterval interval,
+  public PMap<Pitch, Integer> getAccidentals(Fraction beat, BeatInterval interval,
   	Fraction startBeat, Key startBeatKey)
   {
   	if (!(interval == Before || interval == BeforeOrAt || interval == At))
@@ -207,7 +207,7 @@ public class Measure
   	}
   	//when there is a key change, all accidentals are reset. so look for the
   	//last key change before the given beat (if any)
-    PMap<Pitch, Byte> ret = new PMap<Pitch, Byte>();
+    PMap<Pitch, Integer> ret = new PMap<Pitch, Integer>();
     PMap<Pitch, Fraction> retBeats = new PMap<Pitch, Fraction>();
     for (Voice voice : voices)
     {
@@ -231,7 +231,7 @@ public class Measure
 	          Pitch pitch = note.getPitch();
 	          Pitch pitchUnaltered = pitch.withoutAlter();
 	          //accidental already set?
-	          Byte oldAccAlter = ret.get(pitchUnaltered);
+	          Integer oldAccAlter = ret.get(pitchUnaltered);
 	          if (oldAccAlter != null)
 	          {
 	          	//there is already an accidental. only replace it if alter changed
@@ -356,7 +356,6 @@ public class Measure
   /**
    * Gets the voice with the given index, or throws an
    * {@link IllegalMPException} if there is none.
-   * Only the voice index of the given position is relevant.
    */
   public Voice getVoice(int index)
   {

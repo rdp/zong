@@ -11,39 +11,21 @@ public final class LayoutFormat
 
   //page formats
   public enum Side { Left, Right, Both };
-  private PageFormat leftPageFormat;
-  private PageFormat rightPageFormat;
+  private final PageFormat leftPageFormat;
+  private final PageFormat rightPageFormat;
   
-  
-  /**
-   * Creates a default layout format.
-   */
-  public LayoutFormat()
-  {
-    PageFormat pf = new PageFormat();
-    leftPageFormat = pf;
-    rightPageFormat = pf;
-  }
-  
-  
-  /**
-   * Creates a new layout format as a copy of the given one.
-   */
-  public LayoutFormat(LayoutFormat template)
-  {
-    leftPageFormat = new PageFormat(template.leftPageFormat);
-    rightPageFormat = new PageFormat(template.rightPageFormat);
-  }
+  public static final LayoutFormat defaultValue = new LayoutFormat(
+  	PageFormat.defaultValue, PageFormat.defaultValue);
   
   
   /**
    * Creates a new layout format with the given
    * page format for both sides.
    */
-  public LayoutFormat(PageFormat pageFormat)
+  public LayoutFormat(PageFormat leftPageFormat, PageFormat rightPageFormat)
   {
-    leftPageFormat = new PageFormat(pageFormat);
-    rightPageFormat = new PageFormat(pageFormat);
+    this.leftPageFormat = leftPageFormat;
+    this.rightPageFormat = rightPageFormat;
   }
   
   
@@ -52,45 +34,48 @@ public final class LayoutFormat
    * @param side    Both, Left or Right 
    * @param format  the new page format
    */
-  public void setPageFormat(Side side, PageFormat format)
+  public LayoutFormat withPageFormat(Side side, PageFormat format)
     throws IllegalArgumentException
   {
-    if (format == null)
+  	if (format == null)
       throw new IllegalArgumentException("format may not be null!");
+  	PageFormat leftPageFormat = this.leftPageFormat;
+  	PageFormat rightPageFormat = this.rightPageFormat;
     if (side == Side.Left || side == Side.Both)
       leftPageFormat = format;
     if (side == Side.Right || side == Side.Both)
       rightPageFormat = format;
+    return new LayoutFormat(leftPageFormat, rightPageFormat);
   }
   
   
   /**
-   * Gets a copy of the format of the given page.
+   * Gets the format of the given page.
    * @param side  Left or Right
    */
   public PageFormat getPageFormat(Side side)
     throws IllegalArgumentException
   {
     if (side == Side.Left)
-      return new PageFormat(leftPageFormat);
+      return leftPageFormat;
     else if (side == Side.Right)
-      return new PageFormat(rightPageFormat);
+      return rightPageFormat;
     else
       throw new IllegalArgumentException("Side must be left or right!");
   }
   
   
   /**
-   * Gets a copy of the format of the given page.
-   * @param side  Left or Right
+   * Gets the format of the given page.
+   * @param pageIndex  the 0-based index of the page
    */
   public PageFormat getPageFormat(int pageIndex)
     throws IllegalArgumentException
   {
     if (pageIndex % 2 != 0)
-      return new PageFormat(leftPageFormat);
+      return leftPageFormat;
     else
-      return new PageFormat(rightPageFormat);
+      return rightPageFormat;
   }
   
   

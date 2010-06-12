@@ -3,9 +3,9 @@ package com.xenoage.zong.musiclayout.stampings;
 import java.util.List;
 
 import com.xenoage.zong.core.music.barline.Barline;
-import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
+import com.xenoage.zong.core.music.group.BarlineGroup;
 import com.xenoage.zong.renderer.RenderingParams;
-import com.xenoage.zong.renderer.stampings.*;
+import com.xenoage.zong.renderer.stampings.BarlineStampingRenderer;
 
 
 /**
@@ -31,24 +31,24 @@ public final class BarlineStamping
 	private final Barline barline;
   private final List<StaffStamping> staves;
   private final float xPosition;
-  private final BarlineGroupStyle group;
+  private final BarlineGroup.Style groupStyle;
   
   
   /**
    * Creates a new barline stamping.
-   * @param barline    the musical element, including the repeat and line style
-   * @param staves     the list of staves this barline is spanning
-   * @param xPosition  the horizontal position in mm, relative to the parent frame
-   * @param group      the grouping style of the barline
+   * @param barline     the musical element, including the repeat and line style
+   * @param staves      the list of staves this barline is spanning
+   * @param xPosition   the horizontal position in mm, relative to the parent frame
+   * @param groupStyle  the grouping style of the barline
    */
   public BarlineStamping(Barline barline, List<StaffStamping> staves,
-    float xPosition, BarlineGroupStyle group)
+    float xPosition, BarlineGroup.Style groupStyle)
   {
     super(staves.get(0), LEVEL_MUSIC, barline);
     this.barline = barline;
     this.staves = staves;
     this.xPosition = xPosition;
-    this.group = group;
+    this.groupStyle = groupStyle;
     
     updateDrawingElements();
   }
@@ -76,9 +76,9 @@ public final class BarlineStamping
   }
   
   
-  public BarlineGroupStyle getBarlineGroupStyle()
+  public BarlineGroup.Style getGroupStyle()
   {
-    return group;
+    return groupStyle;
   }
   
   

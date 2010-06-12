@@ -7,7 +7,7 @@ import com.xenoage.util.logging.Log;
 import com.xenoage.zong.Zong;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.gui.controller.frames.ViewerMainFrameController;
-import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInput;
+import com.xenoage.zong.io.musicxml.in.MusicXMLScoreDocumentFileInput;
 import com.xenoage.zong.util.demo.ScoreDocumentAlphaVersionWelcomeScreen;
 
 
@@ -86,7 +86,7 @@ public class ViewerApplication
 	@Override public void openFile(File file)
 	{
 		//MusicXML11Input input = new MusicXML11Input();
-		MxlScoreDocumentFileInput input = new MxlScoreDocumentFileInput();
+		MusicXMLScoreDocumentFileInput input = new MusicXMLScoreDocumentFileInput();
 		try
 		{
 			setCursorWaiting(true);

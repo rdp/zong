@@ -7,8 +7,6 @@ import java.util.List;
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.JOptionPane;
 
-import proxymusic.ScorePartwise;
-
 import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.util.filter.Filter;
 import com.xenoage.util.language.Lang;
@@ -16,6 +14,9 @@ import com.xenoage.util.language.VocabularyID;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.io.midi.out.MidiScorePlayer;
 import com.xenoage.zong.io.midi.out.PlaybackListener;
+import com.xenoage.zong.io.musicxml.in.FileReader;
+import com.xenoage.zong.io.musicxml.in.MusicXMLScoreFileInput;
+import com.xenoage.zong.musicxml.types.MxlScorePartwise;
 import com.xenoage.zong.player.Player;
 import com.xenoage.zong.player.language.Voc;
 
@@ -105,10 +106,10 @@ public class Controller
    * @throws InvalidFormatException This exception is thrown so that the
    * calling application can correctly handle this case
    */
-  public void loadScore(ScorePartwise doc)
+  public void loadScore(MxlScorePartwise doc)
   	throws InvalidFormatException
   {
-		Score score = Score.empty(); //TODO(musicxml-in) new MxlScoreFileInput().read(doc, null);
+		Score score = new MusicXMLScoreFileInput().read(doc, null);
 
 		if (score != null)
 		{
@@ -130,7 +131,7 @@ public class Controller
 	{
 		try
 		{
-			return new LinkedList<Score>(); //TODO(musicxml-in) FileReader.loadScores(path, filter);
+			return FileReader.loadScores(path, filter);
 		}
 		catch (Exception ex)
 		{

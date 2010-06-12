@@ -1,0 +1,11 @@
+Zong! MusicXML Library - License
+********************************
+
+Copyright © 2010 by Andreas Wenger, Xenoage Software
+
+This program is distributed under the GNU General Public License 
+See gpl.txt
+
+Many namings and documentation texts are copied from the
+MusicXML 2.0 Schema
+See http://musicxml.org/dtds/license.html

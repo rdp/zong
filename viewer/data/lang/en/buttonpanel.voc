@@ -4,5 +4,5 @@
 	<voc key="OpenDocument" value="Open document"/>
 	<voc key="Playback" value="Playback"/>
 	<voc key="PrintDocument" value="Print document"/>
-	<voc key="SaveDocumentAsMidi" value="Save document as Midi"/>
+	<voc key="SaveDocumentAs" value="Save document as..."/>
 </vocabulary>

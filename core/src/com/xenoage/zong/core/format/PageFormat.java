@@ -15,28 +15,15 @@ public final class PageFormat
   private final Size2f size;
   private final PageMargins margins;
   
-  
-  public PageFormat()
-  {
-    //default: DIN A4
-    size = new Size2f(210, 297);
-    margins = new PageMargins();
-  }
+  //default: DIN A4
+  public static final PageFormat defaultValue = new PageFormat(
+  	new Size2f(210, 297), PageMargins.defaultValue);
   
   
   public PageFormat(Size2f size, PageMargins margins)
   {
-    this.size = new Size2f(size);
-    this.margins = new PageMargins(margins);
-  }
-  
-  
-  /**
-   * Creates a new page format as a copy of the given one.
-   */
-  public PageFormat(PageFormat template)
-  {
-    this(new Size2f(template.size), new PageMargins(template.margins));
+    this.size = size;
+    this.margins = margins;
   }
 
   

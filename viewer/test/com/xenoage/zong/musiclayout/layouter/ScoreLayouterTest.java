@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.core.Score;
-import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInput;
+import com.xenoage.zong.io.musicxml.in.MusicXMLScoreDocumentFileInput;
 import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInputTest;
 import com.xenoage.zong.layout.frames.ScoreFrame;
 import com.xenoage.zong.layout.frames.ScoreFrameChain;
@@ -53,7 +53,7 @@ public class ScoreLayouterTest
     {
     	try
     	{
-    		Score score = new MxlScoreDocumentFileInput().read(file).getScore(0);
+    		Score score = new MusicXMLScoreDocumentFileInput().read(file).getScore(0);
     		ScoreFrame scoreFrame = new ScoreFrame(new Point2f(0, 0), new Size2f(150, 10000));
     		new ScoreLayouter(ScoreFrameChain.createLimitedChain(score, scoreFrame), null).createLayoutWithExceptions();
     	}

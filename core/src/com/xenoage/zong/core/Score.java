@@ -35,7 +35,7 @@ public final class Score
 	private final PMap<String, Object> metaData;
 	
 	private static final Score empty =
-		new Score(ScoreInfo.empty(), ScoreFormat.getDefault(),
+		new Score(ScoreInfo.empty(), ScoreFormat.defaultValue,
 			ScoreHeader.empty(), StavesList.empty(), Globals.empty(),
 			new PMap<String, Object>());
 
@@ -188,6 +188,17 @@ public final class Score
   {
   	return metaData;
   }
+  
+  
+  /**
+   * Sets the given meta-data information.
+   */
+  public Score plusMetaData(String key, Object value)
+  {
+  	PMap<String, Object> metaData = this.metaData.plus(key, value);
+  	return new Score(scoreInfo, scoreFormat, scoreHeader,
+  		stavesList, globals, metaData);
+  }
 
 
 	/**
@@ -200,17 +211,6 @@ public final class Score
 		return new Score(scoreInfo, scoreFormat, scoreHeader, stavesList,
 			globals, metaData);
 	}
-  
-
-  /**
-   * Adds the given meta-data information.
-   */
-  public Score putMetaData(String id, Object value)
-  {
-  	PMap<String, Object> metaData = this.metaData.plus(id, value);
-  	return new Score(scoreInfo, scoreFormat, scoreHeader, stavesList,
-  		globals, metaData);
-  }
   
   
   /**
@@ -358,6 +358,19 @@ public final class Score
 		stavesList = stavesList.plusPart(part, measures);
 		return new Score(scoreInfo, scoreFormat, scoreHeader, stavesList,
 			globals, metaData);
+	}
+	
+	
+	/**
+	 * Gets the interline space for the staff with the given index.
+	 */
+	public float getInterlineSpace(int staffIndex)
+	{
+		Float is = getStaff(staffIndex).getInterlineSpace();
+		if (is != null)
+			return is;
+		else
+			return scoreFormat.getInterlineSpace();
 	}
 
 }

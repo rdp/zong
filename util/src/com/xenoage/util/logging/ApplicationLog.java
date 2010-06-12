@@ -126,8 +126,8 @@ public class ApplicationLog
       + sender.getClass().getName() + " threw an exception: " + e.getMessage()
       + "\nStack Trace:\n");
     e.printStackTrace(writer);
-    writer.flush();
     writer.print("\n");
+    writer.flush();
   }
 
 

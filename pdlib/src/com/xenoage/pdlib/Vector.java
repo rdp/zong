@@ -51,6 +51,5 @@ public interface Vector<T>
 	
 	
 	@Deprecated @Override public T set(int index, T element);
-	
 
 }

@@ -2,8 +2,7 @@ package com.xenoage.zong.player.gui;
 
 import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.zong.io.midi.out.PlaybackListener;
-
-import proxymusic.ScorePartwise;
+import com.xenoage.zong.musicxml.types.MxlScorePartwise;
 
 import javax.sound.midi.Sequence;
 
@@ -60,12 +59,12 @@ public interface FrameController
 
 
 	/**
-	 * Process the score defined by the provided ScorePartwise document by
+	 * Process the score defined by the provided MxlScorePartwise document by
 	 * loading and playing.
 	 * @param document the ready-to-use document
 	 * @throws InvalidFormatException if the MusicXML is invalid
 	 */
-	void openDocument(ScorePartwise document) throws InvalidFormatException;
+	void openDocument(MxlScorePartwise document) throws InvalidFormatException;
 
 
 	/**
@@ -73,7 +72,7 @@ public interface FrameController
 	 * @param document the ready-to-use document
 	 * @throws InvalidFormatException if the MusicXML is invalid
 	 */
-	void loadDocument(ScorePartwise document) throws InvalidFormatException;
+	void loadDocument(MxlScorePartwise document) throws InvalidFormatException;
 
 
 	/**

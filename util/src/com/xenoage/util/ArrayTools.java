@@ -153,5 +153,16 @@ public class ArrayTools
     return contains(c, null);
   }
   
+  
+  /**
+   * Returns true, if the given collection contains only <code>null</code> elements.
+   */
+  public static <T> boolean containsOnlyNull(T[] c)
+  {
+  	for (Object e : c)
+      if (e != null) return false;
+    return true;
+  }
+  
 
 }

@@ -22,4 +22,12 @@ public class ThrowableTools
   }
 
 	
+	/**
+	 * Throws a {@link RuntimeException} with the given message.
+	 */
+	public static void exception(String message)
+	{
+		throw new RuntimeException(message);
+	}
+	
 }

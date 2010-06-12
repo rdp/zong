@@ -37,8 +37,8 @@
 		<key>ClassPath</key>
 		<array>
 			<string>$JAVAROOT/lib/player.jar</string>
+			<string>$JAVAROOT/lib/iText-5.0.2.jar:</string>
 			<string>$JAVAROOT/lib/gervill.jar</string>
-			<string>$JAVAROOT/lib/proxymusic-2.0.jar</string>
 		</array>
 		<key>Properties</key>
 		<dict>

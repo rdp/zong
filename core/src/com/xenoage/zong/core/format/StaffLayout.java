@@ -14,18 +14,12 @@ public final class StaffLayout
   private final float staffDistance;
   
   //default
-  private static final StaffLayout defaultInstance = new StaffLayout(10);
+  public static final StaffLayout defaultValue = new StaffLayout(10);
   
   
   public StaffLayout(float staffDistance)
   {
   	this.staffDistance = staffDistance;
-  }
-  
-  
-  public static StaffLayout getDefault()
-  {
-  	return defaultInstance;
   }
 
   

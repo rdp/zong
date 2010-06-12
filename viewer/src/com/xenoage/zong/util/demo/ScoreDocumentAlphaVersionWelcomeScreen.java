@@ -36,7 +36,7 @@ public class ScoreDocumentAlphaVersionWelcomeScreen
 		
 		ScoreDocument document = new ScoreDocument(score, null, scorePanelController);
 
-		Page page = document.getCurrentLayout().addPage(new PageFormat());
+		Page page = document.getCurrentLayout().addPage(PageFormat.defaultValue);
 		ScoreFrameChain sfc = null;
 		
 		//Show Logo

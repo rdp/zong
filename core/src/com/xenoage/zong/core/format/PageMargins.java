@@ -12,15 +12,8 @@ public final class PageMargins
   
   public final float left, right, top, bottom;
   
-  
-  public PageMargins()
-  {
-    //default: 20 mm
-    left = 20;
-    right = 20;
-    top = 20;
-    bottom = 20;
-  }
+  //default: 20 mm
+  public static final PageMargins defaultValue = new PageMargins(20, 20, 20, 20);
   
   
   public PageMargins(float left, float right, float top, float bottom)
@@ -29,15 +22,6 @@ public final class PageMargins
     this.right = right;
     this.top = top;
     this.bottom = bottom;
-  }
-  
-  
-  public PageMargins(PageMargins template)
-  {
-    this.left = template.left;
-    this.right = template.right;
-    this.top = template.top;
-    this.bottom = template.bottom;
   }
   
   

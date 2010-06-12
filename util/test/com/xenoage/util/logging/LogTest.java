@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.xenoage.util.FileTools;
+import com.xenoage.util.io.IO;
 
 
 /**
@@ -21,19 +22,18 @@ public class LogTest
 {
   
   private String logFilename;
-  private File logFile;
   
   
   @Before public void setUp()
   {
+  	IO.initTest();
     logFilename = "data/test/temp.log";
-    logFile = new File(logFilename);
   }
   
 
   @Test public void testLogging()
   {
-    logFile.delete();
+    IO.deleteDataFile(logFilename, true);
     
     //create log file
     Log.initApplicationLog(logFilename, "test");
@@ -45,8 +45,8 @@ public class LogTest
     Log.log(Log.WARNING, warning);
     
     //check logfile
-    assertTrue(logFile.exists());
-    String logText = FileTools.readFile(logFile.getAbsolutePath());
+    assertTrue(IO.existsDataFile(logFilename));
+    String logText = FileTools.readFile(logFilename);
     assertNotNull(logText);
     assertTrue(logText.contains(message));
     assertTrue(logText.contains(warning));
@@ -56,7 +56,7 @@ public class LogTest
   @After public void cleanUp()
   {
     Log.close();
-    logFile.delete();
+    IO.deleteDataFile(logFilename, true);
   }
   
 }

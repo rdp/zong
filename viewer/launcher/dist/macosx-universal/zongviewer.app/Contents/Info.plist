@@ -39,8 +39,8 @@
 			<string>$JAVAROOT/lib/viewer.jar</string>
 			<string>$JAVAROOT/lib/gervill.jar</string>
 			<string>$JAVAROOT/lib/gluegen-rt.jar</string>
+			<string>$JAVAROOT/lib/iText-5.0.2.jar</string>
 			<string>$JAVAROOT/lib/jogl.jar</string>
-			<string>$JAVAROOT/lib/proxymusic-2.0.jar</string>
 			<string>$JAVAROOT/lib/tablelayout.jar</string>
 			<string>$JAVAROOT/lib/viewerdata.jar</string>
 		</array>

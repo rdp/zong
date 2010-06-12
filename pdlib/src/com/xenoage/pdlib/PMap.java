@@ -50,6 +50,12 @@ public final class PMap<K, V>
 	}
 	
 	
+	public static <K, V> PMap<K, V> pmap()
+	{
+		return new PMap<K, V>();
+	}
+	
+	
 	@Deprecated @Override public V put(K key, V value)
 	{
 		throw new UnsupportedOperationException("Use plus method instead");

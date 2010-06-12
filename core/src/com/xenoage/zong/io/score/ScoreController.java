@@ -121,7 +121,7 @@ public class ScoreController
 	 * valid before or at the given beat (depending on the given interval),
 	 * looking at all voices.
 	 */
-	public static PMap<Pitch, Byte> getAccidentals(Score score, MP mp, BeatInterval interval)
+	public static PMap<Pitch, Integer> getAccidentals(Score score, MP mp, BeatInterval interval)
 	{
 		MPE<? extends Key> key = getKey(score, mp, interval);
 		//if key change is in same measure, start at that beat. otherwise start at beat 0.
@@ -234,15 +234,16 @@ public class ScoreController
    */
   public static float getInterlineSpace(Score score, MP mp)
   {
-  	Float custom = score.getStaff(mp).getInterlineSpace();
-  	if (custom != null)
+  	int staffIndex = mp.getStaff();
+  	if (staffIndex >= 0 && staffIndex < score.getStavesList().getStavesCount())
   	{
-  		return custom;
+	  	Float custom = score.getStaff(staffIndex).getInterlineSpace();
+	  	if (custom != null)
+	  	{
+	  		return custom;
+	  	}
   	}
-  	else
-  	{
-  		return score.getScoreFormat().getInterlineSpace();
-  	}
+  	return score.getScoreFormat().getInterlineSpace();
   }
 	
 	
@@ -318,16 +319,24 @@ public class ScoreController
 	 * {@link MP}, also over measure boundaries.
 	 * 
 	 * If an accidental appears at the given beat, it is regarded
-	 * if the given {@link BeatInterval} or {@link BeatInterval#BeforeOrAt},
-	 * but if it is  {@link BeatInterval#Before}, it is ignored.
+	 * if the given {@link BeatInterval} is {@link BeatInterval#At}
+	 * or {@link BeatInterval#BeforeOrAt}, but if it is
+	 * {@link BeatInterval#Before}, it is ignored.
 	 *
 	 * Calling this method can be quite expensive, so call only when neccessary.
 	 */
 	public static MusicContext getMusicContext(Score score, MP mp, BeatInterval interval)
 	{
-		Clef clef = getClef(score, mp, interval);
-		Key key = getKey(score, mp, interval).getElement();
-		PMap<Pitch, Byte> accidentals = getAccidentals(score, mp, interval);
+		BeatInterval keyClefInterval = interval;
+		if (interval == At)
+		{
+			//when we want to now the musical context _at_ a given position, it
+			//still has the clef/key that was set _before_
+			keyClefInterval = BeforeOrAt;
+		}
+		Clef clef = getClef(score, mp, keyClefInterval);
+		Key key = getKey(score, mp, keyClefInterval).getElement();
+		PMap<Pitch, Integer> accidentals = getAccidentals(score, mp, interval);
 		return new MusicContext(clef, key, accidentals);
 	}
 	
@@ -437,35 +446,7 @@ public class ScoreController
 	}
 	
 	
-	/**
-	 * Replaces the chord at the given position. It must have the same duration
-	 * like the chord which was already there.
-	 * If the old chord had a beam, slur, directions or lyrics, they will be used
-	 * again.
-	 */
-	public static Score replaceChord(Score score, MP mp, Chord chord)
-	{
-		Voice voice = score.getVoice(mp);
-		VoiceElement e = voice.getElementAt(mp.getBeat());
-		if (e == null || !(e instanceof Chord))
-		{
-			throw new IllegalArgumentException("No chord starting at " + mp);
-		}
-		else
-		{
-			Chord oldChord = (Chord) e;
-			if (!oldChord.getDuration().equals(chord.getDuration()))
-			{
-				throw new IllegalArgumentException("New chord has different duration than the old one");
-			}
-			else
-			{
-				voice = voice.replaceElement(oldChord, chord); 
-				Globals globals = score.getGlobals().replaceChord(oldChord, chord);
-				return score.withVoiceUnchecked(mp, voice, globals);
-			}
-		}
-	}
+	
 	
 	
 	/**
@@ -476,11 +457,9 @@ public class ScoreController
   	StaffLayout staffLayout)
   {
   	SystemLayout systemLayout = score.getScoreHeader().getSystemLayout(systemIndex);
+  	if (systemLayout == null)
+  		systemLayout = SystemLayout.defaultValue;
 		PVector<StaffLayout> staffLayouts = systemLayout.getStaffLayouts();
-		if (staffLayouts == null)
-		{
-			staffLayouts = new PVector<StaffLayout>();
-		}
 		while (systemIndex >= staffLayouts.size())
 		{
 			staffLayouts = staffLayouts.plus(null);
@@ -614,6 +593,8 @@ public class ScoreController
 	 * and the given duration (if any) by the given {@link VoiceElement}.
 	 * If the start or end position is within an element, these elements will
 	 * be cut correspondingly.
+	 * If there is empty space between the last element and the written
+	 * element, it is filled by a rest.
 	 * All affected elements (slurs, beams, ...) will be removed
 	 * from the score, so the returned score is guaranteed to be in a
 	 * consistent state.
@@ -666,6 +647,14 @@ public class ScoreController
 			voice = voice.minusElement(middleElement);
 			globals = globals.minusMusicElement(middleElement);
 		}
+		//if element is after last element, insert rest
+		Fraction filledBeats = voice.getFilledBeats();
+		if (filledBeats.compareTo(startBeat) < 0)
+		{
+			Rest rest = new Rest(startBeat.sub(filledBeats));
+			voice = voice.insertElement(filledBeats, rest);
+			globals = globals.plusMusicElement(startMP.withBeat(filledBeats), rest);
+		}
 		//insert new element
 		voice = voice.insertElement(startBeat, element);
 		globals = globals.plusMusicElement(startMP, element);
@@ -691,6 +680,54 @@ public class ScoreController
 			throw new MeasureFullException(startMP, element.getDuration());
 		}
 		return writeVoiceElement(score, startMP, element);
+	}
+
+
+	/**
+	 * Replaces the chord at the given position by the given chord.
+	 * It must have the same duration like the chord which was already there.
+	 * If the old chord had a beam, slur, directions or lyrics, they will be used
+	 * again.
+	 */
+	public static Score replaceChord(Score score, MP mp, Chord chord)
+	{
+		Voice voice = score.getVoice(mp);
+		VoiceElement e = voice.getElementAt(mp.getBeat());
+		if (e == null || !(e instanceof Chord))
+		{
+			throw new IllegalArgumentException("No chord starting at " + mp);
+		}
+		else
+		{
+			Chord oldChord = (Chord) e;
+			if (!oldChord.getDuration().equals(chord.getDuration()))
+			{
+				throw new IllegalArgumentException("New chord has different duration than the old one");
+			}
+			else
+			{
+				voice = voice.replaceElement(oldChord, chord); 
+				Globals globals = score.getGlobals().replaceChord(oldChord, chord);
+				return score.withVoiceUnchecked(mp, voice, globals);
+			}
+		}
+	}
+
+
+	/**
+	 * Replaces the given chord with the other given one.
+	 * It must have the same duration like the chord which was already there.
+	 * If the old chord had a beam, slur, directions or lyrics, they will be used
+	 * again.
+	 */
+	public static Score replaceChord(Score score, Chord oldChord, Chord newChord)
+	{
+		MP mp = score.getGlobals().getMP(oldChord);
+		if (mp == null)
+		{
+			throw new IllegalArgumentException("Unknown chord");
+		}
+		return replaceChord(score, mp, newChord);
 	}
 
 }

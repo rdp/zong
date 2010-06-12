@@ -1,5 +1,7 @@
 package com.xenoage.util;
 
+import java.util.List;
+
 
 /**
  * Functions to work with strings.
@@ -60,6 +62,30 @@ public class StringTools
 		StringBuilder ret = new StringBuilder();
 		for (int i = 0; i < count; i++)
 			ret.append(s);
+		return ret.toString();
+	}
+	
+	
+	/**
+	 * Concatenates the Strings in the given list with
+	 * the given separator. After the last element no separator
+	 * follows.
+	 * E.g. ["1", "2", "3"] and ":" results in "1:2:3".
+	 */
+	public static String concatenate(List<String> words, String separator)
+	{
+		int size = words.size();
+		StringBuilder ret = new StringBuilder();
+		int i = 0;
+		for (String word : words)
+		{
+			ret.append(word);
+			i++;
+			if (i < size)
+			{
+				ret.append(separator);
+			}
+		}
 		return ret.toString();
 	}
 

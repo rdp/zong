@@ -2,16 +2,27 @@ package com.xenoage.zong.player.gui;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
+import com.xenoage.util.FileTools;
 import com.xenoage.util.filter.AllFilter;
 import com.xenoage.util.iterators.It;
+import com.xenoage.util.language.Lang;
 import com.xenoage.zong.core.Score;
+import com.xenoage.zong.io.midi.out.MidiConverter;
+import com.xenoage.zong.io.musicxml.FileType;
+import com.xenoage.zong.io.musicxml.in.FileTypeReader;
+import com.xenoage.zong.player.Player;
 import com.xenoage.zong.player.language.Voc;
 import com.xenoage.zong.util.filefilter.MidiFileFilter;
 import com.xenoage.zong.util.filefilter.MusicXMLFileFilter;
@@ -47,7 +58,6 @@ public class ZongFrameController
 
 	public void convertToMidiDir()
 	{
-		/* TODO
 		JFileChooser fc = new JFileChooser(lastPath);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -123,10 +133,9 @@ public class ZongFrameController
 			}
 
 			JOptionPane.showMessageDialog(view.getFrame(), Lang.get(
-				Voc.Message_DirectoryConversionResult, "" + countOK, "" + countFailed), Player
-				.getProjectName(), JOptionPane.INFORMATION_MESSAGE);
+				Voc.Message_DirectoryConversionResult, "" + countOK, "" + countFailed),
+				Player.getProjectName(), JOptionPane.INFORMATION_MESSAGE);
 		}
-		*/
 	}
 
 
@@ -148,8 +157,8 @@ public class ZongFrameController
 
 			for (Score score : scoresIt)
 			{
-				//TODO Sequence seq = MidiConverter.convertToSequence(score, false, false).getSequence();
-				/*String newPath = lastPath;
+				Sequence seq = MidiConverter.convertToSequence(score, false, false).getSequence();
+				String newPath = lastPath;
 				String number = (useNumber ? ("-" + (scoresIt.getIndex() + 1)) : "");
 
 				if (newPath.toLowerCase().endsWith(".xml") || //TIDY: share code
@@ -167,7 +176,7 @@ public class ZongFrameController
 				catch (Exception ex)
 				{
 					controller.showWarning(Voc.Error_SavingFile);
-				}*/
+				}
 			}
 		}
 	}

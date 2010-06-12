@@ -68,6 +68,25 @@ public final class FontInfo
 	
 	
 	/**
+	 * Creates a new {@link FontInfo}.
+	 * @param font      the AWT font
+	 */
+	public FontInfo(Font font)
+	{
+		List<String> f = new LinkedList<String>();
+		f.add(font.getFamily());
+		this.families = f;
+		this.size = font.getSize2D();
+		EnumSet<FontStyle> style = EnumSet.noneOf(FontStyle.class);
+		if (font.isBold())
+			style.add(FontStyle.Bold);
+		if (font.isItalic())
+			style.add(FontStyle.Italic);
+		this.style = style;
+	}
+	
+	
+	/**
 	 * Merges this font information with the given one.
 	 * The font families, size and style is only taken from
 	 * the given font if they are unknown for this font.

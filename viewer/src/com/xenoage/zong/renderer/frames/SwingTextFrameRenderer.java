@@ -1,7 +1,9 @@
 package com.xenoage.zong.renderer.frames;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
 import com.xenoage.util.math.Point2i;
 import com.xenoage.zong.gui.components.TextEditor;
@@ -58,6 +60,12 @@ public class SwingTextFrameRenderer
   	g2d.translate(-w/2, -h/2);
   	
   	PrinterRenderTarget.getInstance(context).drawText(textFrame.getTextWithLineBreaks(), new Point2i(0, 0), false, w, 1);
+  	
+  	/* //TEST
+  	g2d.setColor(Color.green);
+  	g2d.setStroke(new BasicStroke(1));
+  	g2d.drawRect(0, 0, (int) frame.getSize().width, (int) frame.getSize().height); //*/
+
   }
 
   

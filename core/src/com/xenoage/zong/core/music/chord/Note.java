@@ -75,7 +75,7 @@ public final class Note
   
   @Override public String toString()
   {
-  	return "Note: " + pitch.toString();
+  	return "note" + pitch.toString();
   }
 
 

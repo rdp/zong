@@ -1,39 +1,26 @@
 package com.xenoage.zong.gui.controller.menues;
 
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.xenoage.util.RecentFiles;
 import com.xenoage.util.error.ErrorLevel;
+import com.xenoage.util.io.IO;
+import com.xenoage.util.language.text.VocTextItem;
 import com.xenoage.util.xml.XMLReader;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.language.Voc;
-import com.xenoage.zong.commands.document.OpenCommand;
-import com.xenoage.util.language.Lang;
-import com.xenoage.util.language.LanguageComponent;
-import com.xenoage.util.language.LanguageInfo;
-import com.xenoage.util.language.text.VocTextItem;
-import com.xenoage.zong.gui.event.CommandListener;
-import com.xenoage.zong.gui.event.LanguageChangeListener;
-import com.xenoage.util.io.IO;
-import com.xenoage.util.iterators.It;
-import com.xenoage.util.logging.Log;
 
 
 /**
@@ -66,8 +53,8 @@ public class MainMenuBarController
     {
       menuDoc = XMLReader.readFile(IO.openInputStream("data/gui/menu.xml"));
 	    //read root element
-	    Element eMenuBar = XMLReader.element(menuDoc, "menubar");
-	    if (eMenuBar == null)
+	    Element eMenuBar = menuDoc.getDocumentElement();
+	    if (!eMenuBar.getNodeName().equals("menubar"))
 	    {
 	      throw new IOException("Invalid main menu file!");
 	    }

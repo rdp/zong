@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.xenoage.util.Range;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.Globals;
@@ -89,7 +88,7 @@ public class ScoreLayoutStrategy
 		//update beamed notations with correct stem directions
 		notations.setAll(computeBeamStemDirections(notations, lc));
 		//TODO: stem directions dependent on their voice
-		for (int iStaff : new Range(0, score.getStavesCount() - 1))
+		for (int iStaff : range(0, score.getStavesCount() - 1))
 		{
 			notations.setAll(voiceStemDirectionNotationsStrategy.computeNotations(iStaff, notations, lc));
 		}
@@ -119,7 +118,7 @@ public class ScoreLayoutStrategy
 		//go again through all elements, finding beams, and recompute stem direction
 		Score score = lc.getScore();
 		Globals globals = score.getGlobals();
-		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
+		for (int iMeasure : range(0, score.getMeasuresCount() - 1))
 		{
 			Column measureColumn = column(score, iMeasure);
 			for (Measure measure : measureColumn)
@@ -155,7 +154,7 @@ public class ScoreLayoutStrategy
 	{
 		Score score = lc.getScore();
 		ArrayList<MeasureColumnSpacing> ret = new ArrayList<MeasureColumnSpacing>(score.getMeasuresCount());
-		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
+		for (int iMeasure : range(0, score.getMeasuresCount() - 1))
 		{
 			ret.add(measureColumnSpacingStrategy.computeMeasureColumnSpacing(iMeasure, column(score, iMeasure),
 				false, notations, score.getScoreHeader().getColumnHeader(iMeasure), lc).get1()); //TODO: also save optimal voice spacings for later reuse
@@ -326,10 +325,10 @@ public class ScoreLayoutStrategy
 		ArrayList<MeasureColumnSpacing> measureColumnSpacings = new ArrayList<MeasureColumnSpacing>(score.getMeasuresCount());
 		for (FrameArrangement frameArr : frameArrangements)
 		{
-			for (int iSystem : new Range(0, frameArr.getSystemsCount() - 1))
+			for (int iSystem : range(0, frameArr.getSystemsCount() - 1))
 			{
 				SystemArrangement systemArr = frameArr.getSystem(iSystem);
-				for (int iMeasure : new Range(0, systemArr.getMeasureColumnSpacings().length - 1))
+				for (int iMeasure : range(0, systemArr.getMeasureColumnSpacings().length - 1))
 				{
 					measureColumnSpacings.add(systemArr.getMeasureColumnSpacings()[iMeasure]);
 				}
@@ -342,7 +341,7 @@ public class ScoreLayoutStrategy
 			measureColumnSpacings.add(optimalMeasureColumnSpacings.get(iMeasure));
 		}
 		//go again through all elements, finding beams, and recompute stem alignment
-		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
+		for (int iMeasure : range(0, score.getMeasuresCount() - 1))
 		{
 			Column measureColumn = column(score, iMeasure);
 			for (Measure measure : measureColumn)

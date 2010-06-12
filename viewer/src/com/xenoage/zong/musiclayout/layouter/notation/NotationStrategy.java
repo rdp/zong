@@ -1,5 +1,6 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
+import static com.xenoage.util.Range.range;
 import static com.xenoage.zong.core.music.Pitch.pi;
 import static com.xenoage.zong.core.music.util.BeatInterval.BeforeOrAt;
 import static com.xenoage.zong.io.score.ScoreController.getInterlineSpace;
@@ -12,8 +13,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.xenoage.pdlib.Vector;
-import com.xenoage.util.Range;
+import com.xenoage.util.io.IO;
+import com.xenoage.util.logging.Log;
 import com.xenoage.util.math.Fraction;
+import com.xenoage.util.text.TextMeasurer;
 import com.xenoage.util.xml.XMLReader;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.core.Score;
@@ -51,9 +54,6 @@ import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.StemAlignment;
 import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
 import com.xenoage.zong.util.exceptions.IllegalMPException;
-import com.xenoage.util.io.IO;
-import com.xenoage.util.logging.Log;
-import com.xenoage.util.text.TextMeasurer;
 
 
 /**
@@ -162,7 +162,7 @@ public class NotationStrategy
 	{
 		NotationsCache ret = new NotationsCache();
 		Score score = lc.getScore();
-		for (int iMeasure : new Range(0, score.getMeasuresCount() - 1))
+		for (int iMeasure : range(0, score.getMeasuresCount() - 1))
 		{
 			Column measureColumn = Column.column(score, iMeasure);
 			for (Measure measure : measureColumn)

@@ -2,7 +2,7 @@
 <menubar>
   <menu voc="Document">
     <menuitem voc="Open_" icon="fileopen.png" command="dialogs.OpenDocumentDialogCommand"/>
-    <menuitem voc="SaveAsMidi_" icon="filesaveas.png" command="dialogs.SaveDocumentDialogViewerCommand"/>
+    <menuitem voc="SaveAs_" icon="filesaveas.png" command="dialogs.SaveDocumentDialogViewerCommand"/>
     <menuitem voc="Print_" icon="fileprint.png" command="document.PrintCommand"/>
     <separator/>
     <menuitem id="recentfiles"/>

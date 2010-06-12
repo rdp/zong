@@ -1,5 +1,7 @@
 package com.xenoage.zong.io.midi.out;
 
+import static com.xenoage.util.Range.range;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -37,7 +39,7 @@ public class VoltaBlock
 			Range range = volta.getNumbers();
 			if (range != null && range.isInRange(repeatTime))
 			{
-				ret = new Range(map.get(volta), map.get(volta) + volta.getLength() - 1);
+				ret = range(map.get(volta), map.get(volta) + volta.getLength() - 1);
 				break;
 			}
 		}
@@ -48,7 +50,7 @@ public class VoltaBlock
 			{
 				if (volta.getNumbers() == null)
 				{
-					ret = new Range(map.get(volta), map.get(volta) + volta.getLength() - 1);
+					ret = range(map.get(volta), map.get(volta) + volta.getLength() - 1);
 					break;
 				}
 			}

@@ -170,6 +170,14 @@ public class AppletIO
   
   
   /**
+   * Does nothing, since files can not be deleted in the applet version.
+   */
+  public void deleteDataFile(String filepath, boolean system)
+  {
+  }
+  
+  
+  /**
    * Finds and returns the data files in the given directory.
    */
   public Set<String> listDataFiles(String directory)

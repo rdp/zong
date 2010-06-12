@@ -2,24 +2,24 @@ package com.xenoage.zong.renderer.stampings;
 
 import static com.xenoage.zong.core.music.format.SP.sp;
 
+import java.awt.Color;
+import java.util.List;
+
+import com.xenoage.util.Units;
 import com.xenoage.util.math.Point2i;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
-import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
 import com.xenoage.zong.core.music.barline.BarlineRepeat;
 import com.xenoage.zong.core.music.barline.BarlineStyle;
 import com.xenoage.zong.core.music.format.SP;
+import com.xenoage.zong.core.music.group.BarlineGroup;
 import com.xenoage.zong.musiclayout.stampings.BarlineStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
-import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.RenderingParams;
+import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.screen.ScreenLine;
 import com.xenoage.zong.renderer.screen.ScreenStaff;
-import com.xenoage.util.Units;
-
-import java.awt.Color;
-import java.util.List;
 
 
 /**
@@ -47,9 +47,9 @@ public class BarlineStampingRenderer
     int xCorrection = 0;
     
     //lines
-    BarlineGroupStyle group = barline.getBarlineGroupStyle();
+    BarlineGroup.Style group = barline.getGroupStyle();
     BarlineStyle style = barline.getBarline().getStyle();
-    if (group == null || group == BarlineGroupStyle.Single || group == BarlineGroupStyle.Common)
+    if (group == null || group == BarlineGroup.Style.Single || group == BarlineGroup.Style.Common)
     {
       //draw single barlines
       for (StaffStamping staff : staves)
@@ -58,7 +58,7 @@ public class BarlineStampingRenderer
           staff, 0, xPosition, style);
       }
     }
-    if (group == BarlineGroupStyle.Mensurstrich || group == BarlineGroupStyle.Common)
+    if (group == BarlineGroup.Style.Mensurstrich || group == BarlineGroup.Style.Common)
     {
       //draw barlines between staves
       for (int i = 0; i < staves.size() - 1; i++)

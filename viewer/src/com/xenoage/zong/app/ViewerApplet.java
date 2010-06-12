@@ -29,7 +29,7 @@ import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.documents.ViewerDocument;
 import com.xenoage.zong.gui.applet.ZongApplet;
 import com.xenoage.zong.io.midi.out.MidiScoreDocumentFileOutput;
-import com.xenoage.zong.io.musicxml.in.MxlScoreDocumentFileInput;
+import com.xenoage.zong.io.musicxml.in.MusicXMLScoreDocumentFileInput;
 import com.xenoage.zong.util.demo.ScoreDocumentAlphaVersionWelcomeScreen;
 
 
@@ -212,7 +212,7 @@ public class ViewerApplet
 
 	@Override public void openFile(File file)
 	{
-		MxlScoreDocumentFileInput input = new MxlScoreDocumentFileInput();
+		MusicXMLScoreDocumentFileInput input = new MusicXMLScoreDocumentFileInput();
 		try
 		{
 			setCursorWaiting(true);
@@ -325,7 +325,7 @@ public class ViewerApplet
 	
 	public void openURL(String path)
 	{
-		MxlScoreDocumentFileInput input = new MxlScoreDocumentFileInput();
+		MusicXMLScoreDocumentFileInput input = new MusicXMLScoreDocumentFileInput();
 		URL file = null;
 		try
 		{

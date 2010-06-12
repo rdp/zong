@@ -16,10 +16,20 @@ public final class Rest
 	//the duration of the rest
   private final Fraction duration;
   
+  //cue size
+  private final boolean cue;
+  
+  
+  public Rest(Fraction duration, boolean cue)
+  {
+    this.duration = duration;
+    this.cue = cue;
+  }
+  
   
   public Rest(Fraction duration)
   {
-    this.duration = duration;
+    this(duration, false);
   }
   
   
@@ -29,13 +39,27 @@ public final class Rest
   }
   
   
-  /**
-   * Returns this element but with the given duration.
-   */
   @Override public Rest withDuration(Fraction duration)
   {
-  	return new Rest(duration);
+  	return new Rest(duration, cue);
+  }
+  
+  
+  public boolean isCue()
+  {
+  	return cue;
+  }
+  
+  
+  public Rest withCue(boolean cue)
+  {
+  	return new Rest(duration, cue);
   }
 
+  
+  @Override public String toString()
+  {
+  	return "rest(dur:" + duration + ")";
+  }
 
 }

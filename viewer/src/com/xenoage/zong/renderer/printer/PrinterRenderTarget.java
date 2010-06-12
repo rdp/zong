@@ -116,7 +116,14 @@ public class PrinterRenderTarget
   	  	{
   	  		//string
   	  		TextLayout tl = TextLayoutTools.create((FormattedTextString) e, frc);
-  	  		tl.draw(g2d, offsetX, offsetY);  
+  	  		
+  	  		//iText workaround: since vertical offset has reverted sign in Java2D and iText
+  	  		//(at least here. this is confirmed by the author Paulo Soares, see
+  	  		// http://sourceforge.net/mailarchive/message.php?msg_name=000601cae89a$d0ea15d0$587ba8c0%40psoaresw
+  	  		//), we translate first, paint at y=0, and translate back
+  	  		g2d.translate(0, offsetY);
+  	  		tl.draw(g2d, offsetX, 0);  
+  	  		g2d.translate(0, -offsetY);
   	  	}
   	  	else
   	  	{

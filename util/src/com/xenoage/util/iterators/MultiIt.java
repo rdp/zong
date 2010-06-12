@@ -30,6 +30,12 @@ public class MultiIt<T>
 		this.currentIterator = collections[0].iterator();
 	}
 	
+	
+	public static MultiIt multiIt(Collection... collections)
+	{
+		return new MultiIt(collections);
+	}
+	
 
 	public boolean hasNext()
 	{

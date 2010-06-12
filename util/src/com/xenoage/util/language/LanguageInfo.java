@@ -46,11 +46,11 @@ public class LanguageInfo
     Element intName = XMLReader.element(root, "intname");
     Element localName = XMLReader.element(root, "localname");
     if (intName != null)
-      this.internationalName = XMLReader.textTrim(intName);
+      this.internationalName = XMLReader.text(intName);
     else
       throw new Exception("intname must be set!");
     if (localName != null)
-      this.localName = XMLReader.textTrim(localName);
+      this.localName = XMLReader.text(localName);
     else
       this.localName = null;
     loadFlagImage();

@@ -10,6 +10,7 @@ import com.xenoage.zong.app.App;
 import com.xenoage.zong.commands.Command;
 import com.xenoage.zong.documents.ScoreDocument;
 import com.xenoage.zong.util.filefilter.MidiFileFilter;
+import com.xenoage.zong.util.filefilter.PDFFileFilter;
 import com.xenoage.zong.util.filefilter.MusicXMLFileFilter;
 import com.xenoage.util.logging.Log;
 
@@ -18,9 +19,9 @@ import com.xenoage.util.logging.Log;
  * This command shows a dialog that allows to save
  * the current {@link ScoreDocument}.
  * 
- * In the application, only export to Midi is possible.
+ * In the application, only export to Midi or PDF is possible.
  * In the applet, download as MusicXML (original format) and
- * export to Midi is possible.
+ * export to Midi and PDF is possible.
  * 
  * @author Andreas Wenger
  * @author Uli Teschemacher
@@ -32,7 +33,8 @@ public class SaveDocumentDialogViewerCommand
 	public static enum FileFormat
 	{
 		Midi,
-		MusicXML
+		MusicXML,
+		PDF
 	}
 
 	/**
@@ -68,6 +70,9 @@ public class SaveDocumentDialogViewerCommand
 		//filter for MIDI files
 		FileFilter midiFilter = new MidiFileFilter();
 		fileChooser.addChoosableFileFilter(midiFilter);
+		//filter for PDF files
+		FileFilter pdfFilter = new PDFFileFilter();
+		fileChooser.addChoosableFileFilter(pdfFilter);
 		//set default
 		FileFilter defaultFilter = null;
 		FileFormat defaultFormat = null;
@@ -100,6 +105,10 @@ public class SaveDocumentDialogViewerCommand
 			else if (fileChooser.getFileFilter() == midiFilter)
 			{
 				format = FileFormat.Midi;
+			}
+			else if (fileChooser.getFileFilter() == pdfFilter)
+			{
+				format = FileFormat.PDF;
 			}
 			App.getInstance().saveFile(
 				App.getInstance().getScoreDocument(), file, format);

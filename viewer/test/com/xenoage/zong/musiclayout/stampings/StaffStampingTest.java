@@ -4,13 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.xenoage.util.Delta;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.zong.core.format.ScoreFormat;
-import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 
 
 /**
@@ -21,13 +19,7 @@ import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 public class StaffStampingTest
 {
   
-  private ScoreFormat scoreFormat;
-  
-  
-  @Before public void setUp()
-  {
-    scoreFormat = ScoreFormat.getDefault();
-  }
+  private ScoreFormat scoreFormat = ScoreFormat.defaultValue;
   
 
   @Test public void createStaffLayoutElement()

@@ -1,17 +1,17 @@
 package com.xenoage.zong.renderer.stampings;
 
+import java.awt.Color;
+
+import com.xenoage.util.Units;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
-import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
+import com.xenoage.zong.core.music.group.BracketGroup;
 import com.xenoage.zong.musiclayout.stampings.BracketStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
-import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.RenderingParams;
+import com.xenoage.zong.renderer.RenderingQuality;
 import com.xenoage.zong.renderer.screen.ScreenStaff;
-import com.xenoage.util.Units;
-
-import java.awt.Color;
 
 
 /**
@@ -76,12 +76,12 @@ public class BracketStampingRenderer
 	 */
   public static void paint(BracketStamping bracket, RenderingParams params)
   {
-  	BracketGroupStyle style = bracket.getStyle();
-    if (style == null || style == BracketGroupStyle.Brace)
+  	BracketGroup.Style style = bracket.getGroupStyle();
+    if (style == null || style == BracketGroup.Style.Brace)
     {
       paintBrace(bracket, params);
     }
-    else if (style == BracketGroupStyle.Bracket)
+    else if (style == BracketGroup.Style.Bracket)
     {
       paintBracket(bracket, params);
     }

@@ -62,6 +62,14 @@ public interface IOInterface
   
   
   /**
+   * Removes the data file with the given relative path.
+   * @param system  if true, not only the user's private settings file is deleted
+   *                but also the system data file
+   */
+  public void deleteDataFile(String filepath, boolean system);
+  
+  
+  /**
    * Finds and returns the data files in the given directory.
    */
   public Set<String> listDataFiles(String directory)

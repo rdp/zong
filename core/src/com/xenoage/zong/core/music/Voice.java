@@ -374,4 +374,10 @@ public class Voice
 	}
 	
 	
+	@Override public String toString()
+	{
+		return elements.toString();
+	}
+	
+	
 }

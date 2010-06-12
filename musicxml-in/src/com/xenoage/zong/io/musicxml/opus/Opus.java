@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.xenoage.zong.io.musicxml.in.MxlOpusFileInput;
+import com.xenoage.zong.io.musicxml.in.OpusFileInput;
 
 
 /**
@@ -49,7 +49,7 @@ public class Opus
 		throws IOException
 	{
 		LinkedList<String> ret = new LinkedList<String>();
-		getScoreFilenames(new MxlOpusFileInput().resolveOpusLinks(this, ""), ret);
+		getScoreFilenames(new OpusFileInput().resolveOpusLinks(this, ""), ret);
 		return ret;
 	}
 	

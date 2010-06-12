@@ -1,6 +1,9 @@
 package com.xenoage.zong.core.format;
 
+import static com.xenoage.pdlib.PVector.pvec;
+
 import com.xenoage.pdlib.PVector;
+import com.xenoage.util.annotations.MaybeEmpty;
 
 
 /**
@@ -16,8 +19,9 @@ public final class SystemLayout
   private final float systemMarginRight;
   private final PVector<StaffLayout> staffLayouts;
   
-  public static final SystemLayout defaultInstance = new SystemLayout(30f, 5f, 5f, null);
-
+  public static final PVector<StaffLayout> emptyStaffLayouts = pvec();
+  public static final SystemLayout defaultValue = new SystemLayout(30f, 5f, 5f, emptyStaffLayouts);
+  
 
   /**
    * Creates a new {@link SystemLayout}.
@@ -26,7 +30,7 @@ public final class SystemLayout
    * @param systemMarginLeft   left system margin: distance between the staves
    *                           and the page margin
    * @param systemMarginRight  right system margin
-   * @param staffLayouts       layouts of the staves of the system (may also be or contain null)
+   * @param staffLayouts       layouts of the staves of the system (may not be null)
    */
 	public SystemLayout(float systemDistance, float systemMarginLeft,
   	float systemMarginRight, PVector<StaffLayout> staffLayouts)
@@ -35,12 +39,6 @@ public final class SystemLayout
   	this.systemMarginLeft = systemMarginLeft;
   	this.systemMarginRight = systemMarginRight;
   	this.staffLayouts = staffLayouts;
-  }
-  
-  
-  public static SystemLayout getDefault()
-  {
-  	return defaultInstance;
   }
 
   
@@ -78,6 +76,17 @@ public final class SystemLayout
   {
     return systemMarginLeft;
   }
+  
+  
+  /**
+   * Sets the distance between the left side of the staves
+   * and the left page margin.
+   */
+  public SystemLayout withSystemMarginLeft(float systemMarginLeft)
+  {
+    return new SystemLayout(systemDistance, systemMarginLeft,
+    	systemMarginRight, staffLayouts);
+  }
 
 
   /**
@@ -87,6 +96,17 @@ public final class SystemLayout
   public float getSystemMarginRight()
   {
     return systemMarginRight;
+  }
+  
+  
+  /**
+   * Sets the distance between the right side of the staves
+   * and the right page margin.
+   */
+  public SystemLayout withSystemMarginRight(float systemMarginRight)
+  {
+    return new SystemLayout(systemDistance, systemMarginLeft,
+    	systemMarginRight, staffLayouts);
   }
   
   
@@ -107,7 +127,7 @@ public final class SystemLayout
   /**
    * Gets the layouts of the staves of the system (may also be or contain null).
    */
-  public PVector<StaffLayout> getStaffLayouts()
+  @MaybeEmpty public PVector<StaffLayout> getStaffLayouts()
 	{
 		return staffLayouts;
 	}

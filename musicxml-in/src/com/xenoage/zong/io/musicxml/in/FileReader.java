@@ -45,13 +45,13 @@ public class FileReader
 		//open file
 		if (fileType == FileType.XMLScorePartwise)
 		{
-			Score score = new MxlScoreFileInput().read(bis, path, null);
+			Score score = new MusicXMLScoreFileInput().read(bis, path, null);
 			ret.add(score);
 		}
 		else if (fileType == FileType.XMLOpus)
 		{
 			//opus
-			MxlOpusFileInput opusInput = new MxlOpusFileInput();
+			OpusFileInput opusInput = new OpusFileInput();
 			Opus opus = opusInput.readOpusFile(bis);
 			opus = opusInput.resolveOpusLinks(opus, directory);
 			List<String> filePaths = scoreFileFilter.filter(opus.getScoreFilenames());
@@ -64,7 +64,7 @@ public class FileReader
 		}
 		else if (fileType == FileType.Compressed)
 		{
-			MxlCompressedFileInput zip = new MxlCompressedFileInput(bis, FileTools.getTempFolder());
+			CompressedFileInput zip = new CompressedFileInput(bis, FileTools.getTempFolder());
 			List<String> filePaths = scoreFileFilter.filter(zip.getScoreFilenames());
 			for (String filePath : filePaths)
 			{

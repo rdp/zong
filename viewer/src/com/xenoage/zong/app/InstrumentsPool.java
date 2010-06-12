@@ -89,10 +89,10 @@ public class InstrumentsPool
 				for (int a=0; a<eGroups.size();a++)
 				{
 					Element eGroup = eGroups.get(a);
-					InstrumentGroup group = groups.get(XMLReader.textTrim(eGroup));
+					InstrumentGroup group = groups.get(XMLReader.text(eGroup));
 					if (group == null)
 					{
-						Log.log(Log.WARNING, "Unknown group \"" + XMLReader.textTrim(eGroup) + "\" in instrument \"" + iID + "\". Ignored.");
+						Log.log(Log.WARNING, "Unknown group \"" + XMLReader.text(eGroup) + "\" in instrument \"" + iID + "\". Ignored.");
 					}
 					else
 					{

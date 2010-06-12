@@ -12,10 +12,6 @@ import java.util.Set;
  * 
  * It can be initialized for an desktop application
  * or for an applet.
- * 
- * TODO: very, very bad. Replace this whole stuff as soon
- * as possible (if possible, use Java's new I/O also for
- * applets)
  *
  * @author Andreas Wenger
  */
@@ -27,7 +23,7 @@ public class IO
   
   
   /**
-   * Initialized the file reader for the application.
+   * Initializes the file reader for the application.
    */
   public static void initApplication(String programName)
   {
@@ -36,11 +32,23 @@ public class IO
   
   
   /**
-   * Initialized the file reader for the applet.
+   * Initializes the file reader for the applet.
    */
   public static void initApplet(URL codeBase)
   {
     implementation = new AppletIO(codeBase);
+  }
+  
+  
+  /**
+   * Initializes the file reader for testing.
+   * The application mode is used, and the program name is
+   * composed of "xenoage" and the name of the calling class.
+   */
+  public static void initTest()
+  {
+    implementation = new ApplicationIO("xenoage/" +
+    	Thread.currentThread().getStackTrace()[2].getClassName());
   }
   
   
@@ -106,6 +114,17 @@ public class IO
     throws IOException
   {
     return implementation.openOutputStream(filepath);
+  }
+  
+  
+  /**
+   * Removes the data file with the given relative path.
+   * @param system  if true, not only the user's private settings file is deleted
+   *                but also the system data file
+   */
+  public static void deleteDataFile(String filepath, boolean system)
+  {
+    implementation.deleteDataFile(filepath, system);
   }
   
   

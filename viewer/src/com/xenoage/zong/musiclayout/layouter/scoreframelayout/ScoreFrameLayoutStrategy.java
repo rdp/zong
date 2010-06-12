@@ -23,19 +23,18 @@ import com.xenoage.zong.core.music.MeasureElement;
 import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.core.music.Part;
 import com.xenoage.zong.core.music.Staff;
-import com.xenoage.zong.core.music.StavesGroup;
 import com.xenoage.zong.core.music.StavesList;
 import com.xenoage.zong.core.music.Voice;
 import com.xenoage.zong.core.music.barline.Barline;
-import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
 import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.beam.BeamWaypoint;
-import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.curvedline.CurvedLine;
 import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
 import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint.Type;
 import com.xenoage.zong.core.music.direction.Wedge;
+import com.xenoage.zong.core.music.group.BarlineGroup;
+import com.xenoage.zong.core.music.group.BracketGroup;
 import com.xenoage.zong.core.music.rest.Rest;
 import com.xenoage.zong.core.music.text.Lyric;
 import com.xenoage.zong.core.music.text.Lyric.SyllableType;
@@ -217,9 +216,9 @@ public class ScoreFrameLayoutStrategy
       //create the brackets at the beginning of the system
       for (int i = 0; i < stavesList.getBracketGroups().size(); i++)
       {
-      	StavesGroup<BracketGroupStyle> bracketGroup = stavesList.getBracketGroups().get(i);
-        otherStampsPool.add(new BracketStamping(systemStaves.get(bracketGroup.getStartIndex()),
-        	systemStaves.get(bracketGroup.getEndIndex()), system.getMarginLeft() - 1.4f, bracketGroup.getStyle()));
+      	BracketGroup bracketGroup = stavesList.getBracketGroups().get(i);
+        otherStampsPool.add(new BracketStamping(systemStaves.get(bracketGroup.getStavesRange().getStartIndex()),
+        	systemStaves.get(bracketGroup.getStavesRange().getEndIndex()), system.getMarginLeft() - 1.4f, bracketGroup.getStyle()));
       }
       
       //add the barlines
@@ -228,7 +227,7 @@ public class ScoreFrameLayoutStrategy
       if (system.getMeasureColumnSpacings().length > 0)
       {
       	otherStampsPool.add(new BarlineStamping(Barline.createRegularBarline(),
-      		systemStaves, xOffset, BarlineGroupStyle.Common));
+      		systemStaves, xOffset, BarlineGroup.Style.Common));
       }
       //barlines within the system and measure numbers
       int iMeasureMax = system.getMeasureColumnSpacings().length - 1;
@@ -272,8 +271,8 @@ public class ScoreFrameLayoutStrategy
         {
         	ColumnHeader columnHeader = score.getScoreHeader().getColumnHeader(
           	iMeasure + system.getStartMeasureIndex());
-          BarlineGroupStyle barlineGroupStyle = BarlineGroupStyle.Single;
-          StavesGroup<BarlineGroupStyle> group = stavesList.getBarlineGroups().get(iStaff); 
+          BarlineGroup.Style barlineGroupStyle = BarlineGroup.Style.Single;
+          BarlineGroup group = stavesList.getBarlineGroups().get(iStaff); 
           if (group != null)
             barlineGroupStyle = group.getStyle();
           List<StaffStamping> groupStaves = getBarlineGroupStaves(systemStaves, group);
@@ -299,7 +298,7 @@ public class ScoreFrameLayoutStrategy
           }
           //go to next group
           if (group != null)
-            iStaff = group.getEndIndex();
+            iStaff = group.getStavesRange().getEndIndex();
         }
       }
       
@@ -686,14 +685,15 @@ public class ScoreFrameLayoutStrategy
    * all staves are returned.
    */
   private List<StaffStamping> getBarlineGroupStaves(
-  	List<StaffStamping> systemStaves, StavesGroup<BarlineGroupStyle> barlineGroup)
+  	List<StaffStamping> systemStaves, BarlineGroup barlineGroup)
   {
     if (barlineGroup == null)
       return systemStaves;
     else
     {
     	//use efficient sublist
-    	return systemStaves.subList(barlineGroup.getStartIndex(), barlineGroup.getEndIndex() + 1);
+    	return systemStaves.subList(barlineGroup.getStavesRange().getStartIndex(),
+    		barlineGroup.getStavesRange().getEndIndex() + 1);
     }
   }
 

@@ -1,6 +1,7 @@
 package com.xenoage.zong.core.music;
 
 import static com.xenoage.pdlib.PVector.pvec;
+import static com.xenoage.zong.core.music.MP.atMeasure;
 import static com.xenoage.zong.core.music.util.BeatInterval.AtOrAfter;
 import static com.xenoage.zong.core.music.util.BeatInterval.BeforeOrAt;
 import static com.xenoage.zong.core.music.util.VoiceElementSelection.Last;
@@ -100,6 +101,19 @@ public final class Staff
   public Vector<Measure> getMeasures()
   {
     return measures;
+  }
+  
+  
+  /**
+   * Gets the measure with the given index, or throws an
+   * {@link IllegalMPException} if there is none.
+   */
+  public Measure getMeasure(int index)
+  {
+  	if (index >= 0 && index <= measures.size())
+  		return measures.get(index);
+  	else
+  		throw new IllegalMPException(atMeasure(index));
   }
   
   

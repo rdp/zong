@@ -9,14 +9,14 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
+import com.xenoage.util.Units;
 import com.xenoage.util.error.ErrorLevel;
+import com.xenoage.util.logging.Log;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.language.Voc;
 import com.xenoage.zong.layout.Layout;
 import com.xenoage.zong.renderer.SwingGraphicsContext;
 import com.xenoage.zong.renderer.printer.page.PrinterPageLayoutRenderer;
-import com.xenoage.util.Units;
-import com.xenoage.util.logging.Log;
 
 
 /**
@@ -29,7 +29,7 @@ import com.xenoage.util.logging.Log;
  *
  * @author Andreas Wenger
  */
-public class PrintProcess
+public final class PrintProcess
   implements Pageable, Printable
 {
   
@@ -70,6 +70,7 @@ public class PrintProcess
     { 
       App.err().report(ErrorLevel.Error, Voc.Error_PrintFailed, ex);
     }
+    
   }
 
 
@@ -117,7 +118,7 @@ public class PrintProcess
     Log.log(Log.MESSAGE, "Printing page " + pageIndex + "...");
     Graphics2D g2d = (Graphics2D) g;
     PrinterPageLayoutRenderer renderer = PrinterPageLayoutRenderer.getInstance();
-    renderer.paint(layout, pageIndex, new SwingGraphicsContext(g2d, 1));
+    renderer.paint(layout, pageIndex, new SwingGraphicsContext(g2d, 1f));
     
     //DEMO
     /*

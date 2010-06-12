@@ -28,16 +28,6 @@ public final class Range
 	/**
 	 * Creates a new range between the given two values (both inclusive).
 	 */
-	public Range(int start, int stop)
-	{
-		this.start = start;
-		this.stop = stop;
-	}
-	
-	
-	/**
-	 * Creates a new range between the given two values (both inclusive).
-	 */
 	public static Range range(int start, int stop)
 	{
 		return new Range(start, stop);
@@ -68,6 +58,16 @@ public final class Range
 	public static <T> Range range(T... a)
 	{
 		return new Range(0, a.length - 1);
+	}
+	
+	
+	/**
+	 * Creates a new range between the given two values (both inclusive).
+	 */
+	private Range(int start, int stop)
+	{
+		this.start = start;
+		this.stop = stop;
 	}
 	
 	

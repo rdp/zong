@@ -26,7 +26,7 @@ public class MusicContext
   private final Key key;
   
   //current accidentals (key: pitch without alter, value: alter)
-  private final PMap<Pitch, Byte> accidentals;
+  private final PMap<Pitch, Integer> accidentals;
   
   
   /**
@@ -37,7 +37,7 @@ public class MusicContext
   {
     this.clef = clef;
     this.key = key;
-    PMap<Pitch, Byte> accidentalsMap = new PMap<Pitch, Byte>();
+    PMap<Pitch, Integer> accidentalsMap = new PMap<Pitch, Integer>();
     for (Pitch acc : accidentals)
     {
     	accidentalsMap = accidentalsMap.plus(acc.withoutAlter(), acc.getAlter());
@@ -50,7 +50,7 @@ public class MusicContext
    * Creates a context with the given clef, key
    * and list of accidentals.
    */
-  public MusicContext(Clef clef, Key key, PMap<Pitch, Byte> accidentals)
+  public MusicContext(Clef clef, Key key, PMap<Pitch, Integer> accidentals)
   {
     this.clef = clef;
     this.key = key;
@@ -66,7 +66,7 @@ public class MusicContext
   {
     this.clef = new Clef(ClefType.G);
     this.key = new TraditionalKey(0);
-    this.accidentals = new PMap<Pitch, Byte>();
+    this.accidentals = new PMap<Pitch, Integer>();
   }
 
 
@@ -85,7 +85,7 @@ public class MusicContext
   /**
    * Gets the accidentals, or an empty map if there are none.
    */
-  public PMap<Pitch, Byte> getAccidentals()
+  public PMap<Pitch, Integer> getAccidentals()
   {
     return accidentals;
   }
@@ -114,7 +114,7 @@ public class MusicContext
   public Accidental.Type getAccidentalType(Pitch pitch)
   {
     //look, if this pitch is already set as an accidental
-  	Byte alter = accidentals.get(pitch.withoutAlter());
+  	Integer alter = accidentals.get(pitch.withoutAlter());
     if (alter != null)
     {
     	if (alter == pitch.getAlter())

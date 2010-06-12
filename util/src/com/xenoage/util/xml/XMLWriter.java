@@ -74,38 +74,49 @@ public class XMLWriter
    * Adds and returns a new element with the given
    * name as a child of the given element.
    */
-  public static Element addElement(String name, Node parentElement)
+  public static Element addElement(String name, Node parent)
   {
     //get the parent document.
     //parentElement may be the document itself.
-    Document parentDoc = parentElement.getOwnerDocument();
-    Document doc = (parentDoc != null ? parentDoc : (Document) parentElement);
+    Document parentDoc = parent.getOwnerDocument();
+    Document doc = (parentDoc != null ? parentDoc : (Document) parent);
     //add element
     Node ret = doc.createElement(name);
-    parentElement.appendChild(ret);
+    parent.appendChild(ret);
     return (Element) ret;
   }
   
   
   /**
    * Adds and returns a new element with the given
-   * name as a child of the given element,using the given text content.
+   * name as a child of the given element, using the given text content.
+   * But if the given text is null, nothing is added and null is returned.
    */
-  public static Element addElement(String name, String text, Node parentElement)
+  public static Element addElement(String name, Object text, Node parent)
   {
-    Element ret = addElement(name, parentElement);
-    ret.setTextContent(text);
-    return ret;
+  	if (text != null)
+  	{
+	    Element ret = addElement(name, parent);
+	    ret.setTextContent(text.toString());
+	    return ret;
+  	}
+  	else
+  	{
+  		return null;
+  	}
   }
   
   
   /**
-   * Adds a new attribute with the given
-   * name and value to the given element.
+   * Adds a new attribute with the given name and value to the given element.
+   * If the given value is null, the attribute is not written.
    */
-  public static void addAttribute(Node element, String name, String value)
+  public static void addAttribute(Element element, String name, Object value)
   {
-    ((Element) element).setAttribute(name, value);
+  	if (value != null)
+  	{
+  		element.setAttribute(name, value.toString());
+  	}
   }
   
   

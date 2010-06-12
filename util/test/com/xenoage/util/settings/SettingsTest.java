@@ -7,6 +7,9 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.xenoage.util.io.IO;
+import com.xenoage.util.logging.Log;
+
 
 
 /**
@@ -30,6 +33,8 @@ public class SettingsTest
 	 */
 	@Before public void setUp()
 	{
+		IO.initTest();
+		Log.initNoLog();
 		settings = new Settings(directory);
 	}
 	
@@ -97,17 +102,17 @@ public class SettingsTest
 	 */
 	@Test public void save()
 	{
-		File file = new File(directory + "/temp.settings");
-		file.delete();
+		String file = directory + "/temp.settings";
+		IO.deleteDataFile(file, true);
 		settings.setSetting("a.new.key", "temp", "a newly created value");
 		//file may not exist yet
-		assertFalse(file.exists());
+		assertFalse(IO.existsDataFile(file));
 		settings.setSetting("a.new.key.2", "temp", "a second value");
 		//file may still not exist
-		assertFalse(file.exists());
+		assertFalse(IO.existsDataFile(file));
 		settings.save("temp");
 		//file must exist now
-		assertTrue(file.exists());
+		assertTrue(IO.existsDataFile(file));
 		//delete the temp file
 		new File(directory + "/temp.settings").delete();
 	}

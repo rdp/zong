@@ -30,7 +30,7 @@ public abstract class Instrument
 	protected final Vector<InstrumentGroup> groups;
 	
 	//default instrument: piano
-	private static final Instrument defaultInstrument = new PitchedInstrument(
+	public static final Instrument defaultValue = new PitchedInstrument(
 		"default", "Piano", "Pno", null, 0, Transpose.none(),
 		pi(6, 0, 1), pi(0, 0, 8), 0);
 	
@@ -48,15 +48,6 @@ public abstract class Instrument
 		this.name = name;
 		this.abbreviation = abbreviation;
 		this.groups = groups;
-	}
-	
-	
-	/**
-	 * Gets the default instrument, a piano.
-	 */
-	public static Instrument getDefaultInstrument()
-	{
-		return defaultInstrument;
 	}
 	
 	

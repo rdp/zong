@@ -44,7 +44,7 @@ public final class Part
 		if (instrument != null)
 			this.instrument = instrument;
 		else
-			this.instrument = Instrument.getDefaultInstrument();
+			this.instrument = Instrument.defaultValue;
 	}
 	
 	
@@ -73,6 +73,15 @@ public final class Part
   public int getStavesCount()
   {
     return stavesCount;
+  }
+  
+  
+  /**
+   * Sets the number of staves used in this part.
+   */
+  public Part withStavesCount(int stavesCount)
+  {
+    return new Part(name, abbreviation, stavesCount, instrument);
   }
 
 

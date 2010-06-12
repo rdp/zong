@@ -38,6 +38,7 @@ import com.xenoage.zong.io.score.ScoreInputOptions;
 import com.xenoage.zong.layout.Layout;
 import com.xenoage.zong.layout.frames.ScoreFrame;
 import com.xenoage.zong.musiclayout.stampings.Stamping;
+import com.xenoage.zong.print.PDFPrinter;
 import com.xenoage.util.logging.ApplicationLog;
 import com.xenoage.util.logging.Log;
 import com.xenoage.zong.util.LookAndFeel;
@@ -364,6 +365,7 @@ public class App
 	 * Currently supported formats (by all kinds of applications):
 	 * <ul>
 	 * 	<li>MIDI</li>
+	 * 	<li>PDF</li>
 	 * </ul>
 	 */
 	public void saveFile(ScoreDocument doc, File file, FileFormat format)
@@ -383,6 +385,13 @@ public class App
 				setCursorWaiting(false);
 				App.err().report(ErrorLevel.Error, Voc.Error_CouldNotSaveDocument, e, file.getAbsolutePath());
 			}
+		}
+		else if (format == FileFormat.PDF)
+		{
+			//write PDF
+			setCursorWaiting(true);
+			PDFPrinter.print(doc.getDefaultLayout(), file);
+			setCursorWaiting(false);
 		}
 		else
 		{

@@ -16,7 +16,7 @@ public enum Voc
 	ButtonPanel_OpenDocument,
 	ButtonPanel_Playback,
 	ButtonPanel_PrintDocument,
-	ButtonPanel_SaveDocumentAsMidi,
+	ButtonPanel_SaveDocumentAs,
 	Buttons_Close,
 	Buttons_Details,
 	Buttons_ReportError,

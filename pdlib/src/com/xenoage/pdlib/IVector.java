@@ -234,7 +234,7 @@ public final class IVector<T>
 	
 	@Override public String toString()
 	{
-		return array.toString();
+		return "{size:" + array.size() + ", data:" + array.toString() + "}";
 	}
 	
 

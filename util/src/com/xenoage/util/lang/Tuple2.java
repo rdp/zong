@@ -9,7 +9,7 @@ package com.xenoage.util.lang;
  * 
  * @author Andreas Wenger
  */
-public class Tuple2<T1, T2>
+public final class Tuple2<T1, T2>
 {
 	
 	private final T1 e1;

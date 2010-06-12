@@ -1,8 +1,8 @@
 package com.xenoage.zong.musiclayout.stampings;
 
-import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
+import com.xenoage.zong.core.music.group.BracketGroup;
 import com.xenoage.zong.renderer.RenderingParams;
-import com.xenoage.zong.renderer.stampings.*;
+import com.xenoage.zong.renderer.stampings.BracketStampingRenderer;
 
 
 /**
@@ -21,7 +21,7 @@ public class BracketStamping
   private StaffStamping firstStaff;
   private StaffStamping lastStaff;
   private float positionX;
-  private BracketGroupStyle style;
+  private BracketGroup.Style groupStyle;
   
   
   /**
@@ -30,17 +30,17 @@ public class BracketStamping
    * @param firstStaff      the topmost staff of the group
    * @param lastStaff       the lowest staff of the group
    * @param positionX       the horizontal position in mm
-   * @param style           the style of the bracket
+   * @param groupStyle      the style of the bracket
    */
   public BracketStamping(StaffStamping firstStaff,
   	StaffStamping lastStaff,
-    float positionX, BracketGroupStyle style)
+    float positionX, BracketGroup.Style groupStyle)
   {
     super(firstStaff, LEVEL_MUSIC, null);
     this.firstStaff = firstStaff;
     this.lastStaff = lastStaff;
     this.positionX = positionX;
-    this.style = style;
+    this.groupStyle = groupStyle;
     
     //TODO: bounding shape
   }
@@ -78,9 +78,9 @@ public class BracketStamping
   /**
    * Gets the style of the bracket.
    */
-  public BracketGroupStyle getStyle()
+  public BracketGroup.Style getGroupStyle()
   {
-  	return style;
+  	return groupStyle;
   }
   
   

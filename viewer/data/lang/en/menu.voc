@@ -17,7 +17,7 @@
   <voc key="Playback" value="Playback"/>
   <voc key="Print_" value="Print..."/>
   <voc key="Readme_" value="Readme..."/>
-  <voc key="SaveAsMidi_" value="Save as Midi..."/>
+  <voc key="SaveAs_" value="Save as..."/>
   <voc key="Settings" value="Settings"/>
   <voc key="Stop" value="Stop"/>
   <voc key="Website_" value="Open website..."/>

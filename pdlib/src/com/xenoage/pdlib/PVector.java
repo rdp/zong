@@ -55,6 +55,12 @@ public final class PVector<T>
 	}
 	
 	
+	public static <T2> PVector<T2> pvec()
+	{
+		return new PVector<T2>();
+	}
+	
+	
 	public static <T2> PVector<T2> pvec(Collection<T2> data)
 	{
 		return new PVector<T2>(data);
@@ -97,6 +103,18 @@ public final class PVector<T>
 	public PVector<T> plus(T e)
 	{
 		return new PVector<T>(data.plus(e));
+	}
+	
+	
+	/**
+	 * Adds the given element at the end of this vector if it is not null.
+	 */
+	public PVector<T> plusNotNull(T e)
+	{
+		if (e != null)
+			return plus(e);
+		else
+			return this;
 	}
 
 	
@@ -208,6 +226,12 @@ public final class PVector<T>
 	}
 	
 	
+	public PVector<T> minusFirst()
+	{
+		return new PVector<T>(data.minus(0));
+	}
+	
+	
 	@Deprecated @Override public T remove(int index)
 	{
 		throw new UnsupportedOperationException("Use minus method instead");
@@ -311,7 +335,7 @@ public final class PVector<T>
 	
 	@Override public String toString()
 	{
-		return data.toString();
+		return "{size:" + data.size() + ", data:" + data.toString() + "}";
 	}
 	
 

@@ -5,7 +5,10 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import com.xenoage.util.io.IO;
 
 
 /**
@@ -15,6 +18,11 @@ import org.junit.Test;
  */
 public class RecentFilesTest
 {
+	
+	@Before public void setUp()
+	{
+		IO.initTest();
+	}
 
 	@Test public void test()
 	{

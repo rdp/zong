@@ -50,7 +50,7 @@ public class Layout
 	public Layout(ScoreDocument parentScoreDocument)
 	{
 		this.parentScoreDocument = parentScoreDocument;
-		this.format = new LayoutFormat();
+		this.format = LayoutFormat.defaultValue;
 	}
 
 
@@ -127,11 +127,11 @@ public class Layout
 
 
 	/**
-	 * Gets a copy of the default format of this layout.
+	 * Gets the default format of this layout.
 	 */
 	public LayoutFormat getFormat()
 	{
-		return new LayoutFormat(format);
+		return format;
 	}
 
 

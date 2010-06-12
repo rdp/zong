@@ -2,6 +2,11 @@
 <!--
 Ant scripts for all Zong! projects.
 
+Notes: Generate the key for signing (Linux):
+keytool -genkey -alias Xenoage -dname "cn=Xenoage Software, c=en"
+keytool -selfcert -alias Xenoage -dname "cn=Xenoage Software, c=en"
+All passwords are "123456".
+
 @author Andreas Wenger
 @author Uli Teschemacher
 -->
@@ -19,7 +24,8 @@ Ant scripts for all Zong! projects.
 	<defaultexcludes add="**/*.gitignore"/>
 
 	<property name="zong-version" value="i50"/>
-	<property name="debuglevel" value="source,lines,vars"/>
+
+	<property name="debuglevel" value="source,lines,vars"/>
 	<property name="target" value="1.6"/>
 	<property name="source" value="1.6"/>
 	<property name="sourcefilter" value="**/*.java, **/*.clj"/>
@@ -31,7 +37,7 @@ Ant scripts for all Zong! projects.
 	<!-- * main targets                  * -->
 	<!-- ********************************* -->
 	
-	<target name="clean" depends="pdlib-clean,util-clean,core-clean,player-clean,viewer-clean,editor-clean"> <!-- TODO: after core-clean: musicxml-in-clean, -->
+	<target name="clean" depends="pdlib-clean,util-clean,core-clean,musicxml-clean,musicxml-in-clean,player-clean,viewer-clean,editor-clean">
 		<delete dir="dist"/>
 	</target>
 	
@@ -53,7 +59,7 @@ Ant scripts for all Zong! projects.
 		
 	
 	<!-- create the player and pack it for all OSes -->
-	<target name="player-dist" depends="clean,pdlib-jar,util-jar,core-jar,midi-out-jar,player-jar"> <!-- TODO musicxml-in-jar, -->
+	<target name="player-dist" depends="clean,pdlib-jar,util-jar,core-jar,musicxml-jar,musicxml-in-jar,midi-out-jar,player-jar">
 		<!-- *** shared files *** -->
 		<mkdir dir="dist/share/player"/>
 		<copy file="player/readme.txt" todir="dist/share/player"/>
@@ -66,8 +72,6 @@ Ant scripts for all Zong! projects.
 		</copy>
 		<copy file="lib/gervill.jar" todir="dist/share/player/lib"/>
 		<copy file="lib/gervill-license.txt" todir="dist/share/player/lib"/>
-		<copy file="lib/proxymusic-2.0.jar" todir="dist/share/player/lib"/>
-		<copy file="lib/proxymusic-2.0-license.txt" todir="dist/share/player/lib"/>
 		<copy todir="dist/share/player">
 			<fileset dir="player">
 				<include name="data/**"/>
@@ -101,7 +105,8 @@ Ant scripts for all Zong! projects.
 		<unzip src="util/dist/util.jar" dest="dist/share/player/temp"/>
 		<unzip src="core/dist/core.jar" dest="dist/share/player/temp"/>
 		<unzip src="midi-out/dist/midi-out.jar" dest="dist/share/player/temp"/>
-		<!-- TODO <unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/player/temp"/> -->
+		<unzip src="musicxml/dist/musicxml.jar" dest="dist/share/player/temp"/>
+		<unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/player/temp"/>
 		<unzip src="player/dist/player.jar" dest="dist/share/player/temp"/>
 		<delete dir="dist/share/player/temp/META-INF"/>
 		<jar destfile="dist/share/player/lib/player.jar">
@@ -116,7 +121,7 @@ Ant scripts for all Zong! projects.
 	
 	
 	<!-- create the viewer and pack it for all OSes -->
-	<target name="viewer-dist" depends="clean,pdlib-jar,util-jar,core-jar,midi-out-jar,player-jar,viewer-jar"> <!-- TODO musicxml-in-jar, -->
+	<target name="viewer-dist" depends="clean,pdlib-jar,util-jar,core-jar,musicxml-jar,musicxml-in-jar,midi-out-jar,player-jar,viewer-jar">
 		<!-- shared files -->
 		<mkdir dir="dist/share/viewer"/>
 		<copy file="viewer/readme.txt" todir="dist/share/viewer"/>
@@ -131,10 +136,10 @@ Ant scripts for all Zong! projects.
 		<copy file="lib/gervill.jar" todir="dist/share/viewer/lib"/>
 		<copy file="lib/gervill-license.txt" todir="dist/share/viewer/lib"/>
 		<copy file="lib/gluegen-rt.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/iText-5.0.2.jar" todir="dist/share/viewer/lib"/>
+		<copy file="lib/iText-5.0.2-license.txt" todir="dist/share/viewer/lib"/>
 		<copy file="lib/jogl.jar" todir="dist/share/viewer/lib"/>
 		<copy file="lib/jogl-license.txt" todir="dist/share/viewer/lib"/>
-		<copy file="lib/proxymusic-2.0.jar" todir="dist/share/viewer/lib"/>
-		<copy file="lib/proxymusic-2.0-license.txt" todir="dist/share/viewer/lib"/>
 		<copy file="lib/tablelayout.jar" todir="dist/share/viewer/lib"/>
 		<copy file="lib/tablelayout-license.txt" todir="dist/share/viewer/lib"/>
 		<copy todir="dist/share/viewer">
@@ -170,7 +175,8 @@ Ant scripts for all Zong! projects.
 		<unzip src="util/dist/util.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="core/dist/core.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="midi-out/dist/midi-out.jar" dest="dist/share/viewer/temp"/>
-		<!-- TODO <unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/viewer/temp"/> -->
+		<unzip src="musicxml/dist/musicxml.jar" dest="dist/share/viewer/temp"/>
+		<unzip src="musicxml-in/dist/musicxml-in.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="player/dist/player.jar" dest="dist/share/viewer/temp"/>
 		<unzip src="viewer/dist/viewer.jar" dest="dist/share/viewer/temp"/>
 		<delete dir="dist/share/viewer/temp/META-INF"/>
@@ -185,15 +191,15 @@ Ant scripts for all Zong! projects.
 	</target>
 	
 	
-	<target name="test" depends="pdlib-test,util-test,core-test,midi-out-test,player-test,viewer-test"> <!-- TODO musicxml-in-test, ,editor-test -->
+	<target name="test" depends="pdlib-test,util-test,core-test,musicxml-test,musicxml-in-test,midi-out-test,player-test,viewer-test"> <!-- ,editor-test -->
 	</target>
 	
 	
 	<target name="rasterize-symbolpool">
-    <java dir="dist/share/viewer" classname="com.xenoage.zong.app.symbols.rasterizer.SymbolPoolRasterizer"
-    	classpathref="viewer.classpath" classpath="viewer/bin" fork="true" failonerror="true">
-    	<arg value="default"/>
-    </java>
+		<java dir="dist/share/viewer" classname="com.xenoage.zong.app.symbols.rasterizer.SymbolPoolRasterizer"
+			classpathref="viewer.classpath" classpath="viewer/bin" fork="true" failonerror="true">
+			<arg value="default"/>
+		</java>
 	</target>
 	
 	
@@ -235,9 +241,9 @@ Ant scripts for all Zong! projects.
 	<!-- ********************************* -->
 	
 	<path id="gervill.classpath"><pathelement location="lib/gervill.jar"/></path>
+	<path id="itext.classpath"><pathelement location="lib/iText-5.0.2.jar"/></path>
 	<path id="jogl.classpath"><pathelement location="lib/jogl.jar"/><pathelement location="lib/gluegen-rt.jar"/></path>
 	<path id="junit.classpath"><pathelement location="lib/dev/junit/junit-4.7.jar"/></path>
-	<path id="proxymusic.classpath"><pathelement location="lib/proxymusic-2.0.jar"/></path>
 	<path id="tablelayout.classpath"><pathelement location="lib/tablelayout.jar"/></path>
 	
 	
@@ -270,15 +276,25 @@ Ant scripts for all Zong! projects.
 	<target name="midi-out-clean"><antcall target="project-clean"><param name="project" value="midi-out"/></antcall></target>
 	<target name="midi-out-jar" depends="util-jar,core-jar"><antcall target="project-jar"><param name="project" value="midi-out"/></antcall></target>
 	<target name="midi-out-test" depends="util-jar,core-jar"><antcall target="project-test"><param name="project" value="midi-out"/></antcall></target>
-	
-	<path id="musicxml-in.classpath">
+
+	<path id="musicxml.classpath">
+		<pathelement location="pdlib/dist/pdlib.jar"/>
 		<pathelement location="util/dist/util.jar"/>
 		<pathelement location="core/dist/core.jar"/>
-		<path refid="proxymusic.classpath"/>
+	</path>
+	<target name="musicxml-clean"><antcall target="project-clean"><param name="project" value="musicxml"/></antcall></target>
+	<target name="musicxml-jar" depends="util-jar,core-jar"><antcall target="project-jar"><param name="project" value="musicxml"/></antcall></target>
+	<target name="musicxml-test" depends="util-jar,core-jar"><antcall target="project-test"><param name="project" value="musicxml"/></antcall></target>
+	
+	<path id="musicxml-in.classpath">
+		<pathelement location="pdlib/dist/pdlib.jar"/>
+		<pathelement location="util/dist/util.jar"/>
+		<pathelement location="core/dist/core.jar"/>
+		<pathelement location="musicxml/dist/musicxml.jar"/>
 	</path>
 	<target name="musicxml-in-clean"><antcall target="project-clean"><param name="project" value="musicxml-in"/></antcall></target>
-	<target name="musicxml-in-jar" depends="util-jar,core-jar"><antcall target="project-jar"><param name="project" value="musicxml-in"/></antcall></target>
-	<target name="musicxml-in-test" depends="util-jar,core-jar"><antcall target="project-test"><param name="project" value="musicxml-in"/></antcall></target>
+	<target name="musicxml-in-jar" depends="util-jar,core-jar,musicxml-jar"><antcall target="project-jar"><param name="project" value="musicxml-in"/></antcall></target>
+	<target name="musicxml-in-test" depends="util-jar,core-jar,musicxml-jar"><antcall target="project-test"><param name="project" value="musicxml-in"/></antcall></target>
 
 	<path id="pdlib.classpath">
 	</path>
@@ -291,14 +307,14 @@ Ant scripts for all Zong! projects.
 		<pathelement location="util/dist/util.jar"/>
 		<pathelement location="core/dist/core.jar"/>
 		<pathelement location="midi-out/dist/midi-out.jar"/>
-		<!-- TODO <pathelement location="musicxml-in/dist/musicxml-in.jar"/> -->
+		<pathelement location="musicxml/dist/musicxml.jar"/>
+		<pathelement location="musicxml-in/dist/musicxml-in.jar"/>
 		<path refid="gervill.classpath"/>
 		<path refid="jogl.classpath"/>
-		<path refid="proxymusic.classpath"/>
 	</path>
 	<target name="player-clean"><antcall target="project-clean"><param name="project" value="player"/></antcall></target>
-	<target name="player-jar" depends="util-jar,core-jar,midi-out-jar"><!-- TODO ,musicxml-in-jar --><antcall target="project-jar"><param name="project" value="player"/></antcall></target>
-	<target name="player-test" depends="util-jar,core-jar,midi-out-jar"><!-- TODO ,musicxml-in-jar --><antcall target="project-test"><param name="project" value="player"/></antcall></target>
+	<target name="player-jar" depends="util-jar,core-jar,midi-out-jar,musicxml-jar,musicxml-in-jar"><antcall target="project-jar"><param name="project" value="player"/></antcall></target>
+	<target name="player-test" depends="util-jar,core-jar,midi-out-jar,musicxml-jar,musicxml-in-jar"><antcall target="project-test"><param name="project" value="player"/></antcall></target>
 	
 	<path id="util.classpath">
 		<pathelement location="pdlib/dist/pdlib.jar"/>
@@ -312,16 +328,17 @@ Ant scripts for all Zong! projects.
 		<pathelement location="pdlib/dist/pdlib.jar"/>
 		<pathelement location="util/dist/util.jar"/>
 		<pathelement location="midi-out/dist/midi-out.jar"/>
-		<!-- TODO <pathelement location="musicxml-in/dist/musicxml-in.jar"/> -->
+		<pathelement location="musicxml/dist/musicxml.jar"/>
+		<pathelement location="musicxml-in/dist/musicxml-in.jar"/>
 		<pathelement location="player/dist/player.jar"/>
 		<path refid="gervill.classpath"/>
+		<path refid="itext.classpath"/>
 		<path refid="jogl.classpath"/>
-		<path refid="proxymusic.classpath"/>
 		<path refid="tablelayout.classpath"/>
 	</path>
 	<target name="viewer-clean"><antcall target="project-clean"><param name="project" value="viewer"/></antcall></target>
-	<target name="viewer-jar" depends="util-jar,core-jar,player-jar"><!-- TODO musicxml-in-jar, --><antcall target="project-jar"><param name="project" value="viewer"/></antcall></target>
-	<target name="viewer-test" depends="util-jar,core-jar,player-jar"><!-- TODO musicxml-in-jar, --><antcall target="project-test"><param name="project" value="viewer"/></antcall></target>
+	<target name="viewer-jar" depends="util-jar,core-jar,musicxml-jar,musicxml-in-jar,player-jar"><antcall target="project-jar"><param name="project" value="viewer"/></antcall></target>
+	<target name="viewer-test" depends="util-jar,core-jar,musicxml-jar,musicxml-in-jar,player-jar"><antcall target="project-test"><param name="project" value="viewer"/></antcall></target>
 
 
 	<!-- ********************************* -->

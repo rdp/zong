@@ -5,13 +5,12 @@ import java.util.TimerTask;
 
 import javax.sound.midi.Sequence;
 
-import proxymusic.ScorePartwise;
-
 import com.xenoage.util.exceptions.InvalidFormatException;
 import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.io.midi.out.MidiScorePlayer;
 import com.xenoage.zong.io.midi.out.PlaybackListener;
 import com.xenoage.zong.io.midi.out.SynthManager;
+import com.xenoage.zong.musicxml.types.MxlScorePartwise;
 
 
 /**
@@ -111,14 +110,14 @@ public class BasicFrameController
 	}
 
 
-	public void loadDocument(ScorePartwise doc) throws InvalidFormatException
+	public void loadDocument(MxlScorePartwise doc) throws InvalidFormatException
 	{
 		controller.loadScore(doc);
 		view.setScoreInfo(controller.getScore());
 	}
 
 
-	public void openDocument(ScorePartwise doc) throws InvalidFormatException
+	public void openDocument(MxlScorePartwise doc) throws InvalidFormatException
 	{
 		loadDocument(doc);
 		controller.play();

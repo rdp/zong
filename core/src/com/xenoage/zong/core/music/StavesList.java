@@ -1,5 +1,6 @@
 package com.xenoage.zong.core.music;
 
+import static com.xenoage.pdlib.PMap.pmap;
 import static com.xenoage.util.Range.range;
 import static com.xenoage.zong.core.music.MP.mp;
 
@@ -7,18 +8,20 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.PMap;
 import com.xenoage.pdlib.PVector;
 import com.xenoage.util.MathTools;
+import com.xenoage.util.Range;
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.core.music.barline.BarlineGroupStyle;
-import com.xenoage.zong.core.music.bracket.BracketGroupStyle;
+import com.xenoage.zong.core.music.group.BarlineGroup;
+import com.xenoage.zong.core.music.group.BracketGroup;
+import com.xenoage.zong.core.music.group.StavesRange;
 import com.xenoage.zong.util.exceptions.IllegalMPException;
 
 
 /**
  * A {@link StavesList} manages the staves of a score
- * and all of its groups, like parts, bracket groups
- * and barline groups.
+ * and all of its parts, and bracket and barline groups.
  *
  * @author Andreas Wenger
  */
@@ -27,26 +30,43 @@ public final class StavesList
   
   private final PVector<Staff> staves;
   private final PVector<Part> parts;
-  private final PVector<StavesGroup<BarlineGroupStyle>> barlineGroups;
-  private final PVector<StavesGroup<BracketGroupStyle>> bracketGroups;
+  private final PVector<BarlineGroup> barlineGroups;
+  private final PVector<BracketGroup> bracketGroups;
   
   private static final StavesList empty =
   	new StavesList(new PVector<Staff>(), new PVector<Part>(),
-  		new PVector<StavesGroup<BarlineGroupStyle>>(),
-  		new PVector<StavesGroup<BracketGroupStyle>>());
+  		new PVector<BarlineGroup>(), new PVector<BracketGroup>());
+  
+  //cache
+  private final PMap<Part, Range> partStaffIndices;
+  private final Part[] stavesToParts;
   
   
   /**
    * Creates a new {@link StavesList}.
    */
   public StavesList(PVector<Staff> staves, PVector<Part> parts,
-  	PVector<StavesGroup<BarlineGroupStyle>> barlineGroups,
-  	PVector<StavesGroup<BracketGroupStyle>> bracketGroups)
+  	PVector<BarlineGroup> barlineGroups, PVector<BracketGroup> bracketGroups)
   {
     this.staves = staves;
     this.parts = parts;
     this.barlineGroups = barlineGroups;
     this.bracketGroups = bracketGroups;
+    
+    //cache
+    PMap<Part, Range> partStaffIndices = pmap();
+    Part[] stavesToParts = new Part[staves.size()];
+    int staffIndex = 0;
+    for (Part part : parts)
+    {
+    	Range r = range(staffIndex, staffIndex + part.getStavesCount() - 1);
+    	partStaffIndices = partStaffIndices.plus(part, r);
+    	for (int i : r)
+    		stavesToParts[i] = part;
+    	staffIndex += part.getStavesCount();
+    }
+    this.partStaffIndices = partStaffIndices;
+    this.stavesToParts = stavesToParts;
   }
   
   
@@ -89,7 +109,7 @@ public final class StavesList
   /**
    * Gets the bracket groups.
    */
-  public PVector<StavesGroup<BracketGroupStyle>> getBracketGroups()
+  public PVector<BracketGroup> getBracketGroups()
   {
     return bracketGroups;
   }
@@ -98,7 +118,7 @@ public final class StavesList
   /**
    * Gets the barline groups.
    */
-  public PVector<StavesGroup<BarlineGroupStyle>> getBarlineGroups()
+  public PVector<BarlineGroup> getBarlineGroups()
   {
     return barlineGroups;
   }
@@ -154,28 +174,28 @@ public final class StavesList
     
     //shift the staff indexes of the parts and groups
     //beginning at the start index by the given number of staves
-    PVector<StavesGroup<BracketGroupStyle>> bracketGroups = this.bracketGroups;
+    PVector<BracketGroup> bracketGroups = this.bracketGroups;
     for (int i : range(bracketGroups))
     {
-    	StavesGroup<BracketGroupStyle> bracketGroup = bracketGroups.get(i);
-    	if (bracketGroup.getStartIndex() >= startStaff)
+    	BracketGroup bracketGroup = bracketGroups.get(i);
+    	if (bracketGroup.getStavesRange().getStartIndex() >= startStaff)
       {
     		bracketGroups.with(i, bracketGroup.shift(partStavesCount));
       }
-      else if (bracketGroup.getEndIndex() >= startStaff)
+      else if (bracketGroup.getStavesRange().getEndIndex() >= startStaff)
       {
       	bracketGroups.with(i, bracketGroup.shiftEnd(partStavesCount));
       }
     }
-    PVector<StavesGroup<BarlineGroupStyle>> barlineGroups = this.barlineGroups;
+    PVector<BarlineGroup> barlineGroups = this.barlineGroups;
     for (int i : range(barlineGroups))
     {
-    	StavesGroup<BarlineGroupStyle> barlineGroup = barlineGroups.get(i);
-    	if (barlineGroup.getStartIndex() >= startStaff)
+    	BarlineGroup barlineGroup = barlineGroups.get(i);
+    	if (barlineGroup.getStavesRange().getStartIndex() >= startStaff)
       {
     		barlineGroups.with(i, barlineGroup.shift(partStavesCount));
       }
-      else if (barlineGroup.getEndIndex() >= startStaff)
+      else if (barlineGroup.getStavesRange().getEndIndex() >= startStaff)
       {
       	barlineGroups.with(i, barlineGroup.shiftEnd(partStavesCount));
       }
@@ -192,25 +212,27 @@ public final class StavesList
    * at the given positions are removed.
    */
   public StavesList plusBarlineGroup(int startStaff, int endStaff,
-    BarlineGroupStyle style)
+    BarlineGroup.Style style)
   {
   	if (endStaff >= staves.size())
   		throw new IllegalArgumentException("staves out of range");
-  	PVector<StavesGroup<BarlineGroupStyle>> barlineGroups = this.barlineGroups;
+  	PVector<BarlineGroup> barlineGroups = this.barlineGroups;
   	
     //delete existing groups within the given range, or, if the
   	//given group is within an existing one, ignore it
   	//(we do not support nested barline groups)
     for (int i = 0; i < barlineGroups.size(); i++)
     {
-    	StavesGroup<BarlineGroupStyle> group = barlineGroups.get(i);
-      if (group.getEndIndex() >= startStaff && group.getStartIndex() <= endStaff)
+    	BarlineGroup group = barlineGroups.get(i);
+      if (group.getStavesRange().getEndIndex() >= startStaff &&
+      	group.getStavesRange().getStartIndex() <= endStaff)
       {
       	barlineGroups = barlineGroups.minus(i);
         i--;
       }
       //ignore subgroups. then, this staves list remains untouched.
-      if (startStaff >= group.getStartIndex() && endStaff <= group.getEndIndex())
+      if (startStaff >= group.getStavesRange().getStartIndex() && endStaff <=
+      	group.getStavesRange().getEndIndex())
       {
       	return this;
       }
@@ -219,12 +241,13 @@ public final class StavesList
     //add new group at the right position
     //(the barline groups are sorted by start index)
     int i = 0;
-    while (i < barlineGroups.size() && barlineGroups.get(i).getStartIndex() < startStaff)
+    while (i < barlineGroups.size() &&
+    	barlineGroups.get(i).getStavesRange().getStartIndex() < startStaff)
     {
       i++;
     }
     barlineGroups = barlineGroups.plus(i,
-    	new StavesGroup<BarlineGroupStyle>(startStaff, endStaff, style));
+    	new BarlineGroup(new StavesRange(startStaff, endStaff), style));
     
     return new StavesList(staves, parts, barlineGroups, bracketGroups);
   }
@@ -234,21 +257,22 @@ public final class StavesList
    * Adds a bracket group for the given staves with the given style.
    */
   public StavesList plusBracketGroup(int startStaff, int endStaff,
-    BracketGroupStyle style)
+    BracketGroup.Style style)
   {
   	if (endStaff >= staves.size())
   		throw new IllegalArgumentException("staves out of range");
-  	PVector<StavesGroup<BracketGroupStyle>> bracketGroups = this.bracketGroups;
+  	PVector<BracketGroup> bracketGroups = this.bracketGroups;
   	
     //add new group at the right position
     //(the bracket groups are sorted by start index)
     int i = 0;
-    while (i < bracketGroups.size() && bracketGroups.get(i).getStartIndex() > startStaff)
+    while (i < bracketGroups.size() &&
+    	bracketGroups.get(i).getStavesRange().getStartIndex() > startStaff)
     {
       i++;
     }
     bracketGroups = bracketGroups.plus(i,
-    	new StavesGroup<BracketGroupStyle>(startStaff, endStaff, style));
+    	new BracketGroup(new StavesRange(startStaff, endStaff), style));
     
     return new StavesList(staves, parts, barlineGroups, bracketGroups);
   }
@@ -284,26 +308,20 @@ public final class StavesList
   
   
   /**
-   * Gets the start index of the given part.
+   * Gets the part the given staff belongs to.
    */
-  public int getPartStartIndex(Part part)
+  public Part getPartByStaffIndex(int staffIndex)
   {
-  	int ret = 0;
-  	for (Part p : parts)
-  	{
-  		if (part == p) return ret;
-  		ret += p.getStavesCount();
-  	}
-  	throw new IllegalArgumentException("Unknown part");
+  	return stavesToParts[staffIndex];
   }
   
   
   /**
-   * Gets the end index of the given part.
+   * Gets the range of staff indices of the given part.
    */
-  public int getPartEndIndex(Part part)
+  public Range getPartStaffIndices(Part part)
   {
-  	return getPartStartIndex(part) + part.getStavesCount() - 1;
+  	return partStaffIndices.get(part);
   }
   
   
@@ -311,11 +329,11 @@ public final class StavesList
 	 * Gets the barline group the given staff belongs to.
 	 * If no group is found, null is returned.
 	 */
-	public StavesGroup<BarlineGroupStyle> getBarlineGroup(int staffIndex)
+	public BarlineGroup getBarlineGroup(int staffIndex)
 	{
-		for (StavesGroup<BarlineGroupStyle> barlineGroup : barlineGroups)
+		for (BarlineGroup barlineGroup : barlineGroups)
     {
-      if (barlineGroup.contains(staffIndex))
+      if (barlineGroup.getStavesRange().contains(staffIndex))
         return barlineGroup;
     }
     return null;
@@ -381,7 +399,7 @@ public final class StavesList
    */
   public Staff getStaff(int partIndex, int partStaffIndex)
   {
-    return getStaff(getPartStartIndex(parts.get(partIndex)) + partStaffIndex);
+    return getStaff(getPartStaffIndices(parts.get(partIndex)).getStart() + partStaffIndex);
   }
   
   

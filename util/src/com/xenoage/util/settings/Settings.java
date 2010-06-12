@@ -1,6 +1,5 @@
 package com.xenoage.util.settings;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;

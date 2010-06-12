@@ -2,7 +2,7 @@ package com.xenoage.zong.io.musicxml.link;
 
 
 /**
- * The <code>%link-attributes</code> entity from MusicXML.
+ * MusicXML link-attributes.
  * Currently, only the href attribute is supported.
  * 
  * @author Andreas Wenger

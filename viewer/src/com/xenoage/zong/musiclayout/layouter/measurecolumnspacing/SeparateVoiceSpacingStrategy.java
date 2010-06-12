@@ -4,14 +4,16 @@ import static com.xenoage.util.math.Fraction.fr;
 
 import java.util.ArrayList;
 
-
 import com.xenoage.pdlib.Vector;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.Voice;
 import com.xenoage.zong.core.music.VoiceElement;
+import com.xenoage.zong.core.music.clef.Clef;
+import com.xenoage.zong.core.music.key.Key;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.notations.Notation;
+import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
 import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
 import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
@@ -90,14 +92,17 @@ public class SeparateVoiceSpacingStrategy
     for (VoiceElement element : elements)
     {
     	
+    	/* OBSOLETE
+    	 * this is obsolete since clef/key elements are now saved in measure
+    	 
       //if we are at beat 0 and a leading spacing was used
-      //for this voice and OBSOLETE: the element is a clef or
+      //for this voice and the element is a clef or
       //a key signature, do not use it again
-      if (curBeat.getNumerator() == 0 && leadingSpacing) // OBSOLETE: &&
-        //(element instanceof Clef || element instanceof Key))
+      if (curBeat.getNumerator() == 0 && leadingSpacing &&
+        (element instanceof Clef || element instanceof Key))
       {
         continue;
-      }
+      } */
       
       //get the notation
       Notation notation = notations.get(element);
