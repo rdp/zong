@@ -36,9 +36,14 @@
 		<string>1.6+</string>
 		<key>ClassPath</key>
 		<array>
-			<string>$JAVAROOT/lib/player.jar</string>
-			<string>$JAVAROOT/lib/iText-5.0.2.jar:</string>
+			<string>$JAVAROOT/lib/core.jar</string>
 			<string>$JAVAROOT/lib/gervill.jar</string>
+			<string>$JAVAROOT/lib/midi-out.jar</string>
+			<string>$JAVAROOT/lib/musicxml.jar</string>
+			<string>$JAVAROOT/lib/musicxml-in.jar</string>
+			<string>$JAVAROOT/lib/pdlib.jar</string>
+			<string>$JAVAROOT/lib/player.jar</string>
+			<string>$JAVAROOT/lib/util.jar</string>
 		</array>
 		<key>Properties</key>
 		<dict>

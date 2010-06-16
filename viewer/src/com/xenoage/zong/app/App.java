@@ -217,13 +217,20 @@ public class App
     	//at sun.misc.Service.fail(Unknown Source)
     	//...
     	//at javax.sound.midi.MidiSystem.getSynthesizer(Unknown Source)
-    	if (System.getProperty("user.dir").contains("!"))
-		{
-			showMessageDialog("Due to a bug in a Java Sound module this program\n" +
-				"can not be started under a path which contains an \"!\".\n" +
-				"Please move the whole program directory to another location.");
-			System.exit(0);
-		}
+    	try
+    	{
+	    	if (System.getProperty("user.dir").contains("!"))
+				{
+					showMessageDialog("Due to a bug in a Java Sound module this program\n" +
+						"can not be started under a path which contains an \"!\".\n" +
+						"Please move the whole program directory to another location.");
+					System.exit(0);
+				}
+    	}
+    	catch (SecurityException ex)
+    	{
+    		//ignore this (happens in applets)
+    	}
     	SynthManager.init(readSettings);
     }
     catch (MidiUnavailableException ex)

@@ -1,1 +1,1 @@
-java -cp "lib/gervill.jar:lib/gluegen-rt.jar:lib/jogl.jar:lib/iText-5.0.2.jar:lib/tablelayout.jar:lib/viewer.jar" -Djava.library.path="lib/solaris-i586" com.xenoage.zong.app.ViewerMain
+java -cp "lib/core.jar:lib/gervill.jar:lib/gluegen-rt.jar:lib/iText-5.0.2.jar:lib/jogl.jar:lib/midi-out.jar:lib/musicxml.jar:lib/musicxml-in.jar:lib/pdlib.jar:lib/player.jar:lib/tablelayout.jar:lib/util.jar:lib/viewer.jar" -Djava.library.path="lib/solaris-i586" com.xenoage.zong.app.ViewerMain

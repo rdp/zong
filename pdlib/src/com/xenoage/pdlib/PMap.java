@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-import pcollections.HashPMap;
-import pcollections.HashTreePMap;
+import org.pcollections.HashPMap;
+import org.pcollections.HashTreePMap;
 
 
 /**
