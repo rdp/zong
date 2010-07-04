@@ -38,13 +38,12 @@ public final class WedgeStamping
   public WedgeStamping(Wedge wedge, float yLp, float x1Mm, float x2Mm, float d1Is, float d2Is,
   	StaffStamping parentStaff)
   {
-    super(parentStaff, Stamping.LEVEL_MUSIC, wedge);
+    super(parentStaff, Level.Music, wedge, null);
     this.yLp = yLp;
     this.x1Mm = x1Mm;
     this.x2Mm = x2Mm;
     this.d1Is = d1Is;
     this.d2Is = d2Is;
-    //TODO: updateBoundingShape();
   }
   
   

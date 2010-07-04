@@ -2,7 +2,7 @@ package com.xenoage.zong.musiclayout.stampings;
 
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.renderer.RenderingParams;
-import com.xenoage.zong.renderer.stampings.*;
+import com.xenoage.zong.renderer.stampings.LegerLineStampingRenderer;
 
 
 /**
@@ -14,12 +14,12 @@ import com.xenoage.zong.renderer.stampings.*;
  *
  * @author Andreas Wenger
  */
-public class LegerLineStamping
+public final class LegerLineStamping
   extends Stamping
 {
 
-  private float positionX;
-  private int linePosition;
+  private final float positionX;
+  private final int linePosition;
   
   
   /**
@@ -33,11 +33,9 @@ public class LegerLineStamping
   public LegerLineStamping(StaffStamping parentStaff, Chord chord,
     float positionX, int linePosition)
   {
-    super(parentStaff, LEVEL_MUSIC, chord);
+    super(parentStaff, Level.Music, chord, null);
     this.positionX = positionX;
     this.linePosition = linePosition;
-    
-    //TODO: bounding shape. needed?
   }
   
   

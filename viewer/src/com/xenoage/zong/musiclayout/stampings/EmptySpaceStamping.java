@@ -17,8 +17,7 @@ public class EmptySpaceStamping
   
   public EmptySpaceStamping(Rectangle2f rectangle)
   {
-    super(LEVEL_EMPTYSPACE, null);
-    addBoundingShape(rectangle);
+    super(null, Level.EmptySpace, null, rectangle);
   }
   
   

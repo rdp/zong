@@ -29,10 +29,9 @@ public final class TextStamping
    */
   public TextStamping(FormattedText text, Point2f position)
   {
-    super(Stamping.LEVEL_TEXT, null);
+    super(null, Level.Text, null, null);
     this.text = text;
     this.position = position;
-    updateBoundingShape();
   }
   
   
@@ -52,17 +51,6 @@ public final class TextStamping
   public Point2f getPosition()
   {
   	return position;
-  }
-  
-
-  /**
-   * Updates the bounding rectangle.
-   * This method must be called after creating an instance
-   * of this class.
-   */
-  protected void updateBoundingShape()
-  {
-    //TODO
   }
   
   

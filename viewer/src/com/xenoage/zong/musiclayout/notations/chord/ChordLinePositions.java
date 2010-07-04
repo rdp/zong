@@ -11,7 +11,7 @@ import com.xenoage.zong.core.music.chord.Chord;
  * 
  * @author Andreas Wenger
  */
-public class ChordLinePositions
+public final class ChordLinePositions
 {
 	
 	private final int[] linePositions;

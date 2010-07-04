@@ -329,7 +329,7 @@ public final class StavesList
 	 * Gets the barline group the given staff belongs to.
 	 * If no group is found, null is returned.
 	 */
-	public BarlineGroup getBarlineGroup(int staffIndex)
+	public BarlineGroup getBarlineGroupByStaff(int staffIndex)
 	{
 		for (BarlineGroup barlineGroup : barlineGroups)
     {

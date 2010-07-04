@@ -1,5 +1,6 @@
 package com.xenoage.zong.musiclayout;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.util.math.Fraction.fr;
 import static com.xenoage.zong.core.music.MP.atMeasure;
 import static com.xenoage.zong.core.music.Pitch.pi;
@@ -9,9 +10,8 @@ import com.xenoage.pdlib.PVector;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.Voice;
 import com.xenoage.zong.core.music.VoiceElement;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
-import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
-import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureLeadingSpacingMock;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
+import com.xenoage.zong.musiclayout.spacing.horizontal.LeadingSpacingMock;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
@@ -42,24 +42,20 @@ public class SystemArrangementTry
 		Voice voice = new Voice(new PVector<VoiceElement>(
 			chord(pi(0, 0, 4), fr(2, 4)),
 			chord(pi(1, 0, 4), fr(2, 4))));
-		BeatOffset[] beatOffsets = new BeatOffset[]{
+		PVector<BeatOffset> beatOffsets = pvec(
 			new BeatOffset(fr(1, 4), offsetBeat1),
 			new BeatOffset(fr(3, 4), offsetBeat2),
-			new BeatOffset(fr(5, 4), offsetBeat3)
-		};
-		VoiceSpacing[] voiceSpacings = new VoiceSpacing[]{new VoiceSpacing(voice, 1,
-			new SpacingElement[]{
-				new SpacingElement(null, null, offsetBeat1),
-				new SpacingElement(null, null, offsetBeat2)
-				})};
+			new BeatOffset(fr(5, 4), offsetBeat3));
+		PVector<VoiceSpacing> voiceSpacings = pvec(new VoiceSpacing(voice, 1, pvec(
+			new SpacingElement(null, null, offsetBeat1),
+			new SpacingElement(null, null, offsetBeat2))));
 		MeasureSpacing measureSpacing = new MeasureSpacing(atMeasure(0, 0), voiceSpacings,
-			MeasureLeadingSpacingMock.createGClefSpacing(leadingWidth));
-		MeasureSpacing[] measureSpacings = new MeasureSpacing[]{measureSpacing};
-		MeasureColumnSpacing mcs = new MeasureColumnSpacing(Score.empty(),
+			LeadingSpacingMock.createGClefSpacing(leadingWidth));
+		PVector<MeasureSpacing> measureSpacings = pvec(measureSpacing);
+		ColumnSpacing mcs = new ColumnSpacing(Score.empty(),
 			measureSpacings, beatOffsets,
-				new BeatOffset[]{new BeatOffset(fr(0, 4), 0), new BeatOffset(fr(6, 4), offsetBeat3)});
-		SystemArrangement system = new SystemArrangement(10, 10,
-			new MeasureColumnSpacing[]{mcs},
+				pvec(new BeatOffset(fr(0, 4), 0), new BeatOffset(fr(6, 4), offsetBeat3)));
+		SystemArrangement system = new SystemArrangement(10, 10, pvec(mcs),
 			0, 0, leadingWidth + offsetBeat3, new float[1], new float[0], 0);
 		return system;
 	}
@@ -79,7 +75,7 @@ public class SystemArrangementTry
 		for (int i = 0; i < stavesCount - 1; i++)
 			staffDistances[i] = staffDistance;
 		return new SystemArrangement(-1, -1,
-			new MeasureColumnSpacing[]{}, 0, 0, 0, staffHeights, staffDistances, offsetY);
+			new PVector<ColumnSpacing>(), 0, 0, 0, staffHeights, staffDistances, offsetY);
 	}
 
 }

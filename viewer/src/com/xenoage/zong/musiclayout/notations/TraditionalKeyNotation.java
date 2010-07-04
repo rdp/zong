@@ -10,14 +10,14 @@ import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
  *
  * @author Andreas Wenger
  */
-public class TraditionalKeyNotation
+public final class TraditionalKeyNotation
   implements Notation
 {
   
-  private TraditionalKey element;
-  private ElementWidth width;
-  private int linePositionC4;
-  private int linePositionMin;
+  private final TraditionalKey element;
+  private final ElementWidth width;
+  private final int linePositionC4;
+  private final int linePositionMin;
   
   
   /**

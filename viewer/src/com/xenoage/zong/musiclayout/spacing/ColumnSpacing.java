@@ -2,12 +2,13 @@ package com.xenoage.zong.musiclayout.spacing;
 
 import static com.xenoage.zong.io.score.ScoreController.getInterlineSpace;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.core.music.MusicElement;
-import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
-import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureLeadingSpacing;
+import com.xenoage.zong.musiclayout.BeatOffset;
+import com.xenoage.zong.musiclayout.spacing.horizontal.LeadingSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 
@@ -29,39 +30,39 @@ import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
  *
  * @author Andreas Wenger
  */
-public final class MeasureColumnSpacing
+public final class ColumnSpacing
 {
 	
 	//for every staff one measure spacing
-  private final MeasureSpacing[] measureSpacings;
+  private final PVector<MeasureSpacing> measureSpacings;
 	
 	//the offsets of the relevant beats (notes and rests)
   //and, if needed, of mid-measure barlines (otherwise null)
-  private final BeatOffset[] beatOffsets; //TIDY: rename to noteOffsets ?
-  private final BeatOffset[] barlineOffsets;
+  private final PVector<BeatOffset> beatOffsets;
+  private final PVector<BeatOffset> barlineOffsets;
   
-  
-  //width of the leading space (cached for performance reasons) in mm
+  //cache: width of the leading space in mm
   private final float leadingWidth;
   
   private final Score score;
   
   
   /**
-   * Creates a new {@link MeasureColumnSpacing}.
+   * Creates a new {@link ColumnSpacing}.
    * @param measureSpacings  for every staff one measure spacing
    * @param beatOffsets      the offsets of the relevant beats (notes) in mm
    * @param barlineOffsets   the offsets of the relevant beats (barlines) in mm, where
    *                         at least the position of the start barline and the end barline
    *                         must be given (even if they are invisible).
    */
-  public MeasureColumnSpacing(Score score,
-  	MeasureSpacing[] measureSpacings, BeatOffset[] beatOffsets, BeatOffset[] barlineOffsets)
+  public ColumnSpacing(Score score,
+  	PVector<MeasureSpacing> measureSpacings, PVector<BeatOffset> beatOffsets,
+  	PVector<BeatOffset> barlineOffsets)
   {
   	this.score = score;
   	this.measureSpacings = measureSpacings;
   	this.beatOffsets = beatOffsets;
-  	if (barlineOffsets.length < 2)
+  	if (barlineOffsets.size() < 2)
   		throw new IllegalArgumentException("At least two barline offsets (start and end) must be given");
   	this.barlineOffsets = barlineOffsets;
   	//compute width of the leading and voice space
@@ -88,21 +89,31 @@ public final class MeasureColumnSpacing
 
   /**
    * Gets the beat offsets of this measure in mm.
-   * 
-   * TIDY: don't return array. return element by given index
    */
-  public BeatOffset[] getBeatOffsets()
+  public PVector<BeatOffset> getBeatOffsets()
   {
     return beatOffsets;
   }
   
   
   /**
-   * Gets the barline offsets of this measure in mm.
-   * 
-   * TIDY: don't return array. return element by given index
+   * Gets the offset for the given beat, or null if unknown.
    */
-  public BeatOffset[] getBarlineOffsets()
+  public BeatOffset getBeatOffset(Fraction beat)
+  {
+  	for (BeatOffset beatOffset : beatOffsets)
+  	{
+  		if (beatOffset.getBeat().equals(beat))
+  			return beatOffset;
+  	}
+  	return null;
+  }
+  
+  
+  /**
+   * Gets the barline offsets of this measure in mm.
+   */
+  public PVector<BeatOffset> getBarlineOffsets()
   {
     return barlineOffsets;
   }
@@ -115,9 +126,8 @@ public final class MeasureColumnSpacing
    */
   public float getOffset(MusicElement element, int staffIndex, int voiceIndex)
   {
-  	MeasureSpacing measure = measureSpacings[staffIndex];
-    SpacingElement[] voice = measure.getVoice(voiceIndex).getSpacingElements();
-    for (SpacingElement se : voice)
+  	MeasureSpacing measure = measureSpacings.get(staffIndex);
+    for (SpacingElement se : measure.getVoiceSpacings().get(voiceIndex).getSpacingElements())
     {
       if (se.getElement() == element)
       {
@@ -131,10 +141,8 @@ public final class MeasureColumnSpacing
   /**
    * Gets the list of measure spacings (each staff of the
    * measure has its own spacing).
-   * 
-   * TIDY: not return array, but element by given index
    */
-  public MeasureSpacing[] getMeasureSpacings()
+  public PVector<MeasureSpacing> getMeasureSpacings()
   {
     return measureSpacings;
   }
@@ -149,10 +157,10 @@ public final class MeasureColumnSpacing
     float ret = 1; //TODO
     //find the maximum width of the leading spacings
     //of each staff
-    for (int i = 0; i < measureSpacings.length; i++)
+    for (int i = 0; i < measureSpacings.size(); i++)
     {
-    	MeasureSpacing measureSpacing = measureSpacings[i];
-      MeasureLeadingSpacing leadingSpacing = measureSpacing.getLeadingSpacing();
+    	MeasureSpacing measureSpacing = measureSpacings.get(i);
+      LeadingSpacing leadingSpacing = measureSpacing.getLeadingSpacing();
       if (leadingSpacing != null)
       {
         float width = leadingSpacing.getWidth() *
@@ -179,7 +187,7 @@ public final class MeasureColumnSpacing
 	 */
 	public float getVoicesWidth()
 	{
-    return barlineOffsets[barlineOffsets.length - 1].getOffsetMm();
+    return barlineOffsets.getLast().getOffsetMm();
 	}
 	
 	

@@ -23,16 +23,12 @@ import com.xenoage.zong.util.ArrayTools;
  * The rules are adepted from
  * "Chlapik: Die Praxis des Notengraphikers", page 40.
  * 
- * The dot placing rules are equal to
- * Sibelius 1.4.
- * 
- * //LAYOUT-PERFORMANCE (needed 7 of 60 seconds, because
- * called so often. look where to further optimze)
+ * The dot placing rules are based on Sibelius 1.4.
  * 
  * @author Andreas Wenger
  * @author Uli Teschemacher
  */
-public class NotesAlignmentStrategy
+public final class NotesAlignmentStrategy
 	implements ScoreLayouterStrategy
 {
 	
@@ -44,7 +40,7 @@ public class NotesAlignmentStrategy
    * 	<li>2) stem down with unison/second interval</li>
    * 	<li>3) stem up without unison/second interval</li>
    * 	<li>4) stem up with unison/second interval</li>
-   * </ul>sd, 
+   * </ul>
    */
   private enum ChordClass { StemDownNoUni, StemDownUni, StemUpNoUni, StemUpUni }
 	
@@ -52,7 +48,6 @@ public class NotesAlignmentStrategy
   /**
    * Computes the alignment of the notes of the given chord, which has a stem into
    * the given direction, using the given musical context.
-   * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
    */
 	public NotesAlignment computeNotesAlignment(Chord chord, StemDirection stemDirection,
 		MusicContext musicContext)
@@ -75,7 +70,7 @@ public class NotesAlignmentStrategy
 	/**
 	 * Computes the {@link ChordClass} of the given chord.
 	 */
-	ChordClass computeChordClass(ChordLinePositions lp, StemDirection stemDirection)
+	private ChordClass computeChordClass(ChordLinePositions lp, StemDirection stemDirection)
 	{
 		int chordClass = (stemDirection == StemDirection.Up) ? 3 : 1;
     for (int i = 1; i < lp.getNotesCount(); i++)
@@ -193,7 +188,6 @@ public class NotesAlignmentStrategy
 	
 	/**
    * Computes the widths of the dots.
-   * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
    */
   private float computeDotsWidth(int dotsCount)
   {
@@ -239,9 +233,8 @@ public class NotesAlignmentStrategy
   
   
   /**
-   * Gets the width of the notehead of the given
-   * duration.
-   * TIDY: move elsewhere?
+   * Gets the width of the notehead of the given duration.
+   * TODO: place elsewhere?
    */
   private float getNoteheadWidth(Fraction duration)
   {

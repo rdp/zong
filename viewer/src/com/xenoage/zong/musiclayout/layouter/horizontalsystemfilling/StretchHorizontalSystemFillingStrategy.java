@@ -1,8 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.horizontalsystemfilling;
 
+import static com.xenoage.pdlib.PVector.pvec;
+
+import com.xenoage.pdlib.PVector;
+import com.xenoage.zong.musiclayout.BeatOffset;
 import com.xenoage.zong.musiclayout.SystemArrangement;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
-import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
@@ -47,7 +50,7 @@ public class StretchHorizontalSystemFillingStrategy
   	//(leading spacings are not stretched)
   	float voicesWidth = 0;
   	float leadingsWidth = 0;
-  	for (MeasureColumnSpacing mcs : systemArrangement.getMeasureColumnSpacings())
+  	for (ColumnSpacing mcs : systemArrangement.getColumnSpacings())
   	{
   		voicesWidth += mcs.getVoicesWidth();
   		leadingsWidth += mcs.getLeadingWidth();
@@ -60,56 +63,52 @@ public class StretchHorizontalSystemFillingStrategy
   	
   	//stretch the voice spacings
   	//measure columns
-  	MeasureColumnSpacing[] newMCSpacings = new MeasureColumnSpacing[systemArrangement.getMeasureColumnSpacings().length];
-  	for (int iColumn = 0; iColumn < systemArrangement.getMeasureColumnSpacings().length; iColumn++)
+  	PVector<ColumnSpacing> newMCSpacings = pvec();
+  	for (ColumnSpacing column : systemArrangement.getColumnSpacings())
   	{
-  		MeasureColumnSpacing column = systemArrangement.getMeasureColumnSpacings()[iColumn];
   		//beat offsets
-  		BeatOffset[] newBeatOffsets = new BeatOffset[column.getBeatOffsets().length];
-			for (int iBeatOffset = 0; iBeatOffset < column.getBeatOffsets().length; iBeatOffset++)
+  		PVector<BeatOffset> newBeatOffsets = pvec();
+			for (BeatOffset oldBeatOffset : column.getBeatOffsets())
 			{
-				BeatOffset oldBeatOffset = column.getBeatOffsets()[iBeatOffset];
 				//stretch the offset
-				newBeatOffsets[iBeatOffset] = oldBeatOffset.changeOffsetMm(oldBeatOffset.getOffsetMm() * stretch);
+				newBeatOffsets = newBeatOffsets.plus(
+					oldBeatOffset.withOffsetMm(oldBeatOffset.getOffsetMm() * stretch));
 			}
-			BeatOffset[] newBarlineOffsets = new BeatOffset[column.getBarlineOffsets().length];
-			for (int iBarlineOffset = 0; iBarlineOffset < column.getBarlineOffsets().length; iBarlineOffset++)
+			PVector<BeatOffset> newBarlineOffsets = pvec();
+			for (BeatOffset oldBarlineOffset : column.getBarlineOffsets())
 			{
-				BeatOffset oldBarlineOffset = column.getBarlineOffsets()[iBarlineOffset];
 				//stretch the offset
-				newBarlineOffsets[iBarlineOffset] = oldBarlineOffset.changeOffsetMm(oldBarlineOffset.getOffsetMm() * stretch);
+				newBarlineOffsets = newBarlineOffsets.plus(
+					oldBarlineOffset.withOffsetMm(oldBarlineOffset.getOffsetMm() * stretch));
 			}
   		//measures
-			MeasureSpacing[] newMeasureSpacings = new MeasureSpacing[column.getMeasureSpacings().length];
-  		for (int iMeasure = 0; iMeasure < column.getMeasureSpacings().length; iMeasure++)
+			PVector<MeasureSpacing> newMeasureSpacings = pvec();
+  		for (MeasureSpacing oldMS : column.getMeasureSpacings())
   		{
-  			MeasureSpacing oldMS = column.getMeasureSpacings()[iMeasure];
   			//voices
-  			VoiceSpacing[] newVSs = new VoiceSpacing[oldMS.getVoicesCount()];
-  			for (int iVoice = 0; iVoice < oldMS.getVoicesCount(); iVoice++)
+  			PVector<VoiceSpacing> newVSs = pvec();
+  			for (VoiceSpacing oldVS : oldMS.getVoiceSpacings())
   			{
-  				VoiceSpacing oldVS = oldMS.getVoice(iVoice);
   				//spacing elements
-  				SpacingElement[] newSEs = new SpacingElement[oldVS.getSpacingElements().length];
-  				for (int iElement = 0; iElement < oldVS.getSpacingElements().length; iElement++)
+  				PVector<SpacingElement> newSEs = pvec();
+  				for (SpacingElement oldSE : oldVS.getSpacingElements())
   				{
-  					SpacingElement oldSE = oldVS.getSpacingElements()[iElement];
   					//stretch the offset
-  					newSEs[iElement] = oldSE.changeOffset(oldSE.getOffset() * stretch);
+  					newSEs = newSEs.plus(oldSE.withOffset(oldSE.getOffset() * stretch));
   				}
-  				newVSs[iVoice] = new VoiceSpacing(oldVS.getVoice(), oldVS.getInterlineSpace(), newSEs);
+  				newVSs = newVSs.plus(new VoiceSpacing(oldVS.getVoice(), oldVS.getInterlineSpace(), newSEs));
   			}
-  			newMeasureSpacings[iMeasure] = new MeasureSpacing(
-  				oldMS.getMP(), newVSs, oldMS.getLeadingSpacing());
+  			newMeasureSpacings = newMeasureSpacings.plus(new MeasureSpacing(
+  				oldMS.getMP(), newVSs, oldMS.getLeadingSpacing()));
   		}
   		
-  		newMCSpacings[iColumn] = new MeasureColumnSpacing(column.getScore(),
-  			newMeasureSpacings, newBeatOffsets, newBarlineOffsets);
+  		newMCSpacings = newMCSpacings.plus(new ColumnSpacing(column.getScore(),
+  			newMeasureSpacings, newBeatOffsets, newBarlineOffsets));
   		
   	}
   	
   	//create and return the new system
-  	return systemArrangement.changeSpacings(newMCSpacings, usableWidth);
+  	return systemArrangement.withSpacings(newMCSpacings, usableWidth);
 	}
 
 }

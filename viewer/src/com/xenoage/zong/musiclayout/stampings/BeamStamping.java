@@ -40,14 +40,13 @@ public final class BeamStamping
   public BeamStamping(Beam beam, StaffStamping staff1, StaffStamping staff2, 
     float x1, float x2, float lp1, float lp2)
   {
-    super(staff1, LEVEL_MUSIC, beam);
+    super(staff1, Level.Music, beam, null);
     this.staff1 = staff1;
     this.staff2 = staff2;
     this.x1 = x1;
     this.x2 = x2;
     this.lp1 = lp1;
     this.lp2 = lp2;
-    //TODO: bounding shape: (only for the outermost stem?)
   }
   
   

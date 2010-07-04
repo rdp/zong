@@ -1,6 +1,7 @@
-package com.xenoage.zong.musiclayout.spacing.horizontal;
+package com.xenoage.zong.musiclayout;
 
 import com.xenoage.util.math.Fraction;
+import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 
 
 /**
@@ -9,6 +10,9 @@ import com.xenoage.util.math.Fraction;
  * For instance, an offset of 3 and a beat of 2/4 means,
  * that the chord/rest on beat 2/4 begins
  * 3 mm after the barline of the measure.
+ * 
+ * This class is comparable to other instances of this
+ * class by comparing the beat.
  *
  * @author Andreas Wenger
  */
@@ -52,7 +56,7 @@ public final class BeatOffset
    * Returns a copy of this {@link SpacingElement}, but using the
    * given the offset in mm.
    */
-  public BeatOffset changeOffsetMm(float offsetMm)
+  public BeatOffset withOffsetMm(float offsetMm)
   {
   	return new BeatOffset(beat, offsetMm);
   }

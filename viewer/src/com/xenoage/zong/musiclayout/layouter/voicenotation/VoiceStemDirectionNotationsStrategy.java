@@ -56,7 +56,7 @@ public class VoiceStemDirectionNotationsStrategy
 	public NotationsCache computeNotations(int staff, NotationsCache notations, ScoreLayouterContext lc)
 	{
 		//TEST/TODO/TEAM: do nothing. this strategy has to be revised in a team meeting
-		if (true) return new NotationsCache();
+		if (true) return NotationsCache.empty;
 
 		Score score = lc.getScore();
 		int numberOfMeasures = score.getMeasuresCount();
@@ -97,10 +97,10 @@ public class VoiceStemDirectionNotationsStrategy
 		}
 		
 		//FIXME: the following line was just added by Andi to avoid  / by zero exception
-		if (summatedLinesCount[1] == 0 || summatedLinesCount[0] == 0) return new NotationsCache();
+		if (summatedLinesCount[1] == 0 || summatedLinesCount[0] == 0) return NotationsCache.empty;
 		
 		//check whether it is needed to change the stemdirection - if one voice is much smaller there is no need (less than 20%)
-		NotationsCache ret = new NotationsCache();
+		NotationsCache ret = NotationsCache.empty;
 		if (!(summatedLinesCount[1]/summatedLinesCount[0]> 0.8 && summatedLinesCount[0]/summatedLinesCount[1] > 0.8))
 		{
 			int up,down;
@@ -124,11 +124,11 @@ public class VoiceStemDirectionNotationsStrategy
 			}
 			for (Chord chord : voicechords.get(up))
 			{
-				ret.set(notationStrategy.computeChord(chord, Up, lc), chord);
+				ret = ret.plus(notationStrategy.computeChord(chord, Up, score), chord);
 			}
 			for (Chord chord : voicechords.get(down))
 			{
-				ret.set(notationStrategy.computeChord(chord, Down, lc), chord);
+				ret = ret.plus(notationStrategy.computeChord(chord, Down, score), chord);
 			}
 		}
 		return ret;

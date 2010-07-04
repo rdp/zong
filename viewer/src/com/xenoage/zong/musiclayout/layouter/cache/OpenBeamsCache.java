@@ -23,8 +23,6 @@ public class OpenBeamsCache
 	/**
 	 * Gets the {@link BeamedStemStampings} instance for the given {@link Beam}.
 	 * If not existing already, it is created.
-	 * 
-	 * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
 	 */
 	public BeamedStemStampings get(Beam beam)
 	{
@@ -35,6 +33,15 @@ public class OpenBeamsCache
 			openBeams.put(beam, ret);
 		}
 		return ret;
+	}
+	
+	
+	/**
+	 * Sets the {@link BeamedStemStampings} instance for the given {@link Beam}.
+	 */
+	public void set(Beam beam, BeamedStemStampings bss)
+	{
+		openBeams.put(beam, bss);
 	}
 	
 	

@@ -35,11 +35,11 @@ public final class Range
 	
 	
 	/**
-	 * Creates a new range between 0 and the given value (inclusive).
+	 * Creates a new range between 0 and the given value (exclusive).
 	 */
-	public static Range range(int stop)
+	public static Range range(int count)
 	{
-		return new Range(0, stop);
+		return new Range(0, count - 1);
 	}
 	
 	

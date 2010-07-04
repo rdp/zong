@@ -31,8 +31,8 @@ public class SingleMeasureSingleStaffStrategyTest
 	
 	
 	/**
-	 * Attention! This test will only work correct if the values of Ted Ross are selected in the {@link SingleBeamDesign}.
-	 * TODO: fix, when Teddy is back
+	 * Attention! This test will only work correct if the values of Ted Ross
+	 * are selected in the {@link SingleBeamDesign}.
 	 */
 	@Test public void computeStemAlignments1StaffTest()
 	{

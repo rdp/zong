@@ -17,15 +17,15 @@ import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
  *
  * @author Andreas Wenger
  */
-public class NormalTimeStamping
+public final class NormalTimeStamping
   extends Stamping
 {
  
-  private float positionX;
-  private NormalTime normalTime;
-  private float numeratorOffset;
-  private float denominatorOffset;
-  private float digitGap;
+  private final float positionX;
+  private final NormalTime normalTime;
+  private final float numeratorOffset;
+  private final float denominatorOffset;
+  private final float digitGap;
   
   
   /**
@@ -41,13 +41,12 @@ public class NormalTimeStamping
     float positionX, StaffStamping parentStaff,
     float numeratorOffset, float denominatorOffset, float digitGap)
   {
-    super(parentStaff, LEVEL_MUSIC, null);
+    super(parentStaff, Level.Music, null, null);
     this.normalTime = normalTime;
     this.positionX = positionX;
     this.numeratorOffset = numeratorOffset;
     this.denominatorOffset = denominatorOffset;
     this.digitGap = digitGap;
-    //TODO: bounding shape
   }
   
   
@@ -66,7 +65,7 @@ public class NormalTimeStamping
     String s = Integer.toString(normalTime.getNumerator());
     for (int i = 0; i < s.length(); i++)
     {
-      int d = s.charAt(i) - '0'; //TIDY
+      int d = s.charAt(i) - '0';
       Symbol symbol = symbolPool.getSymbol(CommonSymbol.getDigit(d));
       if (symbol != null)
       {
@@ -82,7 +81,7 @@ public class NormalTimeStamping
     s = Integer.toString(normalTime.getDenominator());
     for (int i = 0; i < s.length(); i++)
     {
-      int d = s.charAt(i) - '0'; //TIDY
+      int d = s.charAt(i) - '0';
       Symbol symbol = symbolPool.getSymbol(CommonSymbol.getDigit(d));
       if (symbol != null)
       {

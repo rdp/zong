@@ -46,15 +46,13 @@ public final class VoltaStamping
   	Volta volta, StaffStamping parentStaff, float linePosition, float x1, float x2,
     FormattedText text, boolean leftHook, boolean rightHook)
   {
-    super(parentStaff, Stamping.LEVEL_MUSIC, volta);
+    super(parentStaff, Level.Music, volta, null);
     this.linePosition = linePosition;
     this.x1 = x1;
     this.x2 = x2;
     this.text = text;
     this.leftHook = leftHook;
     this.rightHook = rightHook;
-    
-    updateBoundingShape();
   }
   
   
@@ -91,17 +89,6 @@ public final class VoltaStamping
   public FormattedText getText()
   {
   	return text;
-  }
-  
-
-  /**
-   * Updates the bounding rectangle.
-   * This method must be called after creating an instance
-   * of this class.
-   */
-  protected void updateBoundingShape()
-  {
-    //TODO
   }
   
   

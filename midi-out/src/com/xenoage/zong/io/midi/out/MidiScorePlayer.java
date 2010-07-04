@@ -47,7 +47,7 @@ public class MidiScorePlayer
 	public MidiScorePlayer()
 		throws MidiUnavailableException
 	{
-		Zong.showWorkInProgressWarning(); //TEMP
+		//Zong.showWorkInProgressWarning(); //TEMP
 		
     setVolume(volume);
     SynthManager.removeAllControllerEventListeners();

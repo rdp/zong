@@ -10,13 +10,13 @@ import com.xenoage.zong.renderer.stampings.SystemCursorStampingRenderer;
  *
  * @author Andreas Wenger
  */
-public class SystemCursorStamping
+public final class SystemCursorStamping
   extends Stamping
 {
 
-	private StaffStamping topStaff;
-	private StaffStamping bottomStaff;
-  private float positionX;
+	private final StaffStamping topStaff;
+	private final StaffStamping bottomStaff;
+  private final float positionX;
   
   
   /**
@@ -27,7 +27,7 @@ public class SystemCursorStamping
    */
   public SystemCursorStamping(StaffStamping topStaff, StaffStamping bottomStaff, float positionX)
   {
-    super(LEVEL_EMPTYSPACE, null);
+    super(topStaff, Level.EmptySpace, null, null);
     this.topStaff = topStaff;
     this.bottomStaff = bottomStaff;
     this.positionX = positionX;

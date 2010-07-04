@@ -89,7 +89,8 @@ public class SubclassCollector
       try
       {
         Class cls = Class.forName(classID);
-        if (cls.isInterface() && ArrayTools.contains(cls.getInterfaces(), superInterface))
+        if (cls.isInterface() && com.xenoage.util.ArrayTools.contains(
+        	cls.getInterfaces(), superInterface))
         {
           ret.add(cls);
         }

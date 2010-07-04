@@ -1,16 +1,18 @@
 package com.xenoage.zong.musiclayout;
 
+import static com.xenoage.util.Range.range;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.PVector;
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.io.score.selections.Cursor;
 import com.xenoage.zong.io.score.selections.Selection;
-import com.xenoage.zong.musiclayout.continued.ContinuedElement;
 import com.xenoage.zong.musiclayout.stampings.StaffCursorStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.Stamping;
@@ -26,7 +28,7 @@ public final class ScoreLayout
 {
   
   private final Score score;
-  private final List<ScoreFrameLayout> frames;
+  private final Vector<ScoreFrameLayout> frames;
   
   
   /**
@@ -34,7 +36,7 @@ public final class ScoreLayout
    * @param score   the score which is shown
    * @param frames  a non-empty list of frame layouts (at least one is required)
    */
-  public ScoreLayout(Score score, List<ScoreFrameLayout> frames)
+  public ScoreLayout(Score score, Vector<ScoreFrameLayout> frames)
   {
   	//one frame is required
   	if (frames.size() == 0)
@@ -127,9 +129,9 @@ public final class ScoreLayout
       if (frameArr.getStartMeasureIndex() <= measure && frameArr.getEndMeasureIndex() >= measure)
       {
       	//go through all systems of this frame
-      	for (int iSystem = 0; iSystem < frameArr.getSystemsCount(); iSystem++)
+      	for (int iSystem : range(frameArr.getSystems()))
         {
-          SystemArrangement system = frameArr.getSystem(iSystem);
+          SystemArrangement system = frameArr.getSystems().get(iSystem);
           if (system.getStartMeasureIndex() <= measure && system.getEndMeasureIndex() >= measure)
           {
           	return new Tuple2<Integer, Integer>(iFrame, iSystem);
@@ -169,7 +171,8 @@ public final class ScoreLayout
   	//stampings
     for (int i = 0; i < this.frames.size(); i++)
     {
-      this.frames.get(i).setSelectionStampings(selections.get(i));
+    	//GOON
+      //this.frames.get(i).setSelectionStampings(selections.get(i));
     }
   }
   
@@ -191,9 +194,7 @@ public final class ScoreLayout
    */
   public static ScoreLayout createErrorLayout(Score score)
   {
-  	return new ScoreLayout(score, Arrays.asList(new ScoreFrameLayout(null,
-  		new LinkedList<StaffStamping>(), Arrays.asList(new Stamping[0]),
-  		new LinkedList<ContinuedElement>())));
+  	return new ScoreLayout(score, new PVector<ScoreFrameLayout>());
   }
   
   

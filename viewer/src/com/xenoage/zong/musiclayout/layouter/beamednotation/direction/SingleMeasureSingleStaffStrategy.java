@@ -4,12 +4,11 @@ import static com.xenoage.util.iterators.It.it;
 
 import java.util.Iterator;
 
-import com.xenoage.util.iterators.It;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.beam.BeamWaypoint;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.chord.StemDirection;
-import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.layouter.notation.NotationStrategy;
@@ -44,11 +43,9 @@ public class SingleMeasureSingleStaffStrategy
 	 * Returns better {@link Notation}s of the chords connected by the given beam within
 	 * the given staff and measure, using the given notations and number of lines in this measure.
 	 * Only changed notations are returned.
-	 * 
-	 * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
 	 */
-	public NotationsCache computeNotations(Beam beam, int staff, int measure,
-		NotationsCache notations, int linesCount, ScoreLayouterContext lc)
+	public NotationsCache computeNotations(Beam beam,	NotationsCache notations,
+		int linesCount, Score score)
 	{
 		//pre-requirements: beam spans over only one measure (not tested here),
 		//and line positions and the stem direction of each chord are known (tested here)
@@ -75,7 +72,7 @@ public class SingleMeasureSingleStaffStrategy
 		BeamStemDirections bsd = computeBeamStemDirections(chordsLp, stemDirections, linesCount);
 		
 		//return the results as a new NotationsCache
-		NotationsCache ret = new NotationsCache();
+		NotationsCache ret = NotationsCache.empty;
 		Iterator<BeamWaypoint> beamWaypoints = it(beam.getWaypoints());
 		for (int i = 0; i < bsd.getStemDirections().length; i++)
 		{
@@ -87,7 +84,8 @@ public class SingleMeasureSingleStaffStrategy
 			//has to be done later within another strategy
 			if (bsd.getStemDirections()[i] != oldStemDir)
 			{
-				ret.set(notationStrategy.computeChord(chord, bsd.getStemDirections()[i], lc), chord);
+				ret = ret.plus(notationStrategy.computeChord(chord,
+					bsd.getStemDirections()[i], score), chord);
 			}
 		}
 		return ret;

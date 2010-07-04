@@ -10,15 +10,15 @@ import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
  *
  * @author Andreas Wenger
  */
-public class NormalTimeNotation
+public final class NormalTimeNotation
   implements Notation
 {
   
-  private NormalTime element;
-  private ElementWidth width;
-  private float numeratorOffset;
-  private float denominatorOffset;
-  private float digitGap;
+  private final NormalTime element;
+  private final ElementWidth width;
+  private final float numeratorOffset;
+  private final float denominatorOffset;
+  private final float digitGap;
   
   
   /**

@@ -7,12 +7,12 @@ import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 import java.util.Iterator;
 
 import com.xenoage.util.iterators.It;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.Globals;
 import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.beam.BeamWaypoint;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.chord.StemDirection;
-import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.layouter.notation.NotationStrategy;
@@ -48,13 +48,13 @@ public class SingleMeasureTwoStavesStrategy
 	 * Only changed notations are returned.
 	 */
 	public NotationsCache computeNotations(Beam beam,
-		NotationsCache notations, ScoreLayouterContext lc)
+		NotationsCache notations, Score score)
 	{
 		//do the work
-		BeamStemDirections bsd = computeBeamStemDirections(beam, lc.getScore().getGlobals());
+		BeamStemDirections bsd = computeBeamStemDirections(beam, score.getGlobals());
 		
 		//return the results as a new NotationsCache
-		NotationsCache ret = new NotationsCache();
+		NotationsCache ret = NotationsCache.empty;
 		Iterator<BeamWaypoint> beamWaypoints = it(beam.getWaypoints());
 		for (int i = 0; i < bsd.getStemDirections().length; i++)
 		{
@@ -66,7 +66,8 @@ public class SingleMeasureTwoStavesStrategy
 			//has to be done later within another strategy
 			if (bsd.getStemDirections()[i] != oldStemDir)
 			{
-				ret.set(notationStrategy.computeChord(chord, bsd.getStemDirections()[i], lc), chord);
+				ret = ret.plus(notationStrategy.computeChord(chord,
+					bsd.getStemDirections()[i], score), chord);
 			}
 		}
 		return ret;

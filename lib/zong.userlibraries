@@ -13,7 +13,4 @@
     <library name="JUnit" systemlibrary="false">
         <archive path="/lib/dev/junit/junit-4.7.jar" source="/lib/dev/junit/junit-4.7-src.jar"/>
     </library>
-    <library name="proxymusic" systemlibrary="false">
-        <archive javadoc="jar:platform:/resource/lib/dev/proxymusic/proxymusic-2.0-doc.jar!/" path="/lib/proxymusic-2.0.jar" source="/lib/dev/proxymusic/proxymusic-2.0-src.jar"/>
-    </library>
 </eclipse-userlibraries>

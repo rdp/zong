@@ -1,4 +1,4 @@
-package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
+package com.xenoage.zong.musiclayout.layouter.columnspacing;
 
 import static com.xenoage.util.lang.Tuple2.t;
 
@@ -9,7 +9,7 @@ import com.xenoage.zong.core.header.ColumnHeader;
 import com.xenoage.zong.core.music.barline.Barline;
 import com.xenoage.zong.core.music.barline.BarlineRepeat;
 import com.xenoage.zong.core.music.util.BeatE;
-import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
+import com.xenoage.zong.musiclayout.BeatOffset;
 
 
 /**

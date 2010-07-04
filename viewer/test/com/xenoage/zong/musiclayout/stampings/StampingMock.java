@@ -14,15 +14,9 @@ public class StampingMock
   extends Stamping
 {
   
-  public StampingMock(int level)
+  public StampingMock(Level level, Shape boundingShape)
   {
-    super(level, null);
-  }
-  
-  
-  @Override public void addBoundingShape(Shape boundingShape)
-  {
-    super.addBoundingShape(boundingShape);
+    super(null, level, null, boundingShape);
   }
   
   

@@ -15,19 +15,19 @@ import com.xenoage.zong.renderer.stampings.TestStampingRenderer;
  *
  * @author Andreas Wenger
  */
-@Demo public class TestStamping
+@Demo public final class TestStamping
   extends Stamping
 {
 
-  private Point2f position;
-  private Size2f size;
-  private Color color;
+  private final Point2f position;
+  private final Size2f size;
+  private final Color color;
   
   
   public TestStamping(Point2f position,
     Size2f size, Color color)
   {
-    super(Stamping.LEVEL_MUSIC, null);
+    super(null, Level.Music, null, null);
     this.position = position;
     this.size = size;
     this.color = color;

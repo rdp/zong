@@ -3,20 +3,21 @@ package com.xenoage.zong.musiclayout.layouter.notation;
 import static com.xenoage.util.Delta.DELTA_FLOAT;
 import static com.xenoage.util.math.Fraction.fr;
 import static com.xenoage.zong.core.music.Pitch.pi;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import com.xenoage.util.Delta;
-import com.xenoage.zong.core.music.*;
+import com.xenoage.zong.core.music.MusicContext;
+import com.xenoage.zong.core.music.Pitch;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.chord.ChordFactory;
 import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.Constants;
-import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NoteAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NoteSuspension;
-
-import org.junit.Before;
-import org.junit.Test;
+import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 
 
 /**
@@ -34,7 +35,7 @@ public class NotesAlignmentStrategyTest
   @Before public void setUp()
   {
   	strategy = new NotesAlignmentStrategy();
-    context = new MusicContext();
+    context = MusicContext.simpleInstance;
   }
   
 

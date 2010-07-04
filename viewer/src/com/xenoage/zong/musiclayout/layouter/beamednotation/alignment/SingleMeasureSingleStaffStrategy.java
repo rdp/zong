@@ -11,7 +11,6 @@ import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.beam.BeamWaypoint;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.chord.StemDirection;
-import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.BeamedStemAlignmentNotationsStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.BeamedStemDirectionNotationsStrategy;
@@ -27,7 +26,7 @@ import com.xenoage.zong.musiclayout.notations.beam.BeamStemAlignments;
 import com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.NotesAlignment;
 import com.xenoage.zong.musiclayout.notations.chord.StemAlignment;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 
 
 /**
@@ -51,10 +50,9 @@ public class SingleMeasureSingleStaffStrategy
 	 * direction (like computed by {@link BeamedStemDirectionNotationsStrategy}).
 	 * The updated chord notations are returned.
 	 */
-	public NotationsCache computeNotations(ScoreLayouterContext lc, Beam beam,
-		MeasureColumnSpacing measureColumnSpacing, NotationsCache notations)
+	public NotationsCache computeNotations(Score score, Beam beam,
+		ColumnSpacing columnSpacing, NotationsCache notations)
 	{
-		Score score = lc.getScore();
 		Globals globals = score.getGlobals();
 
 		//collect needed information
@@ -72,7 +70,7 @@ public class SingleMeasureSingleStaffStrategy
 			ChordNotation cn = notations.getChord(chord);
 			chordNa[i] = cn.getNotesAlignment();
 			AccidentalsAlignment aa = cn.getAccidentalsAlignment();
-			stemX[i] = measureColumnSpacing.getOffset(chord, staffIndex, voiceIndex)
+			stemX[i] = columnSpacing.getOffset(chord, staffIndex, voiceIndex)
 				+ (aa != null ? aa.getWidth() : 0) + chordNa[i].getStemOffset();
 			i++;
 		}
@@ -84,13 +82,13 @@ public class SingleMeasureSingleStaffStrategy
 			beamLinesCount, dir);
 
 		//compute new notations
-		NotationsCache ret = new NotationsCache();
+		NotationsCache ret = NotationsCache.empty;
 		It<BeamWaypoint> waypoints = it(beam.getWaypoints());
 		for (BeamWaypoint waypoint : waypoints)
 		{
 			Chord chord = waypoint.getChord();
 			ChordNotation oldCN = notations.getChord(chord);
-			ret.set(oldCN.copy(bsa.getStemAlignments()[waypoints.getIndex()]), oldCN
+			ret = ret.plus(oldCN.withStemAlignment(bsa.getStemAlignments()[waypoints.getIndex()]), oldCN
 				.getMusicElement());
 		}
 
@@ -134,7 +132,7 @@ public class SingleMeasureSingleStaffStrategy
 
 		//compute stem alignments
 		BeamStemAlignments beamstemalignments = computeStemLengths(beamDesign, chordNa,
-			stemX, slantIS, beamLinesCount, stemDirection, staffLinesCount);
+			stemX, slantIS, beamLinesCount, stemDirection);
 
 		return beamstemalignments;
 	}
@@ -345,11 +343,10 @@ public class SingleMeasureSingleStaffStrategy
 	 * @param slantIS          the slant in interline spaces        
 	 * @param beamLinesCount   the number of beam lines         
 	 * @param stemDirection    the direction of the stems
-	 * @param staffLinesCount  the number of staff lines
 	 */
 	private BeamStemAlignments computeStemLengths(BeamDesign beamDesign,
 		NotesAlignment[] chordNa, float[] stemX, float slantIS, int beamLinesCount,
-		StemDirection stemDirection, int staffLinesCount)
+		StemDirection stemDirection)
 	{
 
 		int chordsCount = chordNa.length;

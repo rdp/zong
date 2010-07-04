@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.xenoage.util.Delta;
 import com.xenoage.util.math.Point2f;
+import com.xenoage.util.math.Shape;
 import com.xenoage.zong.core.format.ScoreFormat;
 
 
@@ -26,8 +27,7 @@ public class StaffStampingTest
   {
     //create default staff layout element.
     //drawing element must have 5 lines and the default interline space.
-    StaffStamping staff1 = new StaffStamping(0, 0, -1, -1,
-      new Point2f(40, 80), 160, 5, 1.6f);
+    StaffStamping staff1 = new StaffStamping(new Point2f(40, 80), 160, 5, 1.6f, null);
     assertEquals(staff1.getLinesCount(), 5);
     assertEquals(staff1.getInterlineSpace(),
       scoreFormat.getInterlineSpace(), Delta.DELTA_FLOAT);
@@ -36,8 +36,7 @@ public class StaffStampingTest
     assertEquals(staff1.getLength(), 160, Delta.DELTA_FLOAT);
     //create another staff layout element
     //with 3 lines and 4 mm interline space.
-    StaffStamping staff2 = new StaffStamping(0, 0, -1, -1,
-      new Point2f(40, 160), 160, 3, 4);
+    StaffStamping staff2 = new StaffStamping(new Point2f(40, 160), 160, 3, 4, null);
     assertEquals(staff2.getLinesCount(), 3);
     assertEquals(staff2.getInterlineSpace(), 4, Delta.DELTA_FLOAT);
   }
@@ -45,18 +44,18 @@ public class StaffStampingTest
   
   @Test public void containsPoint()
   {
-  	StaffStamping staff = new StaffStamping(0, 0, -1, -1,
-      new Point2f(40, 80), 160, 5, 1);
+  	StaffStamping staff = new StaffStamping(new Point2f(40, 80), 160, 5, 1, null);
+  	Shape shape = staff.getBoundingShape();
     //don't hit it
-    assertFalse(staff.containsPoint(new Point2f(39, 81)));
-    assertFalse(staff.containsPoint(new Point2f(42, 79)));
-    assertFalse(staff.containsPoint(new Point2f(201, 81)));
-    assertFalse(staff.containsPoint(new Point2f(100, 85)));
+    assertFalse(shape.contains(new Point2f(39, 81)));
+    assertFalse(shape.contains(new Point2f(42, 79)));
+    assertFalse(shape.contains(new Point2f(201, 81)));
+    assertFalse(shape.contains(new Point2f(100, 85)));
     //hit it
-    assertTrue(staff.containsPoint(new Point2f(40, 81)));
-    assertTrue(staff.containsPoint(new Point2f(41, 80)));
-    assertTrue(staff.containsPoint(new Point2f(200, 81)));
-    assertTrue(staff.containsPoint(new Point2f(100, 84)));
+    assertTrue(shape.contains(new Point2f(40, 81)));
+    assertTrue(shape.contains(new Point2f(41, 80)));
+    assertTrue(shape.contains(new Point2f(200, 81)));
+    assertTrue(shape.contains(new Point2f(100, 84)));
   }
   
 }

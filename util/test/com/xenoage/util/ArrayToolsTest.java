@@ -16,8 +16,18 @@ import org.junit.Test;
  */
 public class ArrayToolsTest
 {
+	
+	@Test public void copyTest()
+	{
+		float[] a1 = new float[1000];
+		for (int i = 0; i < a1.length; i++)
+			a1[i] = i;
+		float[] a2 = ArrayTools.copy(a1);
+		assertArrayEquals(a1, a2, 0);
+	}
+	
 
-  @Test public void testConvertToArray()
+  @Test public void convertToArrayTest()
   {
     ArrayList<Integer> al;
     int[] a;

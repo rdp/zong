@@ -4,6 +4,7 @@ import static com.xenoage.zong.core.music.chord.StemDirection.Down;
 import static com.xenoage.zong.core.music.chord.StemDirection.None;
 import static com.xenoage.zong.core.music.chord.StemDirection.Up;
 
+import com.xenoage.zong.core.music.chord.Stem;
 import com.xenoage.zong.core.music.chord.StemDirection;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.notations.chord.NoteAlignment;
@@ -34,14 +35,14 @@ public class StemAlignmentStrategy
    * @param linesCount  the number of lines in this staff
    * @return  the vertical position of the stem, or <code>null</code> if the chord has no stem.
    */
-	public StemAlignment computeStemAlignment(com.xenoage.zong.core.music.chord.Stem stem,
+	public StemAlignment computeStemAlignment(Stem stem,
 		NotesAlignment na, StemDirection sd, int linesCount)
 	{
 		NoteAlignment high = na.getNoteAlignment(na.getNotesCount() - 1);
 		NoteAlignment low = na.getNoteAlignment(0);
 		float startlineposition = 0;
 		float endlineposition = 0;
-		int middlelineposition = 4; //TODO calculate
+		int middlelineposition = linesCount - 1;
 
 		//use a stem?
 		if (sd == None)

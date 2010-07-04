@@ -1,8 +1,10 @@
 package com.xenoage.zong.musiclayout;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.util.math.Fraction.fr;
 import static org.junit.Assert.*;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.Delta;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.MP;
@@ -18,11 +20,10 @@ import org.junit.Test;
 public class StaffMarksTest
 {
   
-	StaffMarks sm = new StaffMarks(0, 0, 0, new MeasureMarks[]{
-		new MeasureMarks(0, 0, 25, new BeatMarker[]{new BeatMarker(5, fr(0, 4)), new BeatMarker(20, fr(1, 4))}),
-		new MeasureMarks(35, 35, 55, new BeatMarker[]{new BeatMarker(40, fr(0, 4)), new BeatMarker(50, fr(1, 4))}),
-		new MeasureMarks(55, 55, 75, new BeatMarker[]{new BeatMarker(60, fr(0, 4)), new BeatMarker(70, fr(3, 4))})
-	});
+	StaffMarks sm = new StaffMarks(0, 0, 0, pvec(
+		new MeasureMarks(0, 0, 25, pvec(new BeatOffset(fr(0, 4), 5), new BeatOffset(fr(1, 4), 20))),
+		new MeasureMarks(35, 35, 55, pvec(new BeatOffset(fr(0, 4), 40), new BeatOffset(fr(1, 4), 50))),
+		new MeasureMarks(55, 55, 75, pvec(new BeatOffset(fr(0, 4), 60), new BeatOffset(fr(3, 4), 70)))));
   
   
   /**
@@ -31,35 +32,36 @@ public class StaffMarksTest
   @Test public void getScorePositionAt()
   {
     MP mp;
-    MeasureMarks[] mm = sm.getMeasureMarks();
+    MeasureMarks[] mm = sm.getMeasureMarks().toArray(new MeasureMarks[0]);
     MeasureMarks lastMm = mm[mm.length - 1];
     //coordinate before first measure must return null
     assertNull(sm.getMPAt(mm[0].getStartMm() - 1));
     //coordinate before first beat in measure 0 must return first beat
-    mp = sm.getMPAt((mm[0].getStartMm() + mm[0].getFirstBeatMarker().getXMm()) / 2);
+    mp = sm.getMPAt((mm[0].getStartMm() + mm[0].getBeatOffsets().getFirst().getOffsetMm()) / 2);
     assertEquals(0, mp.getMeasure());
-    assertEquals(mm[0].getBeatMarkers()[0].getBeat(), mp.getBeat());
+    assertEquals(mm[0].getBeatOffsets().getFirst().getBeat(), mp.getBeat());
     //coordinate after last measure must return null
     assertNull(sm.getMPAt(lastMm.getEndMm() + 1));
     //coordinate after last beat in last measure must return last beat
-    mp = sm.getMPAt((lastMm.getLastBeatMarker().getXMm() + lastMm.getStartMm()) / 2);
+    mp = sm.getMPAt((lastMm.getBeatOffsets().getLast().getOffsetMm() + lastMm.getStartMm()) / 2);
     assertEquals(mm.length - 1, mp.getMeasure());
-    assertEquals(lastMm.getLastBeatMarker().getBeat(), mp.getBeat());
+    assertEquals(lastMm.getBeatOffsets().getLast().getBeat(), mp.getBeat());
     //coordinate at i-th x-position must return i-th beat
     for (int iMeasure = 0; iMeasure < mm.length; iMeasure++)
     {
-    	BeatMarker[] bm = mm[iMeasure].getBeatMarkers();
-	    for (int iBeat = 0; iBeat < bm.length; iBeat++)
+    	PVector<BeatOffset> bm = mm[iMeasure].getBeatOffsets();
+	    for (int iBeat = 0; iBeat < bm.size(); iBeat++)
 	    {
-	      mp = sm.getMPAt(bm[iBeat].getXMm());
+	      mp = sm.getMPAt(bm.get(iBeat).getOffsetMm());
 	      assertEquals(iMeasure, mp.getMeasure());
-	      assertEquals(bm[iBeat].getBeat(), mp.getBeat());
+	      assertEquals(bm.get(iBeat).getBeat(), mp.getBeat());
 	    }
     }
     //coordinate between beat 0 and 3 in measure 2 must return beat 3
-    mp = sm.getMPAt((mm[2].getBeatMarkers()[0].getXMm() + mm[2].getBeatMarkers()[1].getXMm()) / 2);
+    mp = sm.getMPAt((mm[2].getBeatOffsets().get(0).getOffsetMm() +
+    	mm[2].getBeatOffsets().get(1).getOffsetMm()) / 2);
     assertEquals(2, mp.getMeasure());
-    assertEquals(mm[2].getBeatMarkers()[1].getBeat(), mp.getBeat());
+    assertEquals(mm[2].getBeatOffsets().get(1).getBeat(), mp.getBeat());
   }
   
   
@@ -68,24 +70,25 @@ public class StaffMarksTest
    */
   @Test public void getXMmAt()
   {
-  	MeasureMarks[] mm = sm.getMeasureMarks();
+  	MeasureMarks[] mm = sm.getMeasureMarks().toArray(new MeasureMarks[0]);
   	MeasureMarks lastMm = mm[mm.length - 1];
   	//beat before first measure and after last measure must return null
   	assertNull(sm.getXMmAt(0 - 1, Fraction._0));
   	assertNull(sm.getXMmAt(mm.length, Fraction._0));
     //beat before first beat in measure 0 must return first beat
-  	assertEquals(mm[0].getFirstBeatMarker().getXMm(),
-  		sm.getXMmAt(0, mm[0].getFirstBeatMarker().getBeat().sub(fr(1, 4))), Delta.DELTA_FLOAT);
+  	assertEquals(mm[0].getBeatOffsets().getFirst().getOffsetMm(),
+  		sm.getXMmAt(0, mm[0].getBeatOffsets().getFirst().getBeat().sub(fr(1, 4))), Delta.DELTA_FLOAT);
     //beat after last beat in last measure must return last beat
-  	assertEquals(lastMm.getLastBeatMarker().getXMm(),
-  		sm.getXMmAt(mm.length - 1, lastMm.getLastBeatMarker().getBeat().add(fr(1, 4))), Delta.DELTA_FLOAT);
+  	assertEquals(lastMm.getBeatOffsets().getLast().getOffsetMm(),
+  		sm.getXMmAt(mm.length - 1, lastMm.getBeatOffsets().getLast().getBeat().add(fr(1, 4))), Delta.DELTA_FLOAT);
     //i-th beat must return coordinate at i-th x-position
   	for (int iMeasure = 0; iMeasure < mm.length; iMeasure++)
     {
-    	BeatMarker[] bm = mm[iMeasure].getBeatMarkers();
-	    for (int iBeat = 0; iBeat < bm.length; iBeat++)
+    	PVector<BeatOffset> bm = mm[iMeasure].getBeatOffsets();
+	    for (int iBeat = 0; iBeat < bm.size(); iBeat++)
 	    {
-	      assertEquals(bm[iBeat].getXMm(), sm.getXMmAt(iMeasure, bm[iBeat].getBeat()), Delta.DELTA_FLOAT);
+	      assertEquals(bm.get(iBeat).getOffsetMm(),
+	      	sm.getXMmAt(iMeasure, bm.get(iBeat).getBeat()), Delta.DELTA_FLOAT);
 	    }
     }
   }

@@ -1,7 +1,6 @@
 package com.xenoage.zong.musiclayout.layouter.cache;
 
-import java.util.HashMap;
-
+import com.xenoage.pdlib.PMap;
 import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.musiclayout.notations.ChordNotation;
@@ -13,21 +12,28 @@ import com.xenoage.zong.musiclayout.notations.Notation;
  * 
  * @author Andreas Wenger
  */
-public class NotationsCache
+public final class NotationsCache
 {
 	
-	private HashMap<MusicElement, Notation> cache = new HashMap<MusicElement, Notation>();
+	public static final NotationsCache empty = new NotationsCache(
+		new PMap<MusicElement, Notation>());
+	
+	private final PMap<MusicElement, Notation> cache;
+	
+	
+	private NotationsCache(PMap<MusicElement, Notation> cache)
+	{
+		this.cache = cache;
+	}
 	
 	
 	/**
 	 * Adds the given {@link Notation}, that belongs to the given {@link MusicElement}.
 	 * If already there, it is replaced.
-	 * 
-	 * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
 	 */
-	public void set(Notation notation, MusicElement element)
+	public NotationsCache plus(Notation notation, MusicElement element)
 	{
-		cache.put(element, notation);
+		return new NotationsCache(cache.plus(element, notation));
 	}
 	
 	
@@ -35,10 +41,12 @@ public class NotationsCache
 	 * Adds the elements of the given {@link NotationCache}.
 	 * If elements are already there, they are replaced.
 	 */
-	public void setAll(NotationsCache cache)
+	public NotationsCache merge(NotationsCache cache)
 	{
 		if (cache != null)
-			this.cache.putAll(cache.cache);
+			return new NotationsCache(this.cache.plusAll(cache.cache));
+		else
+			return this;
 	}
 	
 	
@@ -55,8 +63,6 @@ public class NotationsCache
 	/**
 	 * Gets the {@link ChordNotation}, that belongs to the given {@link Chord},
 	 * or null if unknown.
-	 * 
-	 * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
 	 */
 	public ChordNotation getChord(Chord chord)
 	{
@@ -64,5 +70,9 @@ public class NotationsCache
 	}
 	
 	
+	@Override public String toString()
+	{
+		return "[" + getClass().getSimpleName() + " with " + cache.size() + " items]";
+	}
 
 }

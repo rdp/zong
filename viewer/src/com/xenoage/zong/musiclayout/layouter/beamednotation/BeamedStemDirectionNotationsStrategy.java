@@ -6,7 +6,6 @@ import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.beam.Beam.HorizontalSpan;
 import com.xenoage.zong.core.music.beam.Beam.VerticalSpan;
-import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.direction.SingleMeasureSingleStaffStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.direction.SingleMeasureTwoStavesStrategy;
@@ -42,8 +41,6 @@ public class BeamedStemDirectionNotationsStrategy
 		singleMeasureTwoStavesStrategy;
 	
 	
-	
-	
 	/**
 	 * Creates a new {@link BeamedStemDirectionNotationsStrategy}.
 	 */
@@ -62,9 +59,8 @@ public class BeamedStemDirectionNotationsStrategy
 	 * Only changed notations are returned.
 	 */
 	public NotationsCache computeNotations(Beam beam,
-		NotationsCache notations, ScoreLayouterContext lc)
+		NotationsCache notations, Score score)
 	{
-		Score score = lc.getScore();
 		Globals globals = score.getGlobals();
 		
 		//choose appropriate strategy
@@ -74,13 +70,12 @@ public class BeamedStemDirectionNotationsStrategy
 			{
 				MP firstMP = globals.getMP(beam.getFirstWaypoint().getChord());
 				return singleMeasureSingleStaffStrategy.computeNotations(
-					beam, firstMP.getStaff(), firstMP.getMeasure(),
-					notations, score.getStaff(firstMP).getLinesCount(), lc);
+					beam, notations, score.getStaff(firstMP).getLinesCount(), score);
 			}
 			else if (beam.getVerticalSpan(globals) == VerticalSpan.TwoAdjacentStaves)
 			{
 				return singleMeasureTwoStavesStrategy.computeNotations(
-					beam, notations, lc);
+					beam, notations, score);
 			}
 			else
 			{

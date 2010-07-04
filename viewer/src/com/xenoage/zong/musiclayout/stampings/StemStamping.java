@@ -15,15 +15,15 @@ import com.xenoage.zong.renderer.stampings.*;
  *
  * @author Andreas Wenger
  */
-public class StemStamping
+public final class StemStamping
   extends Stamping
 {
   
-  private float positionX;
-  private float noteheadLinePosition;
+  private final float positionX;
+  private final float noteheadLinePosition;
   //float, because it may be a fraction of interline space
-  private float endLinePosition;  
-  private int direction; //1: note on the top, -1: note on the bottom
+  private final float endLinePosition;  
+  private final int direction; //1: note on the top, -1: note on the bottom
   
   
   /**
@@ -43,14 +43,11 @@ public class StemStamping
   public StemStamping(StaffStamping parentStaff, Chord chord, float positionX,
     float noteheadLinePosition, float endLinePosition, int direction)
   {
-    super(parentStaff, LEVEL_MUSIC, chord);
+    super(parentStaff, Level.Music, chord, null);
     this.positionX = positionX;
     this.noteheadLinePosition = noteheadLinePosition;
     this.endLinePosition = endLinePosition;
     this.direction = direction;
-    
-    //TODO: bounding shape: one at the end of the stem
-    //(like in sibelius)?
   }
   
   
@@ -70,16 +67,6 @@ public class StemStamping
   public float getEndLinePosition()
   {
     return endLinePosition;
-  }
-  
-  
-  /**
-   * Sets the vertical end position of the stem as
-   * a line position.
-   */
-  public void setEndLinePosition(float endLinePosition)
-  {
-    this.endLinePosition = endLinePosition;
   }
 
 

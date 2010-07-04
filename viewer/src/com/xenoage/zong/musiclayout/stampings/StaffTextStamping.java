@@ -31,10 +31,9 @@ public final class StaffTextStamping
   public StaffTextStamping(
     StaffStamping parentStaff, MusicElement musicElement, FormattedText text, SP position)
   {
-    super(parentStaff, Stamping.LEVEL_MUSIC, musicElement);
+    super(parentStaff, Level.Text, musicElement, null);
     this.text = text;
     this.position = position;
-    updateBoundingShape();
   }
   
   
@@ -53,17 +52,6 @@ public final class StaffTextStamping
   public SP getPosition()
   {
   	return position;
-  }
-  
-
-  /**
-   * Updates the bounding rectangle.
-   * This method must be called after creating an instance
-   * of this class.
-   */
-  protected void updateBoundingShape()
-  {
-    //TODO
   }
   
   

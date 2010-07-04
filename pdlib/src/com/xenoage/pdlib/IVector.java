@@ -13,7 +13,9 @@ import com.xenoage.pdlib.It;
  * Immutable vector.
  * 
  * A very simple collection containing an array with a fixed size,
- * that is immutable.
+ * that is immutable. It can either contain a defensive copy of a
+ * given array or the mutable array itself (use this only for performance
+ * reasons if you know what you are doing).
  * 
  * If a persistent vector with producers is needed, use
  * {@link PVector} instead.
@@ -27,20 +29,34 @@ public final class IVector<T>
 	implements Vector<T>
 {
 	
-	private final ArrayList<T> array;
+	private final List<T> array;
 	private final int hashCode;
 	
 	
-	public IVector(Collection<T> data)
+	public IVector(List<T> data, boolean defensiveCopy)
 	{
-		array = new ArrayList<T>(data.size());
-		int hashCode = 0;
-		for (T e : data)
+		if (defensiveCopy)
 		{
-			array.add(e);
-			hashCode += array.hashCode();
+			array = new ArrayList<T>(data.size());
+			int hashCode = 0;
+			for (T e : data)
+			{
+				array.add(e);
+				hashCode += array.hashCode();
+			}
+			this.hashCode = hashCode;
 		}
-		this.hashCode = hashCode;
+		else
+		{
+			array = data;
+			this.hashCode = data.hashCode();
+		}
+	}
+	
+	
+	public IVector(List<T> data)
+	{
+		this(data, true);
 	}
 	
 	
@@ -53,7 +69,13 @@ public final class IVector<T>
 	
 	public static <T2> IVector<T2> ivec(List<T2> data)
 	{
-		return new IVector<T2>(data);
+		return new IVector<T2>(data, true);
+	}
+	
+	
+	public static <T2> IVector<T2> ivec(List<T2> data, boolean defensiveCopy)
+	{
+		return new IVector<T2>(data, defensiveCopy);
 	}
 	
 	
@@ -62,7 +84,7 @@ public final class IVector<T>
 		ArrayList<T2> array = new ArrayList<T2>(data.length);
 		for (T2 o : data)
 			array.add(o);
-		return new IVector<T2>(array);
+		return new IVector<T2>(array, false);
 	}
 	
 	
@@ -198,9 +220,9 @@ public final class IVector<T>
 	}
 	
 	
-	@Override public List<T> subList(int fromIndex, int toIndex)
+	@Override public Vector<T> subList(int fromIndex, int toIndex)
 	{
-		return array.subList(fromIndex, toIndex);
+		return ivec(array.subList(fromIndex, toIndex));
 	}
 	
 

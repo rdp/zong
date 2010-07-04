@@ -1,10 +1,12 @@
 package com.xenoage.zong.musiclayout.layouter.notation;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.WIDTH_GAP_ACCTOACC;
 import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.WIDTH_GAP_ACCTONOTE;
 import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.computeAccidentalsMaxWidth;
 import static com.xenoage.zong.musiclayout.notations.chord.AccidentalsAlignment.getAccidentalWidth;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.pdlib.Vector;
 import com.xenoage.zong.core.music.MusicContext;
 import com.xenoage.zong.core.music.Pitch;
@@ -64,7 +66,8 @@ public class AccidentalsAlignmentStrategy
     else if (accCount == 3)
     	return computeAlignment3Accidentals(pitches, alignments, mc);
     else if (accCount > 3)
-    	throw new IllegalStateException("Chords with more than 3 accidentals not supported yet!"); //TODO
+    	//chords with more than 3 accidentals have no good layout yet!
+    	return computeAlignmentNAccidentals(pitches, alignments, mc);
     else
     	return null;
   }
@@ -82,8 +85,8 @@ public class AccidentalsAlignmentStrategy
       Accidental.Type at = mc.getAccidentalType(pitches.get(i));
       if (at != null)
       {
-      	AccidentalAlignment[] a = {new AccidentalAlignment(
-          alignments[i].getLinePosition(), 0, at)};
+      	PVector<AccidentalAlignment> a = pvec(new AccidentalAlignment(
+          alignments[i].getLinePosition(), 0, at));
         float width = getAccidentalWidth(at) + WIDTH_GAP_ACCTONOTE;
         return new AccidentalsAlignment(a, width);
       }
@@ -111,13 +114,13 @@ public class AccidentalsAlignmentStrategy
     //interval of at least a seventh?
     int distance = alignments[topNoteIndex].getLinePosition() -
       alignments[bottomNoteIndex].getLinePosition();
-    AccidentalAlignment[] a = new AccidentalAlignment[2];
+    PVector<AccidentalAlignment> a = pvec();
     float width;
     if (distance >= 6)
     {
       //placed on the same horizontal position
-    	a[0] = new AccidentalAlignment(alignments[bottomNoteIndex].getLinePosition(), 0, atBottom);
-    	a[1] = new AccidentalAlignment(alignments[topNoteIndex].getLinePosition(), 0, atTop);
+    	a = a.plus(new AccidentalAlignment(alignments[bottomNoteIndex].getLinePosition(), 0, atBottom));
+    	a = a.plus(new AccidentalAlignment(alignments[topNoteIndex].getLinePosition(), 0, atTop));
       width = computeAccidentalsMaxWidth(
         new Accidental.Type[]{atBottom, atTop}) + WIDTH_GAP_ACCTONOTE;
     }
@@ -138,18 +141,17 @@ public class AccidentalsAlignmentStrategy
       if (bottomFirst)
       {
         //begin with bottom note
-      	a[0] = new AccidentalAlignment(alignments[bottomNoteIndex].getLinePosition(), 0, atBottom);
-      	a[1] = new AccidentalAlignment(alignments[topNoteIndex].getLinePosition(),
-      			getAccidentalWidth(atBottom) + WIDTH_GAP_ACCTOACC, atTop);
+      	a = a.plus(new AccidentalAlignment(alignments[bottomNoteIndex].getLinePosition(), 0, atBottom));
+      	a = a.plus(new AccidentalAlignment(alignments[topNoteIndex].getLinePosition(),
+      			getAccidentalWidth(atBottom) + WIDTH_GAP_ACCTOACC, atTop));
       }
       else
       {
         //begin with top note
-      	a = new AccidentalAlignment[]{
+      	a = pvec(
       		new AccidentalAlignment(alignments[bottomNoteIndex].getLinePosition(),
       			getAccidentalWidth(atTop) + WIDTH_GAP_ACCTOACC, atBottom),
-      		new AccidentalAlignment(alignments[topNoteIndex].getLinePosition(), 0f, atTop)
-      	};
+      		new AccidentalAlignment(alignments[topNoteIndex].getLinePosition(), 0f, atTop));
       }
       //compute width
       width = getAccidentalWidth(atBottom) + WIDTH_GAP_ACCTOACC +
@@ -265,6 +267,29 @@ public class AccidentalsAlignmentStrategy
           middleWidth + WIDTH_GAP_ACCTOACC + bottomWidth + WIDTH_GAP_ACCTOACC, atTop);
         float topWidth = getAccidentalWidth(atTop);
         width = middleWidth + WIDTH_GAP_ACCTOACC + bottomWidth + WIDTH_GAP_ACCTOACC + topWidth + WIDTH_GAP_ACCTONOTE;
+      }
+    }
+    return new AccidentalsAlignment(pvec(a), width);
+  }
+  
+  
+  /**
+   * Computes the accidentals alignment for a chord
+   * with any number of accidental. Currently this returns no good layout,
+   * since all accidentals are within a single column.
+   */
+  private AccidentalsAlignment computeAlignmentNAccidentals(Vector<Pitch> pitches,
+    NoteAlignment[] alignments, MusicContext mc)
+  {
+  	PVector<AccidentalAlignment> a = pvec();
+  	float width = 0;
+    for (int i = 0; i < pitches.size(); i++)
+    {
+      Accidental.Type at = mc.getAccidentalType(pitches.get(i));
+      if (at != null)
+      {
+      	a = a.plus(new AccidentalAlignment(alignments[i].getLinePosition(), 0, at));
+      	width = Math.max(width, getAccidentalWidth(at) + WIDTH_GAP_ACCTONOTE);
       }
     }
     return new AccidentalsAlignment(a, width);

@@ -1,18 +1,17 @@
 package com.xenoage.zong.musiclayout.layouter.beamednotation;
 
-import java.util.ArrayList;
-
+import com.xenoage.pdlib.Vector;
+import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.Globals;
 import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.beam.Beam.HorizontalSpan;
 import com.xenoage.zong.core.music.beam.Beam.VerticalSpan;
-import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureSingleStaffStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.alignment.SingleMeasureTwoStavesStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 
 
 /**
@@ -37,11 +36,10 @@ public class BeamedStemAlignmentNotationsStrategy
 	 * direction! (like computed by {@link BeamedStemDirectionNotationsStrategy}).
 	 * The updated chord notations are returned.
 	 */
-	public NotationsCache computeNotations(ScoreLayouterContext lc, Beam beam,
-		ArrayList<MeasureColumnSpacing> measureColumnSpacings,
-		NotationsCache notations)
+	public NotationsCache computeNotations(Score score, Beam beam,
+		Vector<ColumnSpacing> columnSpacings, NotationsCache notations)
 	{
-		Globals globals = lc.getScore().getGlobals();
+		Globals globals = score.getGlobals();
 		
 		//choose appropriate strategy
 		if (beam.getHorizontalSpan(globals) == HorizontalSpan.SingleMeasure)
@@ -49,8 +47,8 @@ public class BeamedStemAlignmentNotationsStrategy
 			if (beam.getVerticalSpan(globals) == VerticalSpan.SingleStaff)
 			{
 				MP firstMP = globals.getMP(beam.getFirstWaypoint().getChord());
-				return singleMeasureSingleStaffStrategy.computeNotations(lc, beam,
-					measureColumnSpacings.get(firstMP.getMeasure()), notations);
+				return singleMeasureSingleStaffStrategy.computeNotations(score, beam,
+					columnSpacings.get(firstMP.getMeasure()), notations);
 			}
 			else if (beam.getVerticalSpan(globals) == VerticalSpan.TwoAdjacentStaves)
 			{

@@ -1,7 +1,10 @@
 package com.xenoage.zong.musiclayout;
 
+import static com.xenoage.util.Range.range;
 import static com.xenoage.zong.core.music.MP.mp;
 
+import com.xenoage.pdlib.PVector;
+import com.xenoage.util.ArrayTools;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
@@ -32,7 +35,7 @@ public final class StaffMarks
   private final int startMeasureIndex;
   private final int endMeasureIndex;
   
-  private final MeasureMarks[] measureMarks;
+  private final PVector<MeasureMarks> measureMarks;
   
   
   /**
@@ -43,16 +46,17 @@ public final class StaffMarks
    * @param startMeasureIndex  global index of the first measure in the staff stamping
    * @param measureMarks       positioning information about each measure in the staff stamping
    */
-  public StaffMarks(int systemIndex, int staffIndex, int startMeasureIndex, MeasureMarks[] measureMarks)
+  public StaffMarks(int systemIndex, int staffIndex, int startMeasureIndex,
+  	PVector<MeasureMarks> measureMarks)
   {
-  	if (measureMarks.length == 0)
-  	{
+  	if (measureMarks.size() == 0)
   		throw new IllegalArgumentException("At least one measure must be given");
-  	}
+  	if (ArrayTools.containsNull(measureMarks))
+  		throw new IllegalArgumentException("Null content not allowed");
   	this.systemIndex = systemIndex;
     this.staffIndex = staffIndex;
     this.startMeasureIndex = startMeasureIndex;
-    this.endMeasureIndex = startMeasureIndex + measureMarks.length - 1;
+    this.endMeasureIndex = startMeasureIndex + measureMarks.size() - 1;
     this.measureMarks = measureMarks;
   }
   
@@ -111,7 +115,7 @@ public final class StaffMarks
   	if (measureIndex == -1)
   		return null;
     //get the beat at the given position
-  	Fraction beat = measureMarks[measureIndex].getBeatAt(xMm);
+  	Fraction beat = measureMarks.get(measureIndex).getBeatAt(xMm);
     //create and return the score position
     return mp(staffIndex, measureIndex, 0, beat);
   }
@@ -130,7 +134,7 @@ public final class StaffMarks
   	if (measureIndex < startMeasureIndex || measureIndex > endMeasureIndex)
   		return null;
   	else
-  		return measureMarks[measureIndex - startMeasureIndex].getXMmAt(beat);
+  		return measureMarks.get(measureIndex - startMeasureIndex).getXMmAt(beat);
   }
 
   
@@ -140,9 +144,9 @@ public final class StaffMarks
   public MeasureMarks getMeasureMarksAt(int measureIndex)
   {
   	measureIndex -= startMeasureIndex;
-  	if (measureIndex >= 0 && measureIndex < measureMarks.length)
+  	if (measureIndex >= 0 && measureIndex < measureMarks.size())
   	{
-  		return measureMarks[measureIndex];
+  		return measureMarks.get(measureIndex);
   	}
   	else
   	{
@@ -158,9 +162,9 @@ public final class StaffMarks
    */
   private int getMeasureIndexAt(float xMm)
   {
-  	for (int i = 0; i < measureMarks.length; i++)
+  	for (int i : range(measureMarks))
   	{
-  		if (measureMarks[i].contains(xMm))
+  		if (measureMarks.get(i).contains(xMm))
   		{
   			return i;
   		}
@@ -172,7 +176,7 @@ public final class StaffMarks
   /**
    * Gets all {@link MeasureMarks}s.
    */
-  public MeasureMarks[] getMeasureMarks()
+  public PVector<MeasureMarks> getMeasureMarks()
   {
   	return measureMarks;
   }

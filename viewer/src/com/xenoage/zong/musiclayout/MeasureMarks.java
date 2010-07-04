@@ -1,5 +1,6 @@
 package com.xenoage.zong.musiclayout;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.MathTools;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
@@ -29,7 +30,7 @@ public final class MeasureMarks
 	private final float startMm;
 	private final float leadingMm;
   private final float endMm;
-  private final BeatMarker[] beatMarkers;
+  private final PVector<BeatOffset> beatOffsets;
   
   
   /**
@@ -39,16 +40,17 @@ public final class MeasureMarks
    *                     If there is no leading spacing, this value is equal to <code>startMm</code>
    * @param endMm        end position of the measure in mm relative to the beginning of the staff
    * 
-   * @param beatMarkers  markers for the beats in the measure (at least one)
+   * @param beatOffsets  offsets for the beats in the measure (at least one)
    */
-  public MeasureMarks(float startMm, float leadingMm, float endMm, BeatMarker[] beatMarkers)
+  public MeasureMarks(float startMm, float leadingMm, float endMm,
+  	PVector<BeatOffset> beatOffsets)
   {
-  	if (beatMarkers.length == 0)
+  	if (beatOffsets.size() == 0)
   		throw new IllegalArgumentException("At least one beat must be given");
   	this.startMm = startMm;
   	this.leadingMm = leadingMm;
   	this.endMm = endMm;
-  	this.beatMarkers = beatMarkers;
+  	this.beatOffsets = beatOffsets;
   }
   
   
@@ -86,12 +88,12 @@ public final class MeasureMarks
    */
   public Fraction getBeatAt(float xMm)
   {
-  	for (int i = 0; i < beatMarkers.length; i++)
+  	for (int i = 0; i < beatOffsets.size(); i++)
   	{
-  		if (xMm <= beatMarkers[i].getXMm())
-  			return beatMarkers[i].getBeat();
+  		if (xMm <= beatOffsets.get(i).getOffsetMm())
+  			return beatOffsets.get(i).getBeat();
   	}
-  	return beatMarkers[beatMarkers.length - 1].getBeat();
+  	return beatOffsets.getLast().getBeat();
   }
   
   
@@ -104,39 +106,21 @@ public final class MeasureMarks
    */
   public float getXMmAt(Fraction beat)
   {
-  	for (int i = 0; i < beatMarkers.length; i++)
+  	for (int i = 0; i < beatOffsets.size(); i++)
   	{
-  		if (beat.compareTo(beatMarkers[i].getBeat()) <= 0)
-  			return beatMarkers[i].getXMm();
+  		if (beat.compareTo(beatOffsets.get(i).getBeat()) <= 0)
+  			return beatOffsets.get(i).getOffsetMm();
   	}
-  	return beatMarkers[beatMarkers.length - 1].getXMm();
+  	return beatOffsets.getLast().getOffsetMm();
   }
   
   
   /**
-   * Gets all {@link BeatMarker}s.
+   * Gets all {@link BeatOffset}s.
    */
-  public BeatMarker[] getBeatMarkers()
+  public PVector<BeatOffset> getBeatOffsets()
   {
-  	return beatMarkers;
-  }
-  
-  
-  /**
-   * Gets the first {@link BeatMarker}.
-   */
-  public BeatMarker getFirstBeatMarker()
-  {
-  	return beatMarkers[0];
-  }
-  
-  
-  /**
-   * Gets the last {@link BeatMarker}.
-   */
-  public BeatMarker getLastBeatMarker()
-  {
-  	return beatMarkers[beatMarkers.length - 1];
+  	return beatOffsets;
   }
   
 	

@@ -4,7 +4,6 @@ import static com.xenoage.zong.core.music.MP.atStaff;
 
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.core.Score;
-import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.io.score.ScoreController;
 import com.xenoage.zong.layout.frames.ScoreFrameChain;
 

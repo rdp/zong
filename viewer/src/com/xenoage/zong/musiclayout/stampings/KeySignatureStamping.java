@@ -1,14 +1,15 @@
 package com.xenoage.zong.musiclayout.stampings;
 
 import static com.xenoage.zong.core.music.format.SP.sp;
+import static com.xenoage.zong.core.music.key.TraditionalKey.getLinePosition;
+import static com.xenoage.zong.musiclayout.LayoutSettings.layoutSettings;
 
-import com.xenoage.util.MathTools;
 import com.xenoage.util.math.Rectangle2f;
+import com.xenoage.util.math.Shape;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
 import com.xenoage.zong.core.music.key.TraditionalKey;
-import com.xenoage.zong.musiclayout.layouter.notation.NotationStrategy;
 import com.xenoage.zong.renderer.RenderingParams;
 import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
 
@@ -22,14 +23,14 @@ import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
  *
  * @author Andreas Wenger
  */
-public class KeySignatureStamping
+public final class KeySignatureStamping
   extends Stamping
 {
  
-  private float positionX;
-  private TraditionalKey traditionalKey;
-  private int linePositionC4;
-  private int linePositionMin;
+  private final float positionX;
+  private final TraditionalKey traditionalKey;
+  private final int linePositionC4;
+  private final int linePositionMin;
   
   
   /**
@@ -45,94 +46,43 @@ public class KeySignatureStamping
     int linePositionC4, int linePositionMin, float positionX,
     StaffStamping parentStaff)
   {
-    super(parentStaff, LEVEL_MUSIC, null);
+    super(parentStaff, Level.Music, null,
+    	createBoundingShape(traditionalKey, parentStaff, linePositionC4, linePositionMin, positionX));
     this.traditionalKey = traditionalKey;
     this.linePositionC4 = linePositionC4;
     this.linePositionMin = linePositionMin;
     this.positionX = positionX;
-    updateBoundingShape();
   }
   
   
-  private void updateBoundingShape()
+  private static Shape createBoundingShape(TraditionalKey traditionalKey,
+  	StaffStamping parentStaff, int linePositionC4, int linePositionMin, float positionX)
   {
     int fifth = traditionalKey.getFifth();
     if (fifth == 0)
-      return;
+      return null;
     boolean useSharps = (fifth > 0);
-    float distance = (useSharps ? NotationStrategy.distanceSharps : NotationStrategy.distanceFlats);
+    float distance = (useSharps ?
+    	layoutSettings().widthSharp : layoutSettings().widthFlat);
     Symbol symbol = App.getInstance().getSymbolPool().getSymbol(
     	useSharps ? CommonSymbol.AccidentalSharp : CommonSymbol.AccidentalFlat);
     //create bounding shape
-    Rectangle2f flagsBounds = null;
+    Rectangle2f shape = null;
     fifth = Math.abs(fifth);
     float interlineSpace = parentStaff.getInterlineSpace();
     for (int i = 0; i < fifth; i++)
     {
-      int linePosition = getLinePosition(i, useSharps);
+      int linePosition = getLinePosition(i, useSharps, linePositionC4, linePositionMin);
       Rectangle2f bounds = symbol.getBoundingRect();
       bounds = bounds.scale(interlineSpace);
       bounds = bounds.move(positionX + i * distance * interlineSpace,
         parentStaff.computeYMm(linePosition));
-      if (flagsBounds == null)
-        flagsBounds = bounds;
+      if (shape == null)
+      	shape = bounds;
       else
-      	flagsBounds = flagsBounds.extend(bounds);
+      	shape = shape.extend(bounds);
     }
-    //add bounding shape
-    clearBoundingShape();
-    addBoundingShape(flagsBounds);
-  }
-  
-  
-  /**
-   * Gets the line position for the flat
-   * with the given 0-based index.
-   */
-  private int getFlatLinePosition(int index)
-  {
-    switch (index)
-    {
-      case 0: return 4; //Bb
-      case 1: return 7; //Eb
-      case 2: return 3; //Ab
-      case 3: return 6; //Db
-      case 4: return 2; //Gb
-      case 5: return 5; //Cb
-      default: return 1; //Fb
-    }
-  }
-  
-  
-  /**
-   * Gets the line position for the sharp
-   * with the given 0-based index.
-   */
-  private int getSharpLinePosition(int index)
-  {
-    switch (index)
-    {
-      case 0: return 8; //F#
-      case 1: return 5; //C#
-      case 2: return 9; //G#
-      case 3: return 6; //D#
-      case 4: return 3; //A#
-      case 5: return 7; //E#
-      default: return 4; //H#
-    }
-  }
-  
-  
-  /**
-   * Gets the line position for the sharp or flat
-   * with the given 0-based index.
-   */
-  private int getLinePosition(int index, boolean sharp)
-  {
-  	int ret = linePositionC4 + 2 +
-        (sharp ? getSharpLinePosition(index) : getFlatLinePosition(index));
-    ret = MathTools.modMin(ret, 7, linePositionMin);
-    return ret;
+    return shape;
   }
   
   
@@ -146,7 +96,8 @@ public class KeySignatureStamping
     if (fifth == 0)
       return;
     boolean useSharps = (fifth > 0);
-    float distance = (useSharps ? NotationStrategy.distanceSharps : NotationStrategy.distanceFlats);
+    float distance = (useSharps ?
+    	layoutSettings().widthSharp : layoutSettings().widthFlat);
     Symbol symbol = App.getInstance().getSymbolPool().getSymbol(
     	useSharps ? CommonSymbol.AccidentalSharp : CommonSymbol.AccidentalFlat);
     //paint sharps/flats
@@ -154,7 +105,7 @@ public class KeySignatureStamping
     float interlineSpace = parentStaff.getInterlineSpace();
     for (int i = 0; i < fifth; i++)
     {
-      int linePosition = getLinePosition(i, useSharps);
+      int linePosition = getLinePosition(i, useSharps, linePositionC4, linePositionMin);
       StaffSymbolStampingRenderer.paint(symbol, null,
       	sp(positionX + i * distance * interlineSpace, linePosition),
       	1, parentStaff, false, params);

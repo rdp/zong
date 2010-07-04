@@ -1,12 +1,16 @@
-package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
+package com.xenoage.zong.musiclayout.layouter.columnspacing;
 
-import static com.xenoage.util.math.Fraction.fr;
+import static com.xenoage.util.SortedList.sortedListNoDuplicates;
+import static com.xenoage.util.iterators.It.it;
+import static com.xenoage.util.math.Fraction._0;
+import static com.xenoage.zong.musiclayout.LayoutSettings.layoutSettings;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.xenoage.pdlib.PVector;
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.SortedList;
 import com.xenoage.util.iterators.It;
 import com.xenoage.util.math.Fraction;
@@ -15,9 +19,9 @@ import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.core.music.Voice;
 import com.xenoage.zong.core.music.VoiceElement;
 import com.xenoage.zong.core.music.util.Column;
+import com.xenoage.zong.musiclayout.BeatOffset;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.VoiceSpacingsCache;
-import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
 import com.xenoage.zong.musiclayout.spacing.horizontal.SpacingElement;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
 
@@ -34,11 +38,9 @@ public class BeatOffsetsStrategy
 	implements ScoreLayouterStrategy
 {
 	
-	float guaranteedMinimalDistance = 1.5f; //TODO: config
-	
 	
 	/**
-   * Computes the offsets of the all used beats, including
+   * Computes the offsets of all the used beats, including
    * at least beat 0 and the beat at the end of the measure.
    * The beats containing the notes with the lowest valuation
    * (or that needs accidentals) dictate the spacing.
@@ -47,12 +49,12 @@ public class BeatOffsetsStrategy
   public PVector<BeatOffset> computeBeatOffsets(
   	Column measureColumn, VoiceSpacingsCache voiceSpacings, Fraction measureBeats)
   {
-  	//collect voices
+  	//collect voices and measure elements
   	LinkedList<VoiceSpacing> vss = new LinkedList<VoiceSpacing>();
-  	It<Measure> measures = new It<Measure>(measureColumn);
+  	It<Measure> measures = it(measureColumn);
   	for (Measure measure : measures)
   	{
-  		It<Voice> voices = new It<Voice>(measure.getVoices());
+  		It<Voice> voices = it(measure.getVoices());
   		for (Voice voice : voices)
   		{
   			VoiceSpacing vs = voiceSpacings.get(voice);
@@ -116,15 +118,16 @@ public class BeatOffsetsStrategy
     		for (VoiceSpacing voiceSpacing : voiceSpacings)
     		{
     			float interlineSpace = voiceSpacing.getInterlineSpace();
-    			float voiceMinimalDistance = computeMinimalDistance(lastBeat, beat, beat.equals(measureBeats),
+    			float voiceMinimalDistance = computeMinimalDistance(
+    				lastBeat, beat, beat.equals(measureBeats),
     				voiceSpacing.getVoice(), voiceSpacing.getSpacingElements(), ret, interlineSpace);
     			minimalDistance = Math.max(minimalDistance, voiceMinimalDistance);
     			
     			//a minimal distance of 0 is possible, see "BeatOffsetsStrategyTest-3.xml" for an example.
       		//but we do not want to have different beats at the same offset, so add a small distance.
-      		if (minimalDistance < guaranteedMinimalDistance * interlineSpace)
+      		if (minimalDistance < layoutSettings().offsetBeatsMinimal * interlineSpace)
       		{
-      			minimalDistance = guaranteedMinimalDistance * interlineSpace;
+      			minimalDistance = layoutSettings().offsetBeatsMinimal * interlineSpace;
       		}
     		}
     		
@@ -137,9 +140,6 @@ public class BeatOffsetsStrategy
     	
     }
     
-    //TEST
-    //for (BeatOffset b : ret) System.out.println(b.getBeat() + ": " + b.getOffsetMm());
-    
     return new PVector<BeatOffset>(ret);
   }
   
@@ -151,7 +151,7 @@ public class BeatOffsetsStrategy
    */
   SortedList<Fraction> computeVoicesBeats(LinkedList<VoiceSpacing> voiceSpacings)
   {
-  	SortedList<Fraction> beats = new SortedList<Fraction>(false); //no duplicates
+  	SortedList<Fraction> beats = sortedListNoDuplicates();
     Fraction beat;
     for (VoiceSpacing voiceSpacing : voiceSpacings)
     {
@@ -167,7 +167,7 @@ public class BeatOffsetsStrategy
         	beat = beat.add(((VoiceElement)element).getDuration());
       	}
       }
-      //do not add beat here, because the ending beat of a incomplete measure
+      //do not add beat here, because the ending beat of an incomplete measure
       //is not interesting for computing beat offsets.
     }
     return beats;
@@ -228,11 +228,9 @@ public class BeatOffsetsStrategy
    *  
    * This value is the minimal distance the given voice needs to
    * place the elements up to the given ending beat.
-   * 
-   * //LAYOUT-PERFORMANCE (needed 4 of 60 seconds)
    */
   float computeMinimalDistance(Fraction startBeat, Fraction endBeat, boolean endBeatIsMeasureEnd,
-    Voice voice, SpacingElement[] spacings, LinkedList<BeatOffset> alreadyComputedBeatOffsets,
+    Voice voice, Vector<SpacingElement> spacings, LinkedList<BeatOffset> alreadyComputedBeatOffsets,
     float interlineSpace)
   {
   	//end beat used? (measure end beat is always used)
@@ -306,8 +304,8 @@ public class BeatOffsetsStrategy
     float maxOffset = 0;
     for (VoiceSpacing voiceSpacing : voiceSpacings)
     {
-      SpacingElement[] elements = voiceSpacing.getSpacingElements();
-      float offset = getLastOffset(elements, fr(0)) * voiceSpacing.getInterlineSpace();
+      Vector<SpacingElement> elements = voiceSpacing.getSpacingElements();
+      float offset = getLastOffset(elements, _0) * voiceSpacing.getInterlineSpace();
       if (offset > maxOffset)
         maxOffset = offset;
     }
@@ -320,19 +318,19 @@ public class BeatOffsetsStrategy
    * occurrence of the given beat in interline spaces.
    * If the beat is not found, 0 is returned.
    */
-  private float getLastOffset(SpacingElement[] spacings, Fraction beat)
+  private float getLastOffset(Vector<SpacingElement> spacings, Fraction beat)
   {
-    for (int i = 0; i < spacings.length; i++)
+    for (int i = 0; i < spacings.size(); i++)
     {
       //find first occurrence of the beat
-      if (spacings[i].getBeat().equals(beat))
+      if (spacings.get(i).getBeat().equals(beat))
       {
         //find last occurrence of the beat
-        while (i+1 < spacings.length && spacings[i+1].getBeat().equals(beat))
+        while (i+1 < spacings.size() && spacings.get(i+1).getBeat().equals(beat))
         {
           i++;
         }
-        return spacings[i].getOffset();
+        return spacings.get(i).getOffset();
       }
     }
     return 0;

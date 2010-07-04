@@ -3,8 +3,13 @@ package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 import static com.xenoage.util.math.Fraction.fr;
 import static com.xenoage.zong.core.music.Pitch.pi;
 import static com.xenoage.zong.core.music.beam.Beam.beam;
-import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.*;
-import static org.junit.Assert.*;
+import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.HookLeft;
+import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.HookRight;
+import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.None;
+import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.Start;
+import static com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrategy.Waypoint.Stop;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +17,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.xenoage.util.math.Fraction;
-import com.xenoage.zong.core.music.Pitch;
 import com.xenoage.zong.core.music.beam.Beam;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.chord.Note;

@@ -3,11 +3,12 @@ package com.xenoage.zong.musiclayout.stampings;
 import java.awt.Color;
 
 import com.xenoage.util.math.Rectangle2f;
-import com.xenoage.zong.renderer.RenderingParams;
-import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
+import com.xenoage.util.math.Shape;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.core.music.format.SP;
+import com.xenoage.zong.renderer.RenderingParams;
+import com.xenoage.zong.renderer.stampings.StaffSymbolStampingRenderer;
 
 
 /**
@@ -25,17 +26,19 @@ public abstract class StaffSymbolStamping
   extends Stamping
 {
 
-	private Color color;
+	private final Symbol symbol;
+	private final Color color;
 	
-  private SP position;
-  private float scaling;
-  private boolean mirrorV;
+  private final SP position;
+  private final float scaling;
+  private final boolean mirrorV;
   
   
   /**
    * Creates a new symbol stamping belonging to no staff.
    * @param parentStaff     the staff stamping this element belongs to
    * @param musicElement    the musical element for which this layout element was created, or null
+   * @param symbol          the musical symbol
    * @param color           the color of the stamping, or null for default color
    * @param position        the position of the symbol
    * @param scaling         the scaling. e.g. 1 means, that it fits perfect
@@ -43,14 +46,25 @@ public abstract class StaffSymbolStamping
    * @param mirrorV         vertically mirroring of the symbol
    */
   public StaffSymbolStamping(
-    StaffStamping parentStaff, MusicElement musicElement, Color color, SP position,
-    float scaling, boolean mirrorV)
+    StaffStamping parentStaff, MusicElement musicElement, Symbol symbol,
+    Color color, SP position, float scaling, boolean mirrorV)
   {
-    super(parentStaff, Stamping.LEVEL_MUSIC, musicElement);
+    super(parentStaff, Level.Music, musicElement,
+    	createBoundingShape(symbol, scaling, parentStaff, position));
+    this.symbol = symbol;
     this.color = color;
     this.position = position;
     this.scaling = scaling;
     this.mirrorV = mirrorV;
+  }
+  
+  
+  /**
+   * Gets the symbol.
+   */
+  protected Symbol getSymbol()
+  {
+  	return symbol;
   }
   
   
@@ -64,24 +78,15 @@ public abstract class StaffSymbolStamping
   
   
   /**
-   * Gets the symbol.
+   * Creates the bounding geometry.
    */
-  protected abstract Symbol getSymbol();
-  
-  
-  /**
-   * Updates the bounding rectangle.
-   * This method must be called after creating an instance
-   * of this class.
-   */
-  protected void updateBoundingShape()
+  private static Shape createBoundingShape(Symbol symbol, float scaling,
+  	StaffStamping parentStaff, SP position)
   {
-    Symbol symbol = getSymbol();
     Rectangle2f bounds = symbol.getBoundingRect();
     bounds = bounds.scale(scaling * parentStaff.getInterlineSpace());
     bounds = bounds.move(position.xMm, parentStaff.computeYMm(position.yLp));
-    clearBoundingShape();
-    addBoundingShape(bounds);
+    return bounds;
   }
   
   

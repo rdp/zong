@@ -10,7 +10,7 @@ import com.xenoage.zong.core.music.chord.Articulation;
  *
  * @author Andreas Wenger
  */
-public class ArticulationAlignment
+public final class ArticulationAlignment
 {
   
   private final float yLP;

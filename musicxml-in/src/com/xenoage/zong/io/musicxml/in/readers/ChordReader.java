@@ -157,9 +157,14 @@ public final class ChordReader
     	context = context.writeVoiceElement(new Rest(duration, cue), staff, staffVoice);
     }
     
-    //stem
+    //more details for chord
     if (chord != null)
     {
+    	//check if chord could be written. if not, return
+    	if (context.getScore().getGlobals().getMP(chord) == null)
+    		return context;
+    	
+    	//stem
     	Stem stem = readStem(context, mxlFirstNote, chord, staff);
     	if (stem != null)
     	{
@@ -167,58 +172,52 @@ public final class ChordReader
 	    	chord = oldChord.withStem(stem);
 	    	context = context.replaceChord(oldChord, chord);
     	}
-    }
     
-    //add beams
-    //TODO: also read beams for grace and cue chords
-    if (chord != null && mxlFirstGraceNote == null && !cue)
-    {
-      //currently we read only the beam elements with number 1
-      for (MxlBeam mxlBeam : mxlFirstNote.getBeams())
-      {
-        int number = mxlBeam.getNumber();
-        //read only level 1 beams
-        if (number != 1) continue;
-        switch (mxlBeam.getValue())
-        {
-        	case Begin:
-        	{
-        		//open new beam
-        		context = context.openBeam(number);
-        		context = context.addBeamChord(chord, number);
-            break;
-        	}
-        	case Continue:
-        	{
-        		//add chord to beam
-        		context = context.addBeamChord(chord, number);
-            break;
-        	}
-        	case End:
-        	{
-        		//close the beam and create it
-            context = context.addBeamChord(chord, number);
-            Tuple2<MusicReaderContext, PVector<Chord>> t = context.closeBeam(number);
-            context = t.get1();
-            context = context.writeBeam(t.get2());
-        	}
-        }
-      }
-    }
+	    //add beams
+	    //TODO: also read beams for grace and cue chords
+	    if (mxlFirstGraceNote == null && !cue)
+	    {
+	      //currently we read only the beam elements with number 1
+	      for (MxlBeam mxlBeam : mxlFirstNote.getBeams())
+	      {
+	        int number = mxlBeam.getNumber();
+	        //read only level 1 beams
+	        if (number != 1) continue;
+	        switch (mxlBeam.getValue())
+	        {
+	        	case Begin:
+	        	{
+	        		//open new beam
+	        		context = context.openBeam(number);
+	        		context = context.addBeamChord(chord, number);
+	            break;
+	        	}
+	        	case Continue:
+	        	{
+	        		//add chord to beam
+	        		context = context.addBeamChord(chord, number);
+	            break;
+	        	}
+	        	case End:
+	        	{
+	        		//close the beam and create it
+	            context = context.addBeamChord(chord, number);
+	            Tuple2<MusicReaderContext, PVector<Chord>> t = context.closeBeam(number);
+	            context = t.get1();
+	            context = context.writeBeam(t.get2());
+	        	}
+	        }
+	      }
+	    }
     
-    //notations
-    if (chord != null)
-    {    
+	    //notations   
     	for (MxlNotations mxlNotations : mxlFirstNote.getNotations())
 	    {
     		context = readNotations(context, mxlNotations, chord, 0, staff).get1(); //first note has index 0
 	    }
-    }
     
-    //lyric
-    //not supported yet: in MusicXML also rests can have lyrics. see mesaure 36 in Echigo-Jishi
-    if (chord != null) 
-    {
+    	//lyric
+    	//not supported yet: in MusicXML also rests can have lyrics. see mesaure 36 in Echigo-Jishi
 	    for (MxlLyric mxlLyric : mxlFirstNote.getLyrics())
 	    {
 	    	//not supported yet:  different lines (number AND name attribute)
@@ -251,6 +250,7 @@ public final class ChordReader
 	    		context = context.writeAttachment(chord, Lyric.createExtend(0));
 	    	}
 	    }
+    	
     }
     
     context = context.moveCursorForward(duration);

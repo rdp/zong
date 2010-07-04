@@ -3,6 +3,7 @@ package com.xenoage.zong.musiclayout.stampings;
 import static com.xenoage.zong.core.music.format.SP.sp;
 
 import com.xenoage.util.math.Rectangle2f;
+import com.xenoage.util.math.Shape;
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
@@ -31,9 +32,9 @@ public class FlagsStamping
   public static final int FLAG_DOWN = 0;
   public static final int FLAG_UP = 1;
   
-  private int flag;
-  private int flagsCount;
-  private SP position;
+  private final int flag;
+  private final int flagsCount;
+  private final SP position;
   
   
   /**
@@ -50,18 +51,19 @@ public class FlagsStamping
   public FlagsStamping(int flag, int flagsCount,
     StaffStamping parentStaff, Chord chord, SP position)
   {
-    super(parentStaff, Stamping.LEVEL_MUSIC, chord);
+    super(parentStaff, Level.Music, chord,
+    	createBoundingShape(flag, flagsCount, parentStaff, position));
     this.flag = flag;
     this.flagsCount = flagsCount;
     this.position = position;
-    updateBoundingShape();
   }
   
   
-  private void updateBoundingShape()
+  private static Shape createBoundingShape(int flag, int flagsCount,
+  	StaffStamping parentStaff, SP position)
   {
   	Symbol symbol = App.getInstance().getSymbolPool().getSymbol(CommonSymbol.NoteFlag);
-    float flagsDistance = getFlagsDistance();
+    float flagsDistance = getFlagsDistance(flag);
     float interlineSpace = parentStaff.getInterlineSpace();
     Rectangle2f flagsBounds = null;
     for (int i = 0; i < flagsCount; i++)
@@ -79,15 +81,14 @@ public class FlagsStamping
       	flagsBounds = flagsBounds.extend(bounds);
     }
     flagsBounds.move(position.xMm, parentStaff.computeYMm(position.yLp));
-    clearBoundingShape();
-    addBoundingShape(flagsBounds);
+    return flagsBounds;
   }
   
   
   /**
    * Gets the distance between the flags in interline spaces.
    */
-  private float getFlagsDistance()
+  private static float getFlagsDistance(int flag)
   {
   	return (flag == FLAG_DOWN ? -1 : 1);
   }
@@ -101,7 +102,7 @@ public class FlagsStamping
   {
   	Symbol symbol = App.getInstance().getSymbolPool().getSymbol(CommonSymbol.NoteFlag);
   	boolean flagsMirrored = (flag == FLAG_UP);
-  	float flagsDistance = getFlagsDistance();
+  	float flagsDistance = getFlagsDistance(flag);
   	//draw all flags
   	for (int i = 0; i < flagsCount; i++)
     {

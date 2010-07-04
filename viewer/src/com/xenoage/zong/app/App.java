@@ -199,7 +199,7 @@ public class App
   	errorProcessing.setParentFrame(mainFrame);
   	
 		//TEMP
-  	Zong.showWorkInProgressWarning();
+  	//Zong.showWorkInProgressWarning();
 		
   }
   

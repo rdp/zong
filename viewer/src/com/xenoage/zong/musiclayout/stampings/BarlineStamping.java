@@ -2,6 +2,7 @@ package com.xenoage.zong.musiclayout.stampings;
 
 import java.util.List;
 
+import com.xenoage.pdlib.Vector;
 import com.xenoage.zong.core.music.barline.Barline;
 import com.xenoage.zong.core.music.group.BarlineGroup;
 import com.xenoage.zong.renderer.RenderingParams;
@@ -29,7 +30,7 @@ public final class BarlineStamping
 {
 
 	private final Barline barline;
-  private final List<StaffStamping> staves;
+  private final Vector<StaffStamping> staves;
   private final float xPosition;
   private final BarlineGroup.Style groupStyle;
   
@@ -41,22 +42,14 @@ public final class BarlineStamping
    * @param xPosition   the horizontal position in mm, relative to the parent frame
    * @param groupStyle  the grouping style of the barline
    */
-  public BarlineStamping(Barline barline, List<StaffStamping> staves,
+  public BarlineStamping(Barline barline, Vector<StaffStamping> staves,
     float xPosition, BarlineGroup.Style groupStyle)
   {
-    super(staves.get(0), LEVEL_MUSIC, barline);
+    super(staves.get(0), Level.Music, barline, null);
     this.barline = barline;
     this.staves = staves;
     this.xPosition = xPosition;
     this.groupStyle = groupStyle;
-    
-    updateDrawingElements();
-  }
-  
-  
-  private void updateDrawingElements()
-  {
-    //TODO: bounding shape
   }
   
   

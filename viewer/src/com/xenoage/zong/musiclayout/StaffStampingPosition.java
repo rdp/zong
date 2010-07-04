@@ -4,18 +4,18 @@ import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 
 
 /**
- * A StaffStampingPosition is a reference
+ * A {@link StaffStampingPosition} is a reference
  * to a StaffStamping and a x-coordinate
  * in mm, as well as the index of its score frame.
  * 
  * @author Andreas Wenger
  */
-public class StaffStampingPosition //TIDY: rename
+public final class StaffStampingPosition
 {
   
-  private StaffStamping staff;
-  private int frameIndex;
-  private float positionX;
+  private final StaffStamping staff;
+  private final int frameIndex;
+  private final float positionX;
   
   
   public StaffStampingPosition(StaffStamping staff, int frameIndex, float positionX)

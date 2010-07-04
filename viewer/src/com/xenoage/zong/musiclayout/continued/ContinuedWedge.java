@@ -8,7 +8,7 @@ import com.xenoage.zong.core.music.direction.Wedge;
  * 
  * @author Andreas Wenger
  */
-public class ContinuedWedge
+public final class ContinuedWedge
 	implements ContinuedElement
 {
 	

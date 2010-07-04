@@ -1,7 +1,6 @@
 package com.xenoage.zong.musiclayout.stampings;
 
 import com.xenoage.zong.app.App;
-import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
 import com.xenoage.zong.core.music.chord.Articulation;
 import com.xenoage.zong.core.music.chord.Chord;
@@ -13,11 +12,9 @@ import com.xenoage.zong.core.music.format.SP;
  *
  * @author Andreas Wenger
  */
-public class ArticulationStamping
+public final class ArticulationStamping
   extends StaffSymbolStamping
 {
-  
-	private Articulation.Type articulation;
 	
   
   /**
@@ -32,19 +29,10 @@ public class ArticulationStamping
   public ArticulationStamping(Chord chord, Articulation.Type articulation,
     StaffStamping parentStaff, SP position, float scaling)
   {
-    super(parentStaff, chord, null, position, scaling, false);
-    this.articulation = articulation;
-    updateBoundingShape();
-  }
-  
-  
-  /**
-   * Gets the symbol.
-   */
-  @Override protected Symbol getSymbol()
-  {
-  	return App.getInstance().getSymbolPool().getSymbol(
-  		CommonSymbol.getArticulation(articulation));
+    super(parentStaff, chord,
+    	App.getInstance().getSymbolPool().getSymbol(
+    		CommonSymbol.getArticulation(articulation)),
+    		null, position, scaling, false);
   }
 
 }

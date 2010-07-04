@@ -47,7 +47,7 @@ public final class SpacingElement
    * Returns a copy of this {@link SpacingElement}, but using the
    * given the horizontal offset.
    */
-  public SpacingElement changeOffset(float offset)
+  public SpacingElement withOffset(float offset)
   {
     return new SpacingElement(element, beat, offset);
   }
@@ -58,5 +58,10 @@ public final class SpacingElement
     return beat;
   }
   
+  
+  @Override public String toString()
+  {
+  	return element + " at " + beat + ": " + offset;
+  }
 
 }

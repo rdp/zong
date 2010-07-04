@@ -11,6 +11,7 @@ import com.xenoage.pdlib.PMap;
 import com.xenoage.pdlib.PVector;
 import com.xenoage.pdlib.Vector;
 import com.xenoage.util.SortedList;
+import com.xenoage.util.annotations.MaybeNull;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.chord.Chord;
@@ -40,10 +41,12 @@ public class Measure
   private final PVector<Voice> voices;
   
   //clefs, private keys, directions and instrument changes
-  private final BeatEList<Clef> clefs;
-  private final BeatEList<Key> privateKeys;
-  private final BeatEList<Direction> directions;
-  private final BeatEList<InstrumentChange> instrumentChanges;
+  @MaybeNull private final BeatEList<Clef> clefs;
+  @MaybeNull private final BeatEList<Key> privateKeys;
+  @MaybeNull private final BeatEList<Direction> directions;
+  @MaybeNull private final BeatEList<InstrumentChange> instrumentChanges;
+  
+  public static final Measure minimal = new Measure(pvec(Voice.empty), null, null, null, null);
   
   
   /**
@@ -65,15 +68,6 @@ public class Measure
     this.privateKeys = privateKeys;
     this.directions = directions;
     this.instrumentChanges = instrumentChanges;
-  }
-  
-  
-  /**
-   * Returns a minimal measure with a single voice.
-   */
-  public static Measure createMinimal()
-  {
-  	return new Measure(pvec(Voice.empty), null, null, null, null);
   }
   
   
@@ -302,6 +296,15 @@ public class Measure
   
   
   /**
+   * Gets the clefs, or null.
+   */
+  @MaybeNull public BeatEList<Clef> getClefs()
+  {
+  	return clefs;
+  }
+  
+  
+  /**
    * Returns the last clef within this measure.
    * If there is none, null is returned.
    */
@@ -324,6 +327,15 @@ public class Measure
     	return clefs.getLastBefore(endpoint, beat);
     else
     	return null;
+  }
+  
+  
+  /**
+   * Gets the keys, or null.
+   */
+  @MaybeNull public BeatEList<Key> getKeys()
+  {
+  	return privateKeys;
   }
   
   
@@ -388,6 +400,24 @@ public class Measure
   {
   	PVector<Voice> voices = this.voices.with(index, voice);
   	return new Measure(voices, clefs, privateKeys, directions, instrumentChanges);
+  }
+  
+  
+  /**
+   * Gets a list of all {@link MeasureElement}s.
+   */
+  public Vector<MeasureElement> getMeasureElements()
+  {
+  	PVector<MeasureElement> ret = pvec();
+  	if (clefs != null)
+	  	ret = ret.plusAll(clefs.getDataElements());
+  	if (privateKeys != null)
+	  	ret = ret.plusAll(privateKeys.getDataElements());
+  	if (directions != null)
+	  	ret = ret.plusAll(directions.getDataElements());
+  	if (instrumentChanges != null)
+	  	ret = ret.plusAll(instrumentChanges.getDataElements());
+  	return ret;
   }
   
   

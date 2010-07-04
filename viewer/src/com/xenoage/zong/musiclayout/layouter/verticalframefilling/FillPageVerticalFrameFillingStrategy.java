@@ -1,5 +1,9 @@
 package com.xenoage.zong.musiclayout.layouter.verticalframefilling;
 
+import static com.xenoage.pdlib.PVector.pvec;
+import static com.xenoage.util.Range.range;
+
+import com.xenoage.pdlib.PVector;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangement;
@@ -38,20 +42,21 @@ public class FillPageVerticalFrameFillingStrategy
 	{
 		FrameArrangement ret = frameArr;
     //if there is no or only one system, do nothing
-    if (frameArr.getSystemsCount() > 1)
+    if (frameArr.getSystems().size() > 1)
     {
 	    //compute remaining space
-	    SystemArrangement lastSystem = frameArr.getSystem(frameArr.getSystemsCount() - 1);
+	    SystemArrangement lastSystem = frameArr.getSystems().getLast();
 	    float lastSystemEndY = lastSystem.getOffsetY() + lastSystem.getHeight();
 	    float remainingSpace = frameArr.getUsableSize().height - lastSystemEndY;
 	    //compute additional space between the systems
-	    float additionalSpace = remainingSpace / (frameArr.getSystemsCount() - 1);
+	    float additionalSpace = remainingSpace / (frameArr.getSystems().size() - 1);
 	    //compute new y-offsets
-	    SystemArrangement[] systemArrs = new SystemArrangement[frameArr.getSystemsCount()];
-	    for (int i = 0; i < frameArr.getSystemsCount(); i++)
+	    PVector<SystemArrangement> systemArrs = pvec();
+	    for (int i : range(frameArr.getSystems()))
 	    {
-	      SystemArrangement system = frameArr.getSystem(i);
-	      systemArrs[i] = system.changeOffsetY(system.getOffsetY() + i * additionalSpace);
+	    	SystemArrangement system = frameArr.getSystems().get(i);
+	      systemArrs = systemArrs.plus(
+	      	system.withOffsetY(system.getOffsetY() + i * additionalSpace));
 	    }
 	    ret = new FrameArrangement(systemArrs, frameArr.getUsableSize());
     }

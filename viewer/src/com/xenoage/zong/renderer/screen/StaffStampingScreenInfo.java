@@ -14,20 +14,16 @@ import com.xenoage.zong.musiclayout.stampings.StaffStamping;
  * step, but caching this information saves
  * much time.
  * 
- * TODO: when staff changes (size, number of lines...)
- * this class must be notified. At the moment the
- * cached values are used forever.
- * 
  * @author Andreas Wenger
  */
-public class StaffStampingScreenInfo
+public final class StaffStampingScreenInfo
 {
 	
-	private StaffStamping parentStaff;
+	private final StaffStamping parentStaff;
 	
+	//cache
 	private ScreenStaff screenStaff = null;
   private float lastScreenStaffScaling;
-  
   private ScreenLine screenLine = null;
   private float lastScreenLineScaling;
   

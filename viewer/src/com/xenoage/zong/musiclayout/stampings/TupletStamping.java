@@ -13,7 +13,7 @@ import com.xenoage.zong.renderer.stampings.*;
  *
  * @author Andreas Wenger
  */
-public class TupletStamping
+public final class TupletStamping
   extends Stamping
 {
 
@@ -35,14 +35,13 @@ public class TupletStamping
   public TupletStamping(float x1, float x2, float lp1, float lp2, boolean bracket, FormattedText text,
   	StaffStamping parentStaff)
   {
-  	super(parentStaff, LEVEL_MUSIC, null);
+  	super(parentStaff, Level.Music, null, null);
   	this.x1mm = x1;
   	this.x2mm = x2;
   	this.y1lp = lp1;
   	this.y2lp = lp2;
   	this.bracket = bracket;
   	this.text = text;
-    //TODO: bounding shape. needed?
   }
   
   

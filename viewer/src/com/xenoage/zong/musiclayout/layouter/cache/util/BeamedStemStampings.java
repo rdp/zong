@@ -1,13 +1,8 @@
 package com.xenoage.zong.musiclayout.layouter.cache.util;
 
-import com.xenoage.util.iterators.It;
+import com.xenoage.pdlib.PVector;
 import com.xenoage.zong.core.music.beam.Beam;
-import com.xenoage.zong.core.music.chord.Chord;
-import com.xenoage.zong.core.music.chord.StemDirection;
-import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.StemStamping;
-
-import java.util.ArrayList;
 
 
 /**
@@ -22,21 +17,11 @@ import java.util.ArrayList;
  */
 public class BeamedStemStampings
 {
-  
-	public static class OpenBeamMiddleStem
-	{
-		public StaffStamping staff;
-		public Chord chord;
-		public StemDirection stemDirection;
-		public float positionX;
-		public float bottomNoteLP;
-		public float topNoteLP;
-	}
 	
-  private Beam beam;
-  private StemStamping firstStem;
-  private ArrayList<OpenBeamMiddleStem> middleStems;
-  private StemStamping lastStem;
+  private final Beam beam;
+  private final StemStamping firstStem;
+  private final PVector<OpenBeamMiddleStem> middleStems;
+  private final StemStamping lastStem;
   
   
   /**
@@ -44,10 +29,19 @@ public class BeamedStemStampings
    * for the given {@link Beam} instance.
    */
   public BeamedStemStampings(Beam beam)
-  {
-    this.beam = beam;
-    this.middleStems = new ArrayList<OpenBeamMiddleStem>(beam.getWaypoints().size()); 
-  }
+	{
+		this(beam, null, new PVector<OpenBeamMiddleStem>(), null);
+	}
+  
+  
+  private BeamedStemStampings(Beam beam, StemStamping firstStem,
+		PVector<OpenBeamMiddleStem> middleStems, StemStamping lastStem)
+	{
+		this.beam = beam;
+		this.firstStem = firstStem;
+		this.middleStems = middleStems;
+		this.lastStem = lastStem;
+	}
   
   
   /**
@@ -58,9 +52,9 @@ public class BeamedStemStampings
   {
     return beam;
   }
-  
-  
-  /**
+
+
+	/**
    * Gets the first stem of the beam.
    */
   public StemStamping getFirstStem()
@@ -72,9 +66,9 @@ public class BeamedStemStampings
   /**
    * Sets the first stem of the beam.
    */
-  public void setFirstStem(StemStamping firstStem)
+  public BeamedStemStampings withFirstStem(StemStamping firstStem)
   {
-    this.firstStem = firstStem;
+    return new BeamedStemStampings(beam, firstStem, middleStems, lastStem);
   }
   
   
@@ -90,18 +84,18 @@ public class BeamedStemStampings
   /**
    * Adds a stem to the middle part of beam.
    */
-  public void addMiddleStem(OpenBeamMiddleStem middleStem)
+  public BeamedStemStampings plusMiddleStem(OpenBeamMiddleStem middleStem)
   {
-    this.middleStems.add(middleStem);
+  	return new BeamedStemStampings(beam, firstStem, middleStems.plus(middleStem), lastStem);
   }
   
   
   /**
    * Gets an iterator over the middle stems.
    */
-  public It<OpenBeamMiddleStem> getMiddleStems()
+  public PVector<OpenBeamMiddleStem> getMiddleStems()
   {
-  	return new It<OpenBeamMiddleStem>(middleStems);
+  	return middleStems;
   }
   
   
@@ -117,9 +111,9 @@ public class BeamedStemStampings
   /**
    * Sets the last stem of the beam.
    */
-  public void setLastStem(StemStamping lastStem)
+  public BeamedStemStampings withLastStem(StemStamping lastStem)
   {
-    this.lastStem = lastStem;
+  	return new BeamedStemStampings(beam, firstStem, middleStems, lastStem);
   }
   
   

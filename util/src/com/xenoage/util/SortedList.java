@@ -31,6 +31,15 @@ public class SortedList<T extends Comparable<T>>
 	
 	
 	/**
+	 * Creates a new sorted list without duplicates.
+	 */
+	public static <T2 extends Comparable<T2>> SortedList<T2> sortedListNoDuplicates()
+	{
+		return new SortedList<T2>(false);
+	}
+	
+	
+	/**
 	 * Creates a new sorted list from presorted elements.
 	 * If they are not sorted, an {@link IllegalArgumentException} is thown.
 	 */

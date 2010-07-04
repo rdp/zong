@@ -1,5 +1,6 @@
 package com.xenoage.zong.musiclayout.notations.chord;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.zong.core.music.chord.Accidental;
 
 
@@ -13,7 +14,7 @@ import com.xenoage.zong.core.music.chord.Accidental;
  *
  * @author Andreas Wenger
  */
-public class AccidentalsAlignment
+public final class AccidentalsAlignment
 {
   
   public static final float WIDTH_GAP_ACCTONOTE = 0.5f;
@@ -25,7 +26,7 @@ public class AccidentalsAlignment
   public static final float WIDTH_DOUBLEFLAT = 1.8f;
   
   
-  private final AccidentalAlignment[] accidentals;
+  private final PVector<AccidentalAlignment> accidentals;
   private final float width;
   
   
@@ -34,12 +35,12 @@ public class AccidentalsAlignment
    * @param accidentals  the positions of the accidentals
    * @param width        the needed width for all accidentals
    */
-  public AccidentalsAlignment(AccidentalAlignment[] accidentals, float width)
+  public AccidentalsAlignment(PVector<AccidentalAlignment> accidentals, float width)
   {
   	//must be sorted upwards
-  	for (int i = 0; i < accidentals.length - 1; i++)
+  	for (int i = 0; i < accidentals.size() - 1; i++)
   	{
-  		if (accidentals[i].getLinePosition() > accidentals[i + 1].getLinePosition())
+  		if (accidentals.get(i).getLinePosition() > accidentals.get(i + 1).getLinePosition())
   			throw new IllegalArgumentException("Accidentals must be sorted upwards");
   	}
   	this.accidentals = accidentals;
@@ -50,7 +51,7 @@ public class AccidentalsAlignment
   /**
    * Gets the accidentals of this chord.
    */
-  public AccidentalAlignment[] getAccidentals()
+  public PVector<AccidentalAlignment> getAccidentals()
   {
     return accidentals;
   }

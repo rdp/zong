@@ -40,12 +40,11 @@ public final class CurvedLineStamping
    */
   public CurvedLineStamping(StaffStamping parentStaff, CurvedLine curvedLine, SP p1, SP p2, SP c1, SP c2)
   {
-    super(parentStaff, LEVEL_MUSIC, curvedLine);
+    super(parentStaff, Level.Music, curvedLine, null);
     this.p1 = p1;
     this.p2 = p2;
     this.c1 = c1;
     this.c2 = c2;
-    //TODO: bounding shape
   }
 
   

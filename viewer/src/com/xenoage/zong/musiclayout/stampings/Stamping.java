@@ -1,9 +1,5 @@
 package com.xenoage.zong.musiclayout.stampings;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Shape;
 import com.xenoage.zong.core.music.MusicElement;
 import com.xenoage.zong.renderer.RenderingParams;
@@ -30,93 +26,66 @@ public abstract class Stamping
 {
   
   //level
-  public static final int LEVEL_EMPTYSPACE = 0; //empty space
-  public static final int LEVEL_STAFF = 1; //staff
-  public static final int LEVEL_MUSIC = 2; //notes, barlines, ...
-  public static final int LEVEL_TEXT = 2; //text, dynamic symbols, ...
-  private int level;
+	public enum Level
+	{
+		/** empty space */
+		EmptySpace,
+		/** staff */
+		Staff,
+		/** notes, barlines, ... */
+		Music,
+		/** text, dynamic symbols, ... */
+		Text;
+	}
+  private final Level level;
   
   //parent staff stamping
-  protected StaffStamping parentStaff = null;
-
-  //bounding geometry
-  private ArrayList<Shape> boundingShapes = new ArrayList<Shape>();
+  protected final StaffStamping parentStaff;
   
   //the musical element for which this stamping was created,
   //or null, if not availabe (e.g. for staves)
   //this may be another element than expected, e.g. an accidental layout
   //element may refer to a chord musical element.
-  private MusicElement musicElement;
+  private final MusicElement musicElement;
+
+  //bounding geometry
+  private final Shape boundingShape;
   
-  
+
   /**
    * Creates a new stamping that belongs to the given
    * staff element. It may also belong to more than only this
    * staff.
-   * @param parentStaff   the parent staff stamping
-   * @param level         the level, like LEVEL_STAFF or LEVEL_TEXT
-   * @param musicElement  the musical element for which this stamping was created, or null
+   * @param parentStaff    the parent staff stamping
+   * @param level          the layer of this stamping
+   * @param musicElement   the musical element for which this stamping was created, or null
+   * @param boundingShape  the bounding geometry
    */
-  public Stamping(StaffStamping parentStaff, int level, MusicElement musicElement)
+  public Stamping(StaffStamping parentStaff, Level level, MusicElement musicElement,
+  	Shape boundingShape)
   {
     this.level = level;
     this.parentStaff = parentStaff;
     this.musicElement = musicElement;
+    this.boundingShape = boundingShape;
   }
   
   
   /**
-   * Creates a new stamping that belongs to no
-   * staff element.
-   * @param level         the level, like LEVEL_STAFF or LEVEL_TEXT
+   * Gets the layer of this stamping.
    */
-  public Stamping(int level, MusicElement musicElement)
-  {
-    this.level = level;
-    this.parentStaff = null;
-    this.musicElement = musicElement;
-  }
-  
-  
-  /**
-   * Gets the level of this element, like LEVEL_STAFF or LEVEL_TEXT.
-   */
-  public int getLevel()
+  public Level getLevel()
   {
     return level;
   }
   
   
-  protected void clearBoundingShape()
-  {
-    boundingShapes.clear();
-  }
-  
-  
-  protected void addBoundingShape(Shape boundingShape)
-  {
-    boundingShapes.add(boundingShape);
-  }
-  
-  
-  public List<Shape> getBoundingShapes()
-  {
-    return boundingShapes;
-  }
-  
-  
   /**
-   * Returns true, if at least one of the bounding shapes
-   * of this element contains the given point, otherwise false.
+   * Gets the bounding geometry.
    */
-  public boolean containsPoint(Point2f point)
+  public Shape getBoundingShape()
   {
-    for (Shape s : boundingShapes)
-    {
-      if (s.contains(point))
-        return true;
-    }
-    return false;
+    return boundingShape;
   }
 
 

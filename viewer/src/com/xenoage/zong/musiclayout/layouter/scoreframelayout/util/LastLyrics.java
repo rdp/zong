@@ -1,7 +1,8 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout.util;
 
-import java.util.ArrayList;
+import static com.xenoage.pdlib.PVector.pvec;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.zong.musiclayout.stampings.StaffTextStamping;
 
 
@@ -10,10 +11,12 @@ import com.xenoage.zong.musiclayout.stampings.StaffTextStamping;
  * 
  * @author Andreas Wenger
  */
-public class LastLyrics
+public final class LastLyrics
 {
 	
-	public ArrayList<ArrayList<StaffTextStamping>> lastLyrics = new ArrayList<ArrayList<StaffTextStamping>>();
+	private PVector<PVector<StaffTextStamping>> lastLyrics = pvec();
+	
+	private static final PVector<StaffTextStamping> emptyStampings = pvec();
 	
 	
 	/**
@@ -23,7 +26,7 @@ public class LastLyrics
 	{
 		if (staff < lastLyrics.size())
 		{
-			ArrayList<StaffTextStamping> verses = lastLyrics.get(staff);
+			PVector<StaffTextStamping> verses = lastLyrics.get(staff);
 			if (verses != null && verse < verses.size())
 			{
 				return verses.get(verse);
@@ -41,20 +44,21 @@ public class LastLyrics
 		//ensure that staff array is big enough
 		while (staff >= lastLyrics.size())
 		{
-			lastLyrics.add(null);
+			lastLyrics = lastLyrics.plus(null);
 		}
 		//ensure that verse array is existing and big enough
 		if (lastLyrics.get(staff) == null)
 		{
-			lastLyrics.set(staff, new ArrayList<StaffTextStamping>());
+			lastLyrics = lastLyrics.with(staff, emptyStampings);
 		}
-		ArrayList<StaffTextStamping> verses = lastLyrics.get(staff);
+		PVector<StaffTextStamping> verses = lastLyrics.get(staff);
 		while (verse >= verses.size())
 		{
-			verses.add(null);
+			verses = verses.plus(null);
 		}
 		//set lyric
-		verses.set(verse, lyric);
+		verses = verses.with(verse, lyric);
+		lastLyrics = lastLyrics.with(staff, verses);
 	}
 	
 

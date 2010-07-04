@@ -112,7 +112,7 @@ public class BasicFrameController
 
 	public void loadDocument(MxlScorePartwise doc) throws InvalidFormatException
 	{
-		controller.loadScore(doc);
+		controller.loadScore(doc, false);
 		view.setScoreInfo(controller.getScore());
 	}
 

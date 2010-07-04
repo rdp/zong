@@ -94,6 +94,29 @@ public final class Fraction
   {
   	return new Fraction(number);
   }
+  
+  
+  /**
+   * Creates a new fraction from the given string, which must have the format
+   * "x", "x/y" or "z+x/y" for x and y and z being an integer.
+   */
+  public static Fraction fromString(String s)
+  {
+  	String[] plus = s.split("\\+");
+  	if (plus.length == 1)
+  	{
+  		String[] div = s.split("/");
+  		if (div.length == 1)
+	  		return fr(Integer.parseInt(s));
+	  	else if (div.length == 2)
+	  		return fr(Integer.parseInt(div[0]), Integer.parseInt(div[1]));
+  	}
+  	else if (plus.length == 2)
+  	{
+  		return fr(Integer.parseInt(plus[0])).add(fromString(plus[1]));
+  	}
+  	throw new IllegalArgumentException("Invalid fraction: " + s);
+  }
 
   
   /**
@@ -236,6 +259,12 @@ public final class Fraction
     {
       return false;
     }
+  }
+  
+  
+  @Override public int hashCode()
+  {
+  	return numerator + denominator * 100000;
   }
   
   

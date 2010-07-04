@@ -28,7 +28,7 @@ public final class Column
 	public static Column column(Score score, int measure)
 	{
 		Column ret = new Column(score.getStavesCount());
-		for (int iStaff : range(score.getStavesCount() - 1))
+		for (int iStaff : range(score.getStavesCount()))
 		{
 			ret.add(score.getStavesList().getStaff(iStaff).getMeasures().get(measure));
 		}

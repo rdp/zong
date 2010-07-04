@@ -73,6 +73,15 @@ public final class PVector<T>
 	}
 	
 	
+	public static <T2> PVector<T2> pvecInit(T2 val, int size)
+	{
+		PVector<T2> ret = new PVector<T2>();
+		for (int i = 0; i < size; i++)
+			ret = ret.plus(val);
+		return ret;
+	}
+	
+	
 	private PVector(TreePVector<T> data)
 	{
 		this.data = data;

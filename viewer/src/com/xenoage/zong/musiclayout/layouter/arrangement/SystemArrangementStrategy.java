@@ -1,12 +1,14 @@
 package com.xenoage.zong.musiclayout.layouter.arrangement;
 
+import static com.xenoage.pdlib.PVector.pvec;
+import static com.xenoage.util.lang.Tuple2.t;
 import static com.xenoage.zong.core.music.MP.atStaff;
 import static com.xenoage.zong.core.music.util.Column.column;
 import static com.xenoage.zong.io.score.ScoreController.getInterlineSpace;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
+import com.xenoage.pdlib.PVector;
+import com.xenoage.pdlib.Vector;
+import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.lang.Tuple3;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.core.Score;
@@ -22,16 +24,15 @@ import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.layouter.cache.VoiceSpacingsCache;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.MeasureColumnSpacingStrategy;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
-import com.xenoage.zong.util.ArrayTools;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.ColumnSpacingStrategy;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 
 
 /**
  * The system arrangement strategy arranges
  * a list of measure columns into a {@link SystemArrangement}.
  * 
- * The systems will not be stretched to its full possible width.
+ * The systems will not be stretched to their full possible width.
  * This can be done by another strategy.
  * 
  * This strategy also regards forced and prohibited system breaks
@@ -44,24 +45,22 @@ public class SystemArrangementStrategy
 {
 	
 	//used strategies
-	private final MeasureColumnSpacingStrategy measureColumnSpacingStrategy;
+	private final ColumnSpacingStrategy measureColumnSpacingStrategy;
 	
 	
 	/**
 	 * Creates a new {@link SystemArrangementStrategy}.
 	 */
-	public SystemArrangementStrategy(MeasureColumnSpacingStrategy measureColumnSpacingStrategy)
+	public SystemArrangementStrategy(ColumnSpacingStrategy measureColumnSpacingStrategy)
 	{
 		this.measureColumnSpacingStrategy = measureColumnSpacingStrategy;
 	}
   
 	
 	/**
-	 * Arranges an optimum number of measures in a system,
-   * beginning at the given measure,
-   * and returns this system.
-   * If there is not enough space left on the
-   * current frame to create a system, null is returned.
+	 * Arranges an optimum number of measures in a system, beginning at the given measure,
+   * and returns this system together with a list of created notations for leading spacings.
+   * If there is not enough space left on the current frame to create a system, null is returned.
 	 * @param startMeasure   the index of the measure to start with
 	 * @param usableSize     the usable size within the score frame
 	 * @param offsetY        the vertical offset of the system in mm
@@ -73,8 +72,9 @@ public class SystemArrangementStrategy
    *                       for the leading spacing are added.
 	 * @param lc             the context of the layouter
 	 */
-  public SystemArrangement computeSystemArrangement(int startMeasure, Size2f usableSize,
-  	float offsetY, int systemIndex, ArrayList<MeasureColumnSpacing> measureColumnSpacings,
+  public Tuple2<SystemArrangement, NotationsCache> computeSystemArrangement(
+  	int startMeasure, Size2f usableSize,
+  	float offsetY, int systemIndex, Vector<ColumnSpacing> measureColumnSpacings,
   	NotationsCache notations, ScoreLayouterContext lc)
   {
   	
@@ -82,33 +82,41 @@ public class SystemArrangementStrategy
   	Score score = lc.getScore();
   	ScoreFormat scoreFormat = score.getScoreFormat();
   	ScoreHeader scoreHeader = score.getScoreHeader();
-  	float[] staffHeights = new float[score.getStavesCount()];
-  	float[] staffDistances = new float[score.getStavesCount() - 1];
+  	
   	//compute staff heights
+  	float[] staffHeights = new float[score.getStavesCount()];
+  	float totalStavesHeights = 0;
   	for (int iStaff = 0; iStaff < staffHeights.length; iStaff++)
   	{
   		Staff staff = score.getStaff(iStaff);
-  		staffHeights[iStaff] = (staff.getLinesCount() - 1) * 
-  			getInterlineSpace(score, atStaff(iStaff));
+  		float staffHeight = (staff.getLinesCount() - 1) * 
+				getInterlineSpace(score, atStaff(iStaff));
+  		staffHeights[iStaff] = staffHeight;
+  		totalStavesHeights += staffHeight;
   	}
+  	
   	//compute staff distances
+  	float[] staffDistances = new float[score.getStavesCount() - 1];
+  	float totalStavesDistances = 0;
   	for (int iStaff = 1; iStaff < staffHeights.length; iStaff++)
   	{
   		StaffLayout staffLayout = scoreHeader.getStaffLayout(systemIndex, iStaff);
+  		float staffDistance = 0;
   		if (staffLayout != null && staffLayout.getStaffDistance() != null)
   		{
   			//use custom staff distance
-  			staffDistances[iStaff - 1] = staffLayout.getStaffDistance();
+  			staffDistance = staffLayout.getStaffDistance();
   		}
   		else
   		{
   			//use default staff distance
-  			staffDistances[iStaff - 1] = score.getScoreFormat().getStaffLayoutNotNull(iStaff).getStaffDistance();
+  			staffDistance = score.getScoreFormat().getStaffLayoutNotNull(iStaff).getStaffDistance();
   		}
+  		staffDistances[iStaff - 1] = staffDistance;
+  		totalStavesDistances += staffDistance; 
   	}
   	//enough space?
-  	if (offsetY + ArrayTools.sum(staffHeights) +
-  		ArrayTools.sum(staffDistances) > usableSize.height)
+  	if (offsetY + totalStavesHeights + totalStavesDistances > usableSize.height)
   	{
   		//not enough space
   		return null;
@@ -122,21 +130,22 @@ public class SystemArrangementStrategy
     //append system measure-by-measure, until there is no space any more
     //or until there are no measures left
   	int measuresCount = score.getMeasuresCount();
-    LinkedList<MeasureColumnSpacing> systemMCSs = new LinkedList<MeasureColumnSpacing>();
+    PVector<ColumnSpacing> systemMCSs = pvec();
     float usedWidth = 0;
     int currentMeasure;
+    NotationsCache retLeadingNotations = NotationsCache.empty;
     while (startMeasure + systemMCSs.size() < measuresCount)
     {
     	currentMeasure = startMeasure + systemMCSs.size();
       
       //decide if to add a leading spacing to the current measure or not
-    	MeasureColumnSpacing currentMCS;
+    	ColumnSpacing currentMCS;
     	NotationsCache leadingNotations = null; //add leading notations to given cache only if
     	                                        //measure column with leading spacing is really used
       if (systemMCSs.size() == 0)
       { 
       	//first measure within this system: add leading elements (clef, time sig.)
-      	Tuple3<MeasureColumnSpacing, VoiceSpacingsCache, NotationsCache> mcsData =
+      	Tuple3<ColumnSpacing, VoiceSpacingsCache, NotationsCache> mcsData =
       		measureColumnSpacingStrategy.computeMeasureColumnSpacing(currentMeasure,
       			column(score, currentMeasure), true /* leading! */, notations,
       			score.getScoreHeader().getColumnHeader(currentMeasure), lc);
@@ -151,7 +160,7 @@ public class SystemArrangementStrategy
       
       //try to add this measure to the current system. if there is no space left for
       //it, don't use it, and we are finished.
-      if (!append(currentMCS, currentMeasure, usableWidth, usedWidth,
+      if (!canAppend(currentMCS, currentMeasure, usableWidth, usedWidth,
       	score.getScoreHeader(), systemMCSs.size() == 0))
       {
         break;
@@ -159,9 +168,9 @@ public class SystemArrangementStrategy
       else
       {
       	usedWidth += currentMCS.getWidth();
-      	systemMCSs.add(currentMCS);
+      	systemMCSs = systemMCSs.plus(currentMCS);
       	if (leadingNotations != null)
-      		notations.setAll(leadingNotations);
+      		retLeadingNotations = retLeadingNotations.merge(leadingNotations);
       }
     }
     
@@ -173,25 +182,20 @@ public class SystemArrangementStrategy
     else
     {
       SystemArrangement ret = new SystemArrangement(startMeasure, startMeasure + systemMCSs.size() - 1,
-      	ArrayTools.toMeasureColumnSpacingArray(systemMCSs), systemLeftMargin, systemRightMargin, usedWidth, 
+      	systemMCSs, systemLeftMargin, systemRightMargin, usedWidth, 
       	staffHeights, staffDistances, offsetY);
-      return ret;
+      return t(ret, retLeadingNotations);
     }
     
   }
   
   
   /**
-   * Appends the given measure to the currently computed system, if possible.
+   * Returns true, if the given measure can be appended to the currently computed system,
+   * otherwise false.
    * It is not tested if there is enough vertical space, this must be done before.
-   * @param measure       the spacing of the measure to append
-   * @param measureIndex  the index of the measure to append
-   * @param params        the current variables (can be changed within this method)
-   * @return true, if there was enough space for the measure, so
-   *    it was appended. false, if there was not enough
-   *    space left, and it was not appended.
    */
-  public boolean append(MeasureColumnSpacing measure, int measureIndex,
+  public boolean canAppend(ColumnSpacing measure, int measureIndex,
   	float usableWidth, float usedWidth, ScoreHeader scoreHeader, boolean firstMeasureInSystem)
   {
   	

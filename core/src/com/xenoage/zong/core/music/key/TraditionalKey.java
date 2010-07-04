@@ -2,6 +2,7 @@ package com.xenoage.zong.core.music.key;
 
 import static com.xenoage.zong.core.music.Pitch.pi;
 
+import com.xenoage.util.MathTools;
 import com.xenoage.zong.core.music.Pitch;
 
 
@@ -194,6 +195,60 @@ public final class TraditionalKey
 		alter = (byte) getAlterations()[step];
 		return pi(step, alter, octave);
 	}
+	
+	
+	/**
+   * Gets the line position for the sharp or flat
+   * with the given 0-based index, when C4 is on the given line position.
+   */
+	public static int getLinePosition(int index, boolean sharp,
+		int linePositionC4, int linePositionMin)
+  {
+  	int ret = linePositionC4 + 2 +
+        (sharp ? getSharpLinePositionGKey(index) : getFlatLinePositionGKey(index));
+    ret = MathTools.modMin(ret, 7, linePositionMin);
+    return ret;
+  }
+	
+	
+	/**
+   * Gets the line position for the flat
+   * with the given 0-based index when there is a normal G key.
+   */
+  public static int getFlatLinePositionGKey(int index)
+  {
+    switch (index)
+    {
+      case 0: return 4; //Bb
+      case 1: return 7; //Eb
+      case 2: return 3; //Ab
+      case 3: return 6; //Db
+      case 4: return 2; //Gb
+      case 5: return 5; //Cb
+      case 6: return 1; //Fb
+      default: throw new IllegalArgumentException("Invalid index: " + index);
+    }
+  }
+  
+  
+  /**
+   * Gets the line position for the sharp
+   * with the given 0-based index when there is a normal G key.
+   */
+  public static int getSharpLinePositionGKey(int index)
+  {
+    switch (index)
+    {
+      case 0: return 8; //F#
+      case 1: return 5; //C#
+      case 2: return 9; //G#
+      case 3: return 6; //D#
+      case 4: return 3; //A#
+      case 5: return 7; //E#
+      case 6: return 4; //H#
+      default: throw new IllegalArgumentException("Invalid index: " + index);
+    }
+  }
 
 	
 	@Override public String toString()

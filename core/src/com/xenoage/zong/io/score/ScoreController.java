@@ -123,7 +123,8 @@ public class ScoreController
 	 */
 	public static PMap<Pitch, Integer> getAccidentals(Score score, MP mp, BeatInterval interval)
 	{
-		MPE<? extends Key> key = getKey(score, mp, interval);
+		//start key of the measure always counts
+		MPE<? extends Key> key = getKey(score, mp, BeforeOrAt);
 		//if key change is in same measure, start at that beat. otherwise start at beat 0.
 		Fraction keyBeat = (key.getMP().getMeasure() == mp.getMeasure() ?
 			key.getMP().getBeat() : _0);
@@ -315,29 +316,32 @@ public class ScoreController
 	
 	/**
 	 * Gets the {@link MusicContext} that is defined before (or at,
-	 * dependent on the given {@link BeatInterval}) the given
+	 * dependent on the given {@link BeatInterval}s) the given
 	 * {@link MP}, also over measure boundaries.
 	 * 
-	 * If an accidental appears at the given beat, it is regarded
-	 * if the given {@link BeatInterval} is {@link BeatInterval#At}
-	 * or {@link BeatInterval#BeforeOrAt}, but if it is
-	 * {@link BeatInterval#Before}, it is ignored.
-	 *
 	 * Calling this method can be quite expensive, so call only when neccessary.
+	 * 
+	 * @param score                the score
+	 * @param mp                   the musical position
+	 * @param clefAndKeyInterval   where to look for the last clef and key:
+	 *                             {@link BeatInterval#Before} ignores a clef and a key
+	 *                             at the given position, {@link BeatInterval#BeforeOrAt}
+	 *                             and {@link BeatInterval#At} (meaning the same here)
+	 *                             include it
+	 * @param accidentalsInterval  the same as for clefAndKeyInterval, but for the accidentals.
+	 *                             If null, no accidentals are collected.          
 	 */
-	public static MusicContext getMusicContext(Score score, MP mp, BeatInterval interval)
+	public static MusicContext getMusicContext(Score score, MP mp,
+		BeatInterval clefAndKeyInterval, BeatInterval accidentalsInterval)
 	{
-		BeatInterval keyClefInterval = interval;
-		if (interval == At)
-		{
-			//when we want to now the musical context _at_ a given position, it
-			//still has the clef/key that was set _before_
-			keyClefInterval = BeforeOrAt;
-		}
-		Clef clef = getClef(score, mp, keyClefInterval);
-		Key key = getKey(score, mp, keyClefInterval).getElement();
-		PMap<Pitch, Integer> accidentals = getAccidentals(score, mp, interval);
-		return new MusicContext(clef, key, accidentals);
+		if (clefAndKeyInterval == At)
+			clefAndKeyInterval = BeforeOrAt; //At and BeforeOrAt mean the same in this context
+		Clef clef = getClef(score, mp, clefAndKeyInterval);
+		Key key = getKey(score, mp, clefAndKeyInterval).getElement();
+		PMap<Pitch, Integer> accidentals = null;
+		if (accidentalsInterval != null)
+			accidentals = getAccidentals(score, mp, accidentalsInterval);
+		return new MusicContext(clef, key, accidentals, score.getStaff(mp).getLinesCount());
 	}
 	
 	

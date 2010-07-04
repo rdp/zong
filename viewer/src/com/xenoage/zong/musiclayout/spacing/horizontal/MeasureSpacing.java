@@ -1,5 +1,10 @@
 package com.xenoage.zong.musiclayout.spacing.horizontal;
 
+import static com.xenoage.pdlib.PVector.pvec;
+
+import com.xenoage.pdlib.PVector;
+import com.xenoage.util.SortedList;
+import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.MP;
 
 
@@ -13,8 +18,11 @@ public final class MeasureSpacing
 {
   
 	private final MP mp;
-	private final VoiceSpacing[] voiceSpacings;
-  private final MeasureLeadingSpacing leadingSpacing;
+	private final PVector<VoiceSpacing> voiceSpacings;
+  private final LeadingSpacing leadingSpacing;
+  
+  //cache
+  private final PVector<Fraction> usedBeats;
   
 
   /**
@@ -23,12 +31,23 @@ public final class MeasureSpacing
    * @param voiceSpacings   the list of voices
    * @param leadingSpacing  the elements at the beginning (initial clef, key signature, ...), or null
    */
-  public MeasureSpacing(MP mp, VoiceSpacing[] voiceSpacings,
-  	MeasureLeadingSpacing leadingSpacing)
+  public MeasureSpacing(MP mp, PVector<VoiceSpacing> voiceSpacings,
+  	LeadingSpacing leadingSpacing)
   {
   	this.mp = mp;
     this.voiceSpacings = voiceSpacings;
     this.leadingSpacing = leadingSpacing;
+    
+    //compute the list of all used beats
+    SortedList<Fraction> usedBeats = new SortedList<Fraction>(false);
+    for (VoiceSpacing vs : voiceSpacings)
+    {
+    	for (SpacingElement se : vs.getSpacingElements())
+    	{
+    		usedBeats.add(se.getBeat());
+    	}
+    }
+    this.usedBeats = pvec(usedBeats.getLinkedList());
   }
   
   
@@ -44,27 +63,27 @@ public final class MeasureSpacing
   /**
    * Gets the leading spacing.
    */
-  public MeasureLeadingSpacing getLeadingSpacing()
+  public LeadingSpacing getLeadingSpacing()
   {
     return leadingSpacing;
-  }
-  
-  
-  /**
-   * Gets the number of voices.
-   */
-  public int getVoicesCount()
-  {
-    return voiceSpacings.length;
   }
 
 
 	/**
-	 * Gets the spacing of the given voice.
+	 * Gets the voice spacings.
 	 */
-	public VoiceSpacing getVoice(int index)
+	public PVector<VoiceSpacing> getVoiceSpacings()
 	{
-	  return voiceSpacings[index];
+	  return voiceSpacings;
+	}
+	
+	
+	/**
+	 * Gets a sorted list of all used beats in this measure.
+	 */
+	public PVector<Fraction> getUsedBeats()
+	{
+		return usedBeats;
 	}
   
   

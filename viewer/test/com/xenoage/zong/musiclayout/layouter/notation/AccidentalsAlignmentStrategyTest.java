@@ -55,35 +55,35 @@ public class AccidentalsAlignmentStrategyTest
   {
   	strategy = new AccidentalsAlignmentStrategy();
     ClefType clefG = ClefType.G;
-    contextC = new MusicContext();
+    contextC = MusicContext.simpleInstance;
     //contextEb: key = Eb major, acc = Fbb5, G##5
     contextEb = new MusicContext(
       new Clef(clefG), new TraditionalKey(-3),
-      new Pitch[]{pi(3, -2, 5), pi(4, 2, 5)});
+      new Pitch[]{pi(3, -2, 5), pi(4, 2, 5)}, 5);
     //contextAccD4: key = C major, acc = D#4
     contextAccD4 = new MusicContext(
       new Clef(clefG), new TraditionalKey(0),
-      new Pitch[]{pi(1, 1, 4)});
+      new Pitch[]{pi(1, 1, 4)}, 5);
     //contextAccG4: key = C major, acc = G#4
     contextAccG4 = new MusicContext(
       new Clef(clefG), new TraditionalKey(0),
-      new Pitch[]{pi(4, 1, 4)});
+      new Pitch[]{pi(4, 1, 4)}, 5);
     //contextAccB4: key = C major, acc = B#4
     contextAccB4 = new MusicContext(
       new Clef(clefG), new TraditionalKey(0),
-      new Pitch[]{pi(6, 1, 4)});
+      new Pitch[]{pi(6, 1, 4)}, 5);
     //contextAccC5: key = C major, acc = C#5
     contextAccC5 = new MusicContext(
       new Clef(clefG), new TraditionalKey(0),
-      new Pitch[]{pi(0, 1, 5)});
+      new Pitch[]{pi(0, 1, 5)}, 5);
     //contextAccD5: key = C major, acc = D#5
     contextAccD5 = new MusicContext(
       new Clef(clefG), new TraditionalKey(0),
-      new Pitch[]{pi(1, 1, 5)});
+      new Pitch[]{pi(1, 1, 5)}, 5);
     //contextAccsD4B5: key = C major, acc = D#4 and B#4
     contextAccsD4B4 = new MusicContext(
       new Clef(clefG), new TraditionalKey(0),
-      new Pitch[]{pi(1, 1, 4), pi(6, 1, 4)});
+      new Pitch[]{pi(1, 1, 4), pi(6, 1, 4)}, 5);
     //contextAccsG5A5: key = C major, acc = G#5 and A#5
     /*TODO contextAccsG5A5 = new MusicContext(
       new Clef(clefG, null), new TraditionalKey(0),
@@ -127,13 +127,13 @@ public class AccidentalsAlignmentStrategyTest
     AccidentalsAlignment caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(0, 1, 5)),
       new NoteAlignment[]{new NoteAlignment(5, 0)}, contextC);
-    assertEquals(1, caa.getAccidentals().length);
+    assertEquals(1, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToNote, caa.getWidth(), Delta.DELTA_FLOAT);
     //C##5
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(0, 2, 5)),
       new NoteAlignment[]{new NoteAlignment(5, 0)}, contextC);
-    assertEquals(1, caa.getAccidentals().length);
+    assertEquals(1, caa.getAccidentals().size());
     assertEquals(widthDoubleSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     //C4, D4, Gbb4
@@ -142,14 +142,14 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(-2, noteOffset),
         new NoteAlignment(-1, 0, susRight), new NoteAlignment(2, noteOffset)},
       contextC);
-    assertEquals(1, caa.getAccidentals().length);
+    assertEquals(1, caa.getAccidentals().size());
     assertEquals(widthFlatFlat + widthGapAccToNote, caa.getWidth(), Delta.DELTA_FLOAT);
     //Eb4, A4, G##5 with contextEb
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(2, -1, 4), pi(5, 0, 4), pi(4, 2, 5)),
       new NoteAlignment[]{new NoteAlignment(0, 0),
         new NoteAlignment(3, 0), new NoteAlignment(9, 0)}, contextEb);
-    assertEquals(1, caa.getAccidentals().length);
+    assertEquals(1, caa.getAccidentals().size());
     assertEquals(widthNatural + widthGapAccToNote, caa.getWidth(), Delta.DELTA_FLOAT);
   }
   
@@ -165,19 +165,19 @@ public class AccidentalsAlignmentStrategyTest
     AccidentalsAlignment caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(3, 1, 4), pi(3, 1, 5)),
       new NoteAlignment[]{new NoteAlignment(1, 0), new NoteAlignment(8, 0)}, contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToNote, caa.getWidth(), Delta.DELTA_FLOAT);
     //G#4, B#5 (p. 131)
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(4, 1, 4), pi(6, 1, 5)),
       new NoteAlignment[]{new NoteAlignment(2, 0), new NoteAlignment(11, 0)}, contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToNote, caa.getWidth(), Delta.DELTA_FLOAT);
     //Bb4, Ab5 (p. 131)
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(6, -1, 4), pi(5, -1, 5)),
       new NoteAlignment[]{new NoteAlignment(4, 0), new NoteAlignment(10, 0)}, contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToNote, caa.getWidth(), Delta.DELTA_FLOAT);
     //Ab4, Bb4 (p. 132)
     caa = strategy.computeAccidentalsAlignment(
@@ -185,35 +185,35 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{
         new NoteAlignment(3, 0), new NoteAlignment(4, widthQuarter, susRight)},
       contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToAcc + widthFlat + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(0f, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0f, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
     //A#4, F#5 (p. 132)
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(5, 1, 4), pi(3, 1, 5)),
       new NoteAlignment[]{
         new NoteAlignment(3, 0), new NoteAlignment(8, widthQuarter)}, contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToAcc + widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(0f, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0f, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
     //Db5, Eb5 (p. 132)
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(1, -1, 5), pi(2, -1, 5)),
       new NoteAlignment[]{
         new NoteAlignment(6, 0, susLeft), new NoteAlignment(7, widthQuarter)},
       contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToAcc + widthFlat + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(0f, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0f, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
   }
   
   
@@ -229,41 +229,41 @@ public class AccidentalsAlignmentStrategyTest
     	pvec(pi(2, 0, 4), pi(4, 1, 4), pi(0, 1, 5)),
       new NoteAlignment[]{new NoteAlignment(0, 0),
         new NoteAlignment(2, 0), new NoteAlignment(5, 0)}, contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToAcc + widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(0f, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(2, caa.getAccidentals()[0].getLinePosition());
+    assertEquals(0f, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(2, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(5, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(5, caa.getAccidentals().get(1).getLinePosition());
     //Eb4, G(nat)4, C5 with contextAccG4 (no accidental at top note)
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(2, -1, 4), pi(4, 0, 4), pi(0, 0, 5)),
       new NoteAlignment[]{new NoteAlignment(0, 0),
         new NoteAlignment(2, 0), new NoteAlignment(5, 0)}, contextAccG4);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToAcc + widthNatural + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(0f, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(0, caa.getAccidentals()[0].getLinePosition());
+    assertEquals(0f, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(2, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(2, caa.getAccidentals().get(1).getLinePosition());
     //Eb4, G4, C(nat)5 with contextAccC5 (no accidental at middle note)
     //TODO: Eb4-accidental can be placed nearer to the chord
     caa = strategy.computeAccidentalsAlignment(
     	pvec(pi(2, -1, 4), pi(4, 0, 4), pi(0, 0, 5)),
       new NoteAlignment[]{new NoteAlignment(0, 0),
         new NoteAlignment(2, 0), new NoteAlignment(5, 0)}, contextAccC5);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToAcc + widthNatural + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(0f, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(0, caa.getAccidentals()[0].getLinePosition());
+    assertEquals(0f, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(5, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(5, caa.getAccidentals().get(1).getLinePosition());
     //F4, G#4, D(nat)5 with contextAccD5
     //(no accidental at bottom note, middle note suspended)
     caa = strategy.computeAccidentalsAlignment(
@@ -271,15 +271,15 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(1, 0),
         new NoteAlignment(2, widthQuarter, susRight), new NoteAlignment(6, 0)},
       contextAccD5);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthNatural + widthGapAccToAcc + widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(widthNatural + widthGapAccToAcc,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(2, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(2, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(6, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(6, caa.getAccidentals().get(1).getLinePosition());
     //F#4, C5, D#5
     //(no accidental at middle note, top note suspended)
     caa = strategy.computeAccidentalsAlignment(
@@ -287,15 +287,15 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(1, 0),
         new NoteAlignment(5, 0), new NoteAlignment(6, widthQuarter, susRight)},
       contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToAcc + widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(0f,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(1, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(6, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(6, caa.getAccidentals().get(1).getLinePosition());
     //Ab4, Eb5, F5
     //(no accidental at top note, middle note suspended)
     //TODO: accidentals nearer to chord (Ab4-accidental
@@ -305,15 +305,15 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(3, widthQuarter),
         new NoteAlignment(7, 0, susLeft), new NoteAlignment(8, widthQuarter)},
       contextC);
-    assertEquals(2, caa.getAccidentals().length);
+    assertEquals(2, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToAcc + widthFlat + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(3, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(3, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(7, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(7, caa.getAccidentals().get(1).getLinePosition());
   }
   
   
@@ -329,17 +329,17 @@ public class AccidentalsAlignmentStrategyTest
     	pvec(pi(1, 1, 4), pi(3, 1, 4), pi(0, 1, 5)),
       new NoteAlignment[]{new NoteAlignment(-1, 0),
         new NoteAlignment(1, 0), new NoteAlignment(5, 0)}, contextC);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToAcc + widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
-    assertEquals(widthSharp + widthGapAccToAcc, caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(-1, caa.getAccidentals()[0].getLinePosition());
+    assertEquals(widthSharp + widthGapAccToAcc, caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(-1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(1, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(1, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(5, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(5, caa.getAccidentals().get(2).getLinePosition());
   }
   
   
@@ -355,19 +355,19 @@ public class AccidentalsAlignmentStrategyTest
     	pvec(pi(1, 1, 4), pi(3, 1, 4), pi(6, 0, 4)),
       new NoteAlignment[]{new NoteAlignment(-1, 0),
         new NoteAlignment(1, 0), new NoteAlignment(4, 0)}, contextAccB4);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(2 * (widthSharp + widthGapAccToAcc) +
       widthNatural + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(-1, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(-1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(1, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(1, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(2 * (widthSharp + widthGapAccToAcc),
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(4, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(4, caa.getAccidentals().get(2).getLinePosition());
   }
   
   
@@ -384,19 +384,19 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(-1, 0),
         new NoteAlignment(0, widthQuarter, susRight), new NoteAlignment(5, 0)},
       contextC);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(2 * (widthSharp + widthGapAccToAcc) +
       widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(0f,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(-1, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(-1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(2 * (widthSharp + widthGapAccToAcc),
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(0, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(5, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(5, caa.getAccidentals().get(2).getLinePosition());
   }
   
   
@@ -413,19 +413,19 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(-1, 0),
         new NoteAlignment(5, 0), new NoteAlignment(6, widthQuarter, susRight)},
       contextC);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(widthSharp + widthGapAccToAcc +
       widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(-1, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(-1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(5, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(5, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(6, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(6, caa.getAccidentals().get(2).getLinePosition());
   }
   
   
@@ -443,21 +443,21 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(-1, 0),
         new NoteAlignment(3, 0), new NoteAlignment(4, widthQuarter, susRight)},
       contextAccD4);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(widthFlat + widthGapAccToAcc +
       widthNatural + widthGapAccToAcc +
       widthFlat + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(-1, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(-1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(3, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(3, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(widthFlat + widthGapAccToAcc +
       widthNatural + widthGapAccToAcc,
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(4, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(4, caa.getAccidentals().get(2).getLinePosition());
   }
   
   
@@ -475,20 +475,20 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(-1, 0),
         new NoteAlignment(0, widthQuarter, susRight), new NoteAlignment(4, 0)},
       contextAccsD4B4);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(widthNatural + widthGapAccToAcc +
       widthNatural + widthGapAccToAcc +
       widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(0f,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(-1, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(-1, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(2 * (widthNatural + widthGapAccToAcc),
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(0, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(0, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(widthNatural + widthGapAccToAcc,
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(4, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(4, caa.getAccidentals().get(2).getLinePosition());
   }
   
   
@@ -507,19 +507,19 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(6, 0, susLeft),
         new NoteAlignment(7, widthQuarter),
         new NoteAlignment(10, widthQuarter)}, contextC);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(2 * (widthFlat + widthGapAccToAcc) +
       widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(0f,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(6, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(6, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(widthFlat + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(7, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(7, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(2 * (widthFlat + widthGapAccToAcc),
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(10, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(10, caa.getAccidentals().get(2).getLinePosition());
     //A#4, B#4, A#5
     caa = new ChordAccidentalsAlignment(
       new Pitch[]{
@@ -527,19 +527,19 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(3, 0, susLeft),
         new NoteAlignment(4, widthQuarter),
         new NoteAlignment(10, widthQuarter)}, contextC);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(2 * (widthSharp + widthGapAccToAcc) +
       widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(0f,
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(3, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(3, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(widthSharp + widthGapAccToAcc,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(4, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(4, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(2 * (widthSharp + widthGapAccToAcc),
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(10, caa.getAccidentals()[2].getLinePosition());
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(10, caa.getAccidentals().get(2).getLinePosition());
     //C#5, G5, A5 with contextAccsG5A5
     caa = new ChordAccidentalsAlignment(
       new Pitch[]{
@@ -547,19 +547,19 @@ public class AccidentalsAlignmentStrategyTest
       new NoteAlignment[]{new NoteAlignment(5, widthQuarter),
         new NoteAlignment(9, 0, susLeft),
         new NoteAlignment(10, widthQuarter)}, contextAccsG5A5);
-    assertEquals(3, caa.getAccidentals().length);
+    assertEquals(3, caa.getAccidentals().size());
     assertEquals(2 * (widthNatural + widthGapAccToAcc) +
       widthSharp + widthGapAccToNote,
       caa.getWidth(), Delta.DELTA_FLOAT);
     assertEquals(2 * (widthNatural + widthGapAccToAcc),
-      caa.getAccidentals()[0].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(5, caa.getAccidentals()[0].getLinePosition());
+      caa.getAccidentals().get(0).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(5, caa.getAccidentals().get(0).getLinePosition());
     assertEquals(0f,
-      caa.getAccidentals()[1].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(9, caa.getAccidentals()[1].getLinePosition());
+      caa.getAccidentals().get(1).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(9, caa.getAccidentals().get(1).getLinePosition());
     assertEquals(widthNatural + widthGapAccToAcc,
-      caa.getAccidentals()[2].getOffset(), Delta.DELTA_FLOAT);
-    assertEquals(10, caa.getAccidentals()[2].getLinePosition()); */
+      caa.getAccidentals().get(2).getOffset(), Delta.DELTA_FLOAT);
+    assertEquals(10, caa.getAccidentals().get(2).getLinePosition()); */
   }
   
 

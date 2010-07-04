@@ -39,7 +39,9 @@ import com.xenoage.zong.util.exceptions.MeasureFullException;
  * to write or remove elements and move the cursor.
  * 
  * If the move flag is set, the cursor jumps to the end of written elements
- * instead of staying at its old position.
+ * instead of staying at its old position. Then it can be at a {@link MP} which
+ * still does not exist (e.g. at the end of the score), which isn't a problem
+ * since it is created as soon as needed.
  * 
  * There is also the possibility to open and close beams and curved lines.
  * 
@@ -62,7 +64,8 @@ public final class Cursor
 	/**
 	 * Creates a new {@link Cursor}.
 	 * @param score   the score to work on
-	 * @param pos     the musical position of the cursor
+	 * @param pos     the musical position of the cursor, which may still not exist
+	 *                in the score (the measure and voice will be created on demand)
 	 * @param moving  move with input?
 	 */
 	public Cursor(Score score, MP mp, boolean moving)
@@ -244,7 +247,6 @@ public final class Cursor
 			{
 				//begin new measure
 				newMP = mp.withMeasure(mp.getMeasure() + 1).withBeat(_0);
-				score = ensureVoiceExists(score, newMP);
 			}
 			else
 			{

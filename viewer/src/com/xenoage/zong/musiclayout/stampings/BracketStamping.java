@@ -14,14 +14,14 @@ import com.xenoage.zong.renderer.stampings.BracketStampingRenderer;
  *
  * @author Andreas Wenger
  */
-public class BracketStamping
+public final class BracketStamping
   extends Stamping
 {
 
-  private StaffStamping firstStaff;
-  private StaffStamping lastStaff;
-  private float positionX;
-  private BracketGroup.Style groupStyle;
+  private final StaffStamping firstStaff;
+  private final StaffStamping lastStaff;
+  private final float positionX;
+  private final BracketGroup.Style groupStyle;
   
   
   /**
@@ -36,13 +36,11 @@ public class BracketStamping
   	StaffStamping lastStaff,
     float positionX, BracketGroup.Style groupStyle)
   {
-    super(firstStaff, LEVEL_MUSIC, null);
+    super(firstStaff, Level.Music, null, null);
     this.firstStaff = firstStaff;
     this.lastStaff = lastStaff;
     this.positionX = positionX;
     this.groupStyle = groupStyle;
-    
-    //TODO: bounding shape
   }
   
   

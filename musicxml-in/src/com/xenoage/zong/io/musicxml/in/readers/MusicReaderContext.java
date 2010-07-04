@@ -11,7 +11,6 @@ import com.xenoage.pdlib.PMap;
 import com.xenoage.pdlib.PVector;
 import com.xenoage.util.Range;
 import com.xenoage.util.enums.VSide;
-import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.Score;
@@ -65,19 +64,19 @@ public final class MusicReaderContext
   
   private final OpenElements openElements;
   
-  private final ErrorProcessing err;
+  private MusicReaderSettings settings;
 
 
-	public MusicReaderContext(Score score, ErrorProcessing err)
+	public MusicReaderContext(Score score, MusicReaderSettings settings)
   {
   	this(new Cursor(score, mp0, false), 1, 0, 0, new PVector<PVector<String>>(),
-  		new OpenElements(), err);
+  		new OpenElements(), settings);
   }
 	
 
   private MusicReaderContext(Cursor cursor, int divisions, int systemIndex,
 		int pageIndex, PVector<PVector<String>> voiceMappings, OpenElements openElements,
-		ErrorProcessing err)
+		MusicReaderSettings settings)
 	{
 		this.cursor = cursor;
 		this.divisions = divisions;
@@ -85,7 +84,7 @@ public final class MusicReaderContext
 		this.pageIndex = pageIndex;
 		this.voiceMappings = voiceMappings;
 		this.openElements = openElements;
-		this.err = err;
+		this.settings = settings;
 	}
 
 
@@ -99,7 +98,7 @@ public final class MusicReaderContext
   {
   	Cursor cursor = this.cursor.withScore(score);
   	return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
   }
   
   
@@ -112,7 +111,7 @@ public final class MusicReaderContext
   public MusicReaderContext withDivisions(int divisions)
   {
   	return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
   }
   
   
@@ -124,7 +123,7 @@ public final class MusicReaderContext
 		MP mp = this.cursor.getMP();
 		Cursor cursor = this.cursor.withMP(mp.withBeat(mp.getBeat().add(beat)));
 		return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
 	}
 	
 	
@@ -151,7 +150,7 @@ public final class MusicReaderContext
 	public MusicReaderContext incSystemIndex()
 	{
 		return new MusicReaderContext(cursor, divisions, systemIndex + 1, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
 	}
 
 	
@@ -172,7 +171,7 @@ public final class MusicReaderContext
 	public MusicReaderContext incPageIndex()
 	{
 		return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex + 1,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
 	}
 	
 	
@@ -219,7 +218,7 @@ public final class MusicReaderContext
   	for (int i = 0; i < part.getStavesCount(); i++)
   		voiceMappings = voiceMappings.plus(new PVector<String>());
   	return new MusicReaderContext(cursor, divisions, 0, 0,
-  		voiceMappings, new OpenElements(), err);
+  		voiceMappings, new OpenElements(), settings);
   }
   
   
@@ -231,7 +230,7 @@ public final class MusicReaderContext
 		Cursor cursor = this.cursor.withMP(
 			mp(this.cursor.getMP().getStaff(), measureIndex, 0, _0));
 		return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
 	}
 
   
@@ -243,10 +242,17 @@ public final class MusicReaderContext
     checkNumber1to6(number);
     PVector<PVector<Chord>> openBeams = openElements.getOpenBeams();
     if (openBeams.get(number-1) != null)
-    	throw new MusicReaderException("Beam " + number + " already open", this);
-    openBeams = openBeams.with(number-1, new PVector<Chord>());
+    {
+    	//error: this beam is already open
+    	if (!settings.ignoreErrors)
+    	{
+    		throw new MusicReaderException("Beam " + number + " already open", this);
+    	}
+    }
+    //open beam
+  	openBeams = openBeams.with(number-1, new PVector<Chord>());
     return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements.withOpenBeams(openBeams), err);
+  		voiceMappings, openElements.withOpenBeams(openBeams), settings);
   }
   
   
@@ -260,7 +266,7 @@ public final class MusicReaderContext
   	PVector<PVector<Chord>> openBeams = openElements.getOpenBeams();
     openBeams = openBeams.with(number-1, openBeams.get(number-1).plus(chord));
     return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements.withOpenBeams(openBeams), err);
+  		voiceMappings, openElements.withOpenBeams(openBeams), settings);
   }
   
   
@@ -276,7 +282,7 @@ public final class MusicReaderContext
   	openBeams = openBeams.with(number-1, null);
   	MusicReaderContext context =
   		new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  			voiceMappings, openElements.withOpenBeams(openBeams), err);
+  			voiceMappings, openElements.withOpenBeams(openBeams), settings);
     return t(context, ret);
   }
   
@@ -329,7 +335,7 @@ public final class MusicReaderContext
   	return new MusicReaderContext(ret.cursor, ret.divisions, ret.systemIndex, ret.pageIndex,
   		ret.voiceMappings, (type == Type.Slur ?
   			ret.openElements.withOpenSlurs(openCLs) : ret.openElements.withOpenTies(openCLs)),
-  		ret.err);
+  		ret.settings);
   }
   
   
@@ -363,7 +369,7 @@ public final class MusicReaderContext
   	openCL.start.side = side;
   	openUnnumberedTies = openUnnumberedTies.plus(pitch, openCL);
   	return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements.withOpenUnnumberedTies(openUnnumberedTies), err);
+  		voiceMappings, openElements.withOpenUnnumberedTies(openUnnumberedTies), settings);
   }
   
   
@@ -382,7 +388,7 @@ public final class MusicReaderContext
   	MusicReaderContext ret = this;
   	ret = ret.createCurvedLine(openCL);
   	return new MusicReaderContext(ret.cursor, ret.divisions, ret.systemIndex, ret.pageIndex,
-  		ret.voiceMappings, ret.openElements.withOpenUnnumberedTies(openUnnumberedTies), ret.err);
+  		ret.voiceMappings, ret.openElements.withOpenUnnumberedTies(openUnnumberedTies), ret.settings);
   }
   
   
@@ -408,7 +414,7 @@ public final class MusicReaderContext
   	checkNumber1to6(number);
   	PVector<Wedge> openWedges = openElements.getOpenWedges().with(number-1, wedge);
   	return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements.withOpenWedges(openWedges), err);
+  		voiceMappings, openElements.withOpenWedges(openWedges), settings);
   }
   
   
@@ -422,7 +428,7 @@ public final class MusicReaderContext
   	PVector<Wedge> openWedges = openElements.getOpenWedges().with(number-1, null);
   	MusicReaderContext context =
   		new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  			voiceMappings, openElements.withOpenWedges(openWedges), err);
+  			voiceMappings, openElements.withOpenWedges(openWedges), settings);
     return t(context, ret);
   }
   
@@ -434,7 +440,8 @@ public final class MusicReaderContext
   public MusicContext getMusicContext(int staffIndexInPart)
   {
   	MP mp = cursor.getMP().withStaff(getPartStavesIndices().getStart() + staffIndexInPart);
-  	return ScoreController.getMusicContext(getScore(), mp, BeatInterval.At);
+  	return ScoreController.getMusicContext(getScore(), mp,
+  		BeatInterval.BeforeOrAt, BeatInterval.Before);
   }
 
 	
@@ -461,7 +468,7 @@ public final class MusicReaderContext
 			voices = voices.plus(mxlVoice);
 			MusicReaderContext context =
 				new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-		  		voiceMappings.with(mxlStaff, voices), openElements, err);
+		  		voiceMappings.with(mxlStaff, voices), openElements, settings);
 			return t(context, voices.size() - 1);
 		}
 		catch (IndexOutOfBoundsException ex)
@@ -508,10 +515,11 @@ public final class MusicReaderContext
   	}
   	catch (MeasureFullException ex)
   	{
-  		throw new MusicReaderException(ex, this);
+  		if (!settings.ignoreErrors)
+  			throw new MusicReaderException(ex, this);
   	}
   	return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
   }
   
   
@@ -523,7 +531,7 @@ public final class MusicReaderContext
   	MP oldMP = cursor.getMP();
   	Cursor cursor = this.cursor.withMP(oldMP.withBeat(oldMP.getBeat().add(duration)));
   	return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
-  		voiceMappings, openElements, err);
+  		voiceMappings, openElements, settings);
   }
   
   
@@ -579,9 +587,9 @@ public final class MusicReaderContext
 	}
 	
 	
-	public ErrorProcessing getErr()
+	public MusicReaderSettings getSettings()
 	{
-		return err;
+		return settings;
 	}
 	
   

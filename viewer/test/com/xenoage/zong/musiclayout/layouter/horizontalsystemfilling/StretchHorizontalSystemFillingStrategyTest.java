@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.xenoage.util.Delta;
 import com.xenoage.zong.musiclayout.SystemArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangementTry;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
 
 
@@ -45,14 +45,14 @@ public class StretchHorizontalSystemFillingStrategyTest
 		//since the leading spacing (4 spaces) is not scaled, the
 		//remaining 12 spaces of the voices width have to be scaled
 		float stretch = (newWidth - leadingWidth) / offsetBeat3;
-		MeasureColumnSpacing newCol = system.getMeasureColumnSpacings()[0];
+		ColumnSpacing newCol = system.getColumnSpacings().get(0);
 		//beat offsets
-		assertEquals(offsetBeat1 * stretch, newCol.getBeatOffsets()[0].getOffsetMm(), Delta.DELTA_FLOAT);
-		assertEquals(offsetBeat2 * stretch, newCol.getBeatOffsets()[1].getOffsetMm(), Delta.DELTA_FLOAT);
+		assertEquals(offsetBeat1 * stretch, newCol.getBeatOffsets().get(0).getOffsetMm(), Delta.DELTA_FLOAT);
+		assertEquals(offsetBeat2 * stretch, newCol.getBeatOffsets().get(1).getOffsetMm(), Delta.DELTA_FLOAT);
 		//element spacings
-		VoiceSpacing newVoice = newCol.getMeasureSpacings()[0].getVoice(0);
-		assertEquals(offsetBeat1 * stretch, newVoice.getSpacingElements()[0].getOffset(), Delta.DELTA_FLOAT);
-		assertEquals(offsetBeat2 * stretch, newVoice.getSpacingElements()[1].getOffset(), Delta.DELTA_FLOAT);
+		VoiceSpacing newVoice = newCol.getMeasureSpacings().get(0).getVoiceSpacings().get(0);
+		assertEquals(offsetBeat1 * stretch, newVoice.getSpacingElements().get(0).getOffset(), Delta.DELTA_FLOAT);
+		assertEquals(offsetBeat2 * stretch, newVoice.getSpacingElements().get(1).getOffset(), Delta.DELTA_FLOAT);
 		
 	}
 

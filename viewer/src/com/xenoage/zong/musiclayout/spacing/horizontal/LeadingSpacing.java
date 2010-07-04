@@ -11,7 +11,7 @@ package com.xenoage.zong.musiclayout.spacing.horizontal;
  *
  * @author Andreas Wenger
  */
-public final class MeasureLeadingSpacing
+public final class LeadingSpacing
 {
   
   private final SpacingElement[] leadingSpacing;
@@ -21,7 +21,7 @@ public final class MeasureLeadingSpacing
   /**
    * Creates a leading spacing for an empty measure.
    */
-  public MeasureLeadingSpacing(SpacingElement[] leadingSpacing, float width)
+  public LeadingSpacing(SpacingElement[] leadingSpacing, float width)
   {
     this.leadingSpacing = leadingSpacing;
     this.width = width;

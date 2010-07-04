@@ -2,6 +2,7 @@ package com.xenoage.zong.musiclayout.layouter.verticalframefilling;
 
 import static com.xenoage.zong.core.music.MP.atStaff;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.format.SystemLayout;
@@ -9,7 +10,7 @@ import com.xenoage.zong.core.music.Staff;
 import com.xenoage.zong.io.score.ScoreController;
 import com.xenoage.zong.musiclayout.FrameArrangement;
 import com.xenoage.zong.musiclayout.SystemArrangement;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 
 
 /**
@@ -51,9 +52,9 @@ public class EmptySystemsVerticalFrameFillingStrategy
     //compute remaining space
   	float remainingSpace = usableSize.height;
   	float offsetY = 0;
-    if (frameArr.getSystemsCount() > 0)
+    if (frameArr.getSystems().size() > 0)
     {
-    	SystemArrangement lastSystem = frameArr.getSystem(frameArr.getSystemsCount() - 1);
+    	SystemArrangement lastSystem = frameArr.getSystems().getLast();
     	offsetY = lastSystem.getOffsetY() + lastSystem.getHeight();
     	remainingSpace -= offsetY;
     }
@@ -70,15 +71,11 @@ public class EmptySystemsVerticalFrameFillingStrategy
     if (newSystemsCount > 0)
     {
     	//otherwise add the empty systems
-    	SystemArrangement[] newSystems = new SystemArrangement[frameArr.getSystemsCount() + newSystemsCount];
-    	for (int i = 0; i < frameArr.getSystemsCount(); i++)
+    	PVector<SystemArrangement> newSystems = frameArr.getSystems();
+    	for (int i = frameArr.getSystems().size() - 1; i < newSystemsCount; i++)
     	{
-    		newSystems[i] = frameArr.getSystem(i);
-    	}
-    	for (int i = 0; i < newSystemsCount; i++)
-    	{
-    		newSystems[frameArr.getSystemsCount() + i] = createEmptySystem(
-    			score, usableSize.width - defaultMargin, offsetY + defaultSystemDistance);
+    		newSystems = newSystems.plus(createEmptySystem(
+    			score, usableSize.width - defaultMargin, offsetY + defaultSystemDistance));
     		offsetY += newSystemHeight;
     	}
     	ret = new FrameArrangement(newSystems, frameArr.getUsableSize());
@@ -110,7 +107,7 @@ public class EmptySystemsVerticalFrameFillingStrategy
   	}
   	//create and returns system
   	SystemLayout defaultSystemLayout = score.getScoreFormat().getSystemLayout();
-  	return new SystemArrangement(-1, -1, new MeasureColumnSpacing[0],
+  	return new SystemArrangement(-1, -1, new PVector<ColumnSpacing>(),
   		defaultSystemLayout.getSystemMarginLeft(), defaultSystemLayout.getSystemMarginRight(),
   		width, staffHeights, staffDistances, offsetY);
   }

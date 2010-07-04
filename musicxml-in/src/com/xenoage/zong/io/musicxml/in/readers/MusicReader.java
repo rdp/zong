@@ -109,9 +109,11 @@ public final class MusicReader
   /**
    * Reads the given MusicXML document and returns the score.
    */
-  public static Score read(MxlScorePartwise doc, Score baseScore, ErrorProcessing err)
+  public static Score read(MxlScorePartwise doc, Score baseScore, ErrorProcessing err,
+  	boolean ignoreErrors)
   {
-  	MusicReaderContext context = new MusicReaderContext(baseScore, err); 
+  	MusicReaderContext context = new MusicReaderContext(baseScore,
+  		new MusicReaderSettings(err, ignoreErrors)); 
     
     //read the parts
     int staffIndexOffset = 0;

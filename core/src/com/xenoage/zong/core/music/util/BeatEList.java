@@ -1,5 +1,6 @@
 package com.xenoage.zong.core.music.util;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.util.Range.range;
 import static com.xenoage.util.iterators.ReverseIterator.reverseIt;
 import static com.xenoage.util.lang.Tuple2.t;
@@ -161,6 +162,18 @@ public class BeatEList<T>
 	
 	
 	/**
+	 * Gets the first element, or null if the list is empty.
+	 */
+	public BeatE<T> getFirst()
+	{
+		if (elements.size() > 0)
+			return elements.getFirst();
+		else
+			return null;
+	}
+	
+	
+	/**
 	 * Gets the last element, or null if the list is empty.
 	 */
 	public BeatE<T> getLast()
@@ -205,6 +218,18 @@ public class BeatEList<T>
 	@Override public Iterator<BeatE<T>> iterator()
 	{
 		return elements.iterator();
+	}
+	
+	
+	/**
+	 * Gets all data elements.
+	 */
+	public PVector<T> getDataElements()
+	{
+		PVector<T> ret = pvec();
+		for (BeatE<T> element : elements)
+  		ret = ret.plus(element.getElement());
+		return ret;
 	}
   
 

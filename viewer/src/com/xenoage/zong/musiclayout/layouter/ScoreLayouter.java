@@ -1,8 +1,9 @@
 package com.xenoage.zong.musiclayout.layouter;
 
-import com.xenoage.zong.Zong;
 import com.xenoage.util.language.Lang;
 import com.xenoage.util.language.VocByString;
+import com.xenoage.util.logging.Log;
+import com.xenoage.zong.Zong;
 import com.xenoage.zong.app.symbols.SymbolPool;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.layout.frames.ScoreFrame;
@@ -13,12 +14,12 @@ import com.xenoage.zong.musiclayout.layouter.arrangement.FrameArrangementStrateg
 import com.xenoage.zong.musiclayout.layouter.arrangement.SystemArrangementStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.BeamedStemAlignmentNotationsStrategy;
 import com.xenoage.zong.musiclayout.layouter.beamednotation.BeamedStemDirectionNotationsStrategy;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.BarlinesBeatOffsetsStrategy;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.BeatOffsetBasedVoiceSpacingStrategy;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.BeatOffsetsStrategy;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.MeasureColumnSpacingStrategy;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.MeasureLeadingSpacingStrategy;
-import com.xenoage.zong.musiclayout.layouter.measurecolumnspacing.SeparateVoiceSpacingStrategy;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.BarlinesBeatOffsetsStrategy;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.BeatOffsetBasedVoiceSpacingStrategy;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.BeatOffsetsStrategy;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.ColumnSpacingStrategy;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.LeadingSpacingStrategy;
+import com.xenoage.zong.musiclayout.layouter.columnspacing.SeparateVoiceSpacingStrategy;
 import com.xenoage.zong.musiclayout.layouter.notation.AccidentalsAlignmentStrategy;
 import com.xenoage.zong.musiclayout.layouter.notation.ArticulationsAlignmentStrategy;
 import com.xenoage.zong.musiclayout.layouter.notation.NotationStrategy;
@@ -29,14 +30,12 @@ import com.xenoage.zong.musiclayout.layouter.scoreframelayout.BeamStampingStrate
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.CurvedLineStampingStrategy;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.DirectionStampingStrategy;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.LyricStampingStrategy;
-import com.xenoage.zong.musiclayout.layouter.scoreframelayout.NoVoiceElementStampingStrategy;
+import com.xenoage.zong.musiclayout.layouter.scoreframelayout.MusicElementStampingStrategy;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.ScoreFrameLayoutStrategy;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.StaffStampingsStrategy;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.TupletStampingStrategy;
-import com.xenoage.zong.musiclayout.layouter.scoreframelayout.VoiceElementStampingStrategy;
 import com.xenoage.zong.musiclayout.layouter.scoreframelayout.VoltaStampingStrategy;
 import com.xenoage.zong.musiclayout.layouter.voicenotation.VoiceStemDirectionNotationsStrategy;
-import com.xenoage.util.logging.Log;
 
 
 /**
@@ -147,12 +146,12 @@ public class ScoreLayouter
 			new StemAlignmentStrategy(),
 			new ArticulationsAlignmentStrategy());
   	//measure column subtree
-  	MeasureColumnSpacingStrategy measureColumnSpacingStrategy = new MeasureColumnSpacingStrategy(
+  	ColumnSpacingStrategy measureColumnSpacingStrategy = new ColumnSpacingStrategy(
 			new SeparateVoiceSpacingStrategy(),
 			new BeatOffsetsStrategy(),
 			new BarlinesBeatOffsetsStrategy(),
 			new BeatOffsetBasedVoiceSpacingStrategy(),
-			new MeasureLeadingSpacingStrategy(
+			new LeadingSpacingStrategy(
 				notationStrategy));
   	//complete tree
   	return new ScoreLayoutStrategy(
@@ -168,8 +167,7 @@ public class ScoreLayouter
   		new BeamedStemAlignmentNotationsStrategy(),
   		new ScoreFrameLayoutStrategy(
   			new StaffStampingsStrategy(),
-  			new VoiceElementStampingStrategy(),
-  			new NoVoiceElementStampingStrategy(),
+  			new MusicElementStampingStrategy(),
   			new BeamStampingStrategy(),
   			new CurvedLineStampingStrategy(),
   			new LyricStampingStrategy(),

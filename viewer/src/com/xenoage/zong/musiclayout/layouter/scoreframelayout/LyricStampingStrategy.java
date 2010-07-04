@@ -1,10 +1,10 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.zong.core.music.format.SP.sp;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import com.xenoage.pdlib.PVector;
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.StringTools;
 import com.xenoage.util.iterators.It;
 import com.xenoage.zong.core.music.MusicElement;
@@ -93,12 +93,12 @@ public class LyricStampingStrategy
 	 * The right notehead is optional. If not given, the underscore is drawn over 
 	 * all given following staves.
 	 */
-	public LinkedList<StaffTextStamping> createUnderscoreStampings(StaffTextStamping syllableLeft,
-		NoteheadStamping noteheadRight, FormattedTextStyle style, List<StaffStamping> staffStampings)
+	public PVector<StaffTextStamping> createUnderscoreStampings(StaffTextStamping syllableLeft,
+		NoteheadStamping noteheadRight, FormattedTextStyle style, Vector<StaffStamping> staffStampings)
 	{
 		if (syllableLeft == null)
 			throw new IllegalArgumentException("Left syllable must be given");
-		LinkedList<StaffTextStamping> ret = new LinkedList<StaffTextStamping>();
+		PVector<StaffTextStamping> ret = pvec();
 		//measure width of "_"
 		float widthU = new FormattedText("_", style, Alignment.Center).getParagraphs().next().getWidthMm();
 		//compute the horizontal start position, base line and element
@@ -116,7 +116,7 @@ public class LyricStampingStrategy
 		if (noteheadRight != null && syllableLeft.getParentStaff() == noteheadRight.getParentStaff())
 		{
 			//simple case
-			ret.add(createUnderscoreStamping(startX, endX, baseLine,
+			ret = ret.plus(createUnderscoreStamping(startX, endX, baseLine,
 				widthU, style, syllableLeft.getParentStaff(), element));
 		}
 		else
@@ -146,7 +146,7 @@ public class LyricStampingStrategy
 			//first staff (if any): begin at the stamping, go to the end of the system
 			if (firstStaffFound)
 			{
-				ret.add(createUnderscoreStamping(startX, currentStaff.getPosition().x + currentStaff.getLength(),
+				ret = ret.plus(createUnderscoreStamping(startX, currentStaff.getPosition().x + currentStaff.getLength(),
 					baseLine, widthU, style, currentStaff, element));
 			}
 			
@@ -162,7 +162,7 @@ public class LyricStampingStrategy
 					break;
 				}
 				//create underscore over whole staff
-				ret.add(createUnderscoreStamping(currentStaff.getPosition().x,
+				ret = ret.plus(createUnderscoreStamping(currentStaff.getPosition().x,
 					currentStaff.getPosition().x + currentStaff.getLength(), baseLine, widthU, style, currentStaff, element));
 			}
 			
@@ -170,7 +170,7 @@ public class LyricStampingStrategy
 			//system, stop at the notehead
 			if (lastStaffFound)
 			{
-				ret.add(createUnderscoreStamping(currentStaff.getPosition().x,
+				ret = ret.plus(createUnderscoreStamping(currentStaff.getPosition().x,
 					noteheadRight.getPosition().xMm, baseLine, widthU, style, currentStaff, element));
 			}
 			

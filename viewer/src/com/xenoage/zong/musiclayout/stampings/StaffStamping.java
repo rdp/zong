@@ -16,69 +16,47 @@ import com.xenoage.zong.renderer.stampings.StaffStampingRenderer;
  *
  * @author Andreas Wenger
  */
-public class StaffStamping
+public final class StaffStamping
   extends Stamping
 {
-  
-	//general information about the staff
-	private Point2f position;
-	private float length;
-	private float interlineSpace;
-	private int linesCount;
+	
+	//format of the staff
+	private final Point2f position;
+	private final float length;
+	private final float interlineSpace;
+	private final int linesCount;
 	
 	//musical position marks, e.g. to convert layout coordinates to musical positions
-  private StaffMarks staffMarks = null;
+  private final StaffMarks staffMarks;
   
   //cached information for screen display
-  private StaffStampingScreenInfo screenInfo;
+  private final StaffStampingScreenInfo screenInfo;
   
   
   /**
    * TIDY
-   * @param systemIndex  system index relative to frame
-   * @param staffIndex  global staff index
-   * @param startMeasureIndex
-   * @param endMeasureIndex
    * @param position        left border, top line
-   * @param length
-   * @param linesCount
-   * @param interlineSpace
    */
-  public StaffStamping(int systemIndex, int staffIndex, int startMeasureIndex, int endMeasureIndex,
-    Point2f position, float length, int linesCount, float interlineSpace)
+  public StaffStamping(Point2f position, float length, int linesCount,
+  	float interlineSpace, StaffMarks staffMarks)
   {
-    super(Stamping.LEVEL_STAFF, null);
-    
+    super(null, Stamping.Level.Staff, null, new Rectangle2f(position,
+    	new Size2f(length, (linesCount - 1) * interlineSpace /*TODO: line width! */)));
     this.position = position;
     this.length = length;
     this.linesCount = linesCount;
     this.interlineSpace = interlineSpace;
-    //create bounding rectangle
-    Rectangle2f bounds = new Rectangle2f(position,
-    	new Size2f(length, (linesCount - 1) * interlineSpace /*TODO: line width! */));
-    addBoundingShape(bounds);
-    
-    //create cache for screen display information
-    screenInfo = new StaffStampingScreenInfo(this);
+    this.staffMarks = staffMarks;
+    this.screenInfo = new StaffStampingScreenInfo(this);
   }
 
   
   /**
    * Gets positioning information about this staff stamping,
-   * or null, if unknown
    */
   public StaffMarks getStaffMarks()
   {
   	return staffMarks;
-  }
-  
-  
-  /**
-   * Sets positioning information about this staff stamping.
-   */
-  public void setStaffMarks(StaffMarks staffMarks)
-  {
-  	this.staffMarks = staffMarks;
   }
   
   
@@ -166,7 +144,6 @@ public class StaffStamping
    */
   public float getMeasureStartMm(int measureIndex)
   {
-  	ensureStaffMarksSet();
   	return staffMarks.getMeasureMarksAt(measureIndex).getStartMm();
   }
   
@@ -177,7 +154,6 @@ public class StaffStamping
    */
   public float getMeasureLeadingMm(int measureIndex)
   {
-  	ensureStaffMarksSet();
   	return staffMarks.getMeasureMarksAt(measureIndex).getLeadingMm();
   }
   
@@ -188,7 +164,6 @@ public class StaffStamping
    */
   public float getMeasureEndMm(int measureIndex)
   {
-  	ensureStaffMarksSet();
   	return staffMarks.getMeasureMarksAt(measureIndex).getEndMm();
   }
   
@@ -199,7 +174,6 @@ public class StaffStamping
    */
   public int getStartMeasureIndex()
 	{
-  	ensureStaffMarksSet();
   	return staffMarks.getStartMeasureIndex();
 	}
 
@@ -210,7 +184,6 @@ public class StaffStamping
    */
   public int getEndMeasureIndex()
 	{
-  	ensureStaffMarksSet();
   	return staffMarks.getEndMeasureIndex();
 	}
 
@@ -221,7 +194,6 @@ public class StaffStamping
 	 */
 	public MP getMPAtX(float positionX)
 	{
-		ensureStaffMarksSet();
 	  return staffMarks.getMPAt(positionX);
 	}
 
@@ -232,7 +204,6 @@ public class StaffStamping
 	 */
 	public Float getXMmAt(int measureIndex, Fraction beat)
 	{
-		ensureStaffMarksSet();
 	  return staffMarks.getXMmAt(measureIndex, beat);
 	}
 	
@@ -243,7 +214,6 @@ public class StaffStamping
 	 */
 	public Float getXMmAt(MP mp)
 	{
-		ensureStaffMarksSet();
 	  return staffMarks.getXMmAt(mp.getMeasure(), mp.getBeat());
 	}
   
@@ -254,7 +224,6 @@ public class StaffStamping
 	 */
 	public int getSystemIndex()
 	{
-		ensureStaffMarksSet();
 	  return staffMarks.getSystemIndex();
 	}
 
@@ -265,16 +234,14 @@ public class StaffStamping
 	 */
 	public int getStaffIndex()
 	{
-		ensureStaffMarksSet();
 	  return staffMarks.getStaffIndex();
 	}
-	
-	
-	private void ensureStaffMarksSet()
-	{
-		if (staffMarks == null)
-			throw new IllegalStateException("StaffMarks unknown");
-	}
   
+	
+	public StaffStamping withStaffMarks(StaffMarks staffMarks)
+	{
+		return new StaffStamping(position, length, linesCount, interlineSpace, staffMarks);
+	}
+	
   
 }

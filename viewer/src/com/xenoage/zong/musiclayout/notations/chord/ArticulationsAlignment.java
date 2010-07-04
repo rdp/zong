@@ -7,7 +7,7 @@ package com.xenoage.zong.musiclayout.notations.chord;
  *
  * @author Andreas Wenger
  */
-public class ArticulationsAlignment
+public final class ArticulationsAlignment
 { 
   
   private final ArticulationAlignment[] articulations;

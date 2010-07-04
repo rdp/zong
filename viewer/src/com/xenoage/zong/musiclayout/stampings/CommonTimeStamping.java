@@ -32,9 +32,8 @@ public class CommonTimeStamping
   public CommonTimeStamping(CommonTime commonTime,
     float positionX, StaffStamping parentStaff)
   {
-    super(parentStaff, LEVEL_MUSIC, commonTime);
+    super(parentStaff, Level.Music, commonTime, null);
     this.positionX = positionX;
-    //TODO: bounding shape
   }
   
   

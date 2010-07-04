@@ -1,5 +1,6 @@
 package com.xenoage.zong.core.instrument;
 
+import static com.xenoage.pdlib.IVector.ivec;
 import static com.xenoage.zong.core.music.Pitch.pi;
 
 import java.util.LinkedList;
@@ -141,7 +142,7 @@ public abstract class Instrument
 				ret.add(Lang.get(new VocByString("InstrumentGroup", value.getID())));
 			}
 		}
-		return new IVector<String>(ret);
+		return ivec(ret);
 	}
 
 

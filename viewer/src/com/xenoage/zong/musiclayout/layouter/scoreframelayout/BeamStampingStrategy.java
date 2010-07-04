@@ -1,9 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.pdlib.PVector.pvec;
+
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.MathTools;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.Globals;
@@ -14,7 +16,7 @@ import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.util.DurationInfo;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings;
-import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings.OpenBeamMiddleStem;
+import com.xenoage.zong.musiclayout.layouter.cache.util.OpenBeamMiddleStem;
 import com.xenoage.zong.musiclayout.stampings.BeamStamping;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.Stamping;
@@ -43,7 +45,7 @@ public class BeamStampingStrategy
 	/**
 	 * Computes the stampings for the given beam and returns them. 
 	 */
-	public List<Stamping> createBeamStampings(BeamedStemStampings beamedStems,
+	public PVector<Stamping> createBeamStampings(BeamedStemStampings beamedStems,
 		Globals globals)
 	{
 		//everything needed there?
@@ -56,7 +58,7 @@ public class BeamStampingStrategy
 		Beam beam = beamedStems.getBeam();
 		StaffStamping firstChordStaff = beamedStems.getFirstStem().getParentStaff();
 		StaffStamping lastChordStaff = beamedStems.getLastStem().getParentStaff();
-		List<Stamping> ret = new LinkedList<Stamping>();
+		PVector<Stamping> ret = pvec();
 		float lineHeight = BeamStamping.beamHeight;
 		//first level (8th line) is always continuous
 		float leftX = beamedStems.getFirstStem().getPositionX();
@@ -66,7 +68,7 @@ public class BeamStampingStrategy
 		float rightLP = beamedStems.getLastStem().getEndLinePosition() +
 			beamedStems.getLastStem().getDirection() * lineHeight / 2;
 		BeamStamping beam8th = new BeamStamping(beam, firstChordStaff, lastChordStaff, leftX, rightX, leftLP, rightLP);
-    ret.add(beam8th);
+		ret = ret.plus(beam8th);
     //the next levels can be broken, if there are different rhythms or beam subdivisions
     int maxLevel = getMaxLevel(beam);
     List<Waypoint> lastWaypoints = null;
@@ -97,7 +99,7 @@ public class BeamStampingStrategy
     			BeamStamping line = new BeamStamping(beam, firstChordStaff, lastChordStaff, startX, stopX,
     				MathTools.interpolateLinear(leftLeveledLP, rightLeveledLP, leftX, rightX, startX),
     				MathTools.interpolateLinear(leftLeveledLP, rightLeveledLP, leftX, rightX, stopX));
-    	    ret.add(line);
+    			ret = ret.plus(line);
     		}
     		else if (wp == Waypoint.HookLeft || wp == Waypoint.HookRight)
     		{
@@ -109,7 +111,7 @@ public class BeamStampingStrategy
     			BeamStamping line = new BeamStamping(beam, firstChordStaff, lastChordStaff, x1, x2,
     				MathTools.interpolateLinear(leftLeveledLP, rightLeveledLP, leftX, rightX, x1),
     				MathTools.interpolateLinear(leftLeveledLP, rightLeveledLP, leftX, rightX, x2));
-    	    ret.add(line);
+    			ret = ret.plus(line);
     		}
     	}
     }
@@ -139,7 +141,7 @@ public class BeamStampingStrategy
     	float startLP = (endLP > openStem.topNoteLP ? openStem.bottomNoteLP : openStem.topNoteLP);
     	StemStamping stem = new StemStamping(openStem.staff, openStem.chord, stemX, startLP, endLP,
     		-1 * openStem.stemDirection.getSignum());
-    	ret.add(stem);
+    	ret = ret.plus(stem);
     }
     
     return ret;

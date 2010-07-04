@@ -12,12 +12,16 @@ import com.xenoage.zong.core.music.key.TraditionalKey;
  * A music context provides information about the current musical state.
  * 
  * These are the current clef, the key signature,
- * the pitch of the bottom line and the list of accidentals.
+ * the list of accidentals and the number of staff lines.
  *
  * @author Andreas Wenger
  */
 public class MusicContext
 {
+	
+	public static final MusicContext simpleInstance = new MusicContext(
+		new Clef(ClefType.G), new TraditionalKey(0), new Pitch[0], 5);
+	
   
 	//current clef
   private final Clef clef;
@@ -28,12 +32,15 @@ public class MusicContext
   //current accidentals (key: pitch without alter, value: alter)
   private final PMap<Pitch, Integer> accidentals;
   
+  //number of lines
+  private final int linesCount;
+  
   
   /**
    * Creates a context with the given clef, key
    * and list of accidentals.
    */
-  public MusicContext(Clef clef, Key key, Pitch[] accidentals)
+  public MusicContext(Clef clef, Key key, Pitch[] accidentals, int linesCount)
   {
     this.clef = clef;
     this.key = key;
@@ -43,6 +50,7 @@ public class MusicContext
     	accidentalsMap = accidentalsMap.plus(acc.withoutAlter(), acc.getAlter());
     }
     this.accidentals = accidentalsMap;
+    this.linesCount = linesCount;
   }
   
   
@@ -50,23 +58,12 @@ public class MusicContext
    * Creates a context with the given clef, key
    * and list of accidentals.
    */
-  public MusicContext(Clef clef, Key key, PMap<Pitch, Integer> accidentals)
+  public MusicContext(Clef clef, Key key, PMap<Pitch, Integer> accidentals, int linesCount)
   {
     this.clef = clef;
     this.key = key;
     this.accidentals = accidentals;
-  }
-  
-  
-  /**
-   * Creates a simple context with a g-clef,
-   * C major and no accidentals.
-   */
-  public MusicContext()
-  {
-    this.clef = new Clef(ClefType.G);
-    this.key = new TraditionalKey(0);
-    this.accidentals = new PMap<Pitch, Integer>();
+    this.linesCount = linesCount;
   }
 
 
@@ -88,6 +85,15 @@ public class MusicContext
   public PMap<Pitch, Integer> getAccidentals()
   {
     return accidentals;
+  }
+  
+  
+  /**
+   * Gets the number of lines in this staff.
+   */
+  public int getLinesCount()
+  {
+  	return linesCount;
   }
   
   

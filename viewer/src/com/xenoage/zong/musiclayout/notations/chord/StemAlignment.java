@@ -6,11 +6,11 @@ package com.xenoage.zong.musiclayout.notations.chord;
  * 
  * @author Andreas Wenger
  */
-public class StemAlignment
+public final class StemAlignment
 {
   
-	private float startLinePosition;
-	private float endLinePosition;
+	private final float startLinePosition;
+	private final float endLinePosition;
 	
 	
 	/**

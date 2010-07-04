@@ -65,13 +65,13 @@ public class SingleMeasureTwoStavesStrategy
 			firstStem, lastStem, firstStemDirection, lastStemDirection);
 		
 		//compute new notations
-		NotationsCache ret = new NotationsCache();
+		NotationsCache ret = NotationsCache.empty;
 		It<BeamWaypoint> waypoints = it(beam.getWaypoints());
 		for (BeamWaypoint waypoint : waypoints)
 		{
 			Chord chord = waypoint.getChord();
 			ChordNotation oldCN = notations.getChord(chord);
-			ret.set(oldCN.copy(bsa.getStemAlignments()[waypoints.getIndex()]), oldCN.getMusicElement());
+			ret = ret.plus(oldCN.withStemAlignment(bsa.getStemAlignments()[waypoints.getIndex()]), oldCN.getMusicElement());
 		}
 		
 		return ret;

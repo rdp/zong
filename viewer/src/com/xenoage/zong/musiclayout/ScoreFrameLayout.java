@@ -3,6 +3,8 @@ package com.xenoage.zong.musiclayout;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.PVector;
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.iterators.MultiIt;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Rectangle2f;
@@ -29,15 +31,15 @@ public final class ScoreFrameLayout
 	private final FrameArrangement frameArrangement;
 	
 	//for quicker lookup: divided into staff stampings and other stampings
-	private final List<StaffStamping> staffStampings;
-  private final List<Stamping> otherStampings;
+	private final Vector<StaffStamping> staffStampings;
+  private final Vector<Stamping> otherStampings;
   
   //stampings
-  private List<Stamping> selectionStampings = new LinkedList<Stamping>();
-  private List<Stamping> playbackStampings = new LinkedList<Stamping>();
+  private LinkedList<Stamping> selectionStampings = new LinkedList<Stamping>();
+  private LinkedList<Stamping> playbackStampings = new LinkedList<Stamping>();
   
   //continued elements to the following frame
-  private List<ContinuedElement> continuedElements;
+  private PVector<ContinuedElement> continuedElements;
 
   
   /**
@@ -49,8 +51,8 @@ public final class ScoreFrameLayout
    *                           on the next frame
    */
   public ScoreFrameLayout(FrameArrangement frameArrangement,
-  	List<StaffStamping> staffStampings, List<Stamping> otherStampings,
-  	List<ContinuedElement> continuedElements)
+  	Vector<StaffStamping> staffStampings, Vector<Stamping> otherStampings,
+  	PVector<ContinuedElement> continuedElements)
   {
   	this.frameArrangement = frameArrangement;
   	this.staffStampings = staffStampings;
@@ -71,7 +73,7 @@ public final class ScoreFrameLayout
 	/**
    * Gets a list of all staff stampings of this frame.
    */
-  public List<StaffStamping> getStaffStampings()
+  public Vector<StaffStamping> getStaffStampings()
   {
     return staffStampings;
   }
@@ -80,7 +82,7 @@ public final class ScoreFrameLayout
 	/**
    * Gets a list of all other stampings of this frame.
    */
-  public List<Stamping> getOtherStampings()
+  public Vector<Stamping> getOtherStampings()
   {
     return otherStampings;
   }
@@ -119,9 +121,9 @@ public final class ScoreFrameLayout
     int highestLevel = -1;
     for (Stamping s : getMusicalStampings())
     {
-      if (s.getLevel() > highestLevel && s.containsPoint(point))
+      if (s.getLevel().ordinal() > highestLevel && s.getBoundingShape().contains(point))
       {
-        highestLevel = s.getLevel();
+        highestLevel = s.getLevel().ordinal();
         ret = s;
       }
     }
@@ -139,7 +141,7 @@ public final class ScoreFrameLayout
     StaffStamping ret = null;
     for (StaffStamping s : staffStampings)
     {
-      if (s.containsPoint(point))
+      if (s.getBoundingShape().contains(point))
       {
         ret = (StaffStamping) s;
       }
@@ -185,7 +187,7 @@ public final class ScoreFrameLayout
   /**
    * Sets the list of the selection stampings of this frame.
    */
-  public void setSelectionStampings(List<Stamping> selectionStampings)
+  public void setSelectionStampings(LinkedList<Stamping> selectionStampings)
   {
     this.selectionStampings = selectionStampings;
   }
@@ -203,7 +205,7 @@ public final class ScoreFrameLayout
   /**
    * Sets the list of the playback stampings of this frame.
    */
-  public void setPlaybackStampings(List<Stamping> playbackStampings)
+  public void setPlaybackStampings(LinkedList<Stamping> playbackStampings)
   {
     this.playbackStampings = playbackStampings;
   }
@@ -231,7 +233,7 @@ public final class ScoreFrameLayout
 	 * Gets the list of continued elements, that means the unclosed elements
 	 * that must also be painted on the next frame.
 	 */
-	public List<ContinuedElement> getContinuedElements()
+	public PVector<ContinuedElement> getContinuedElements()
 	{
 		return continuedElements;
 	}

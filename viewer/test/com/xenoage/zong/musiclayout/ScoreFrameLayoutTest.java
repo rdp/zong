@@ -1,20 +1,19 @@
 package com.xenoage.zong.musiclayout;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import org.junit.Test;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.math.Point2f;
 import com.xenoage.util.math.Rectangle2f;
-import com.xenoage.zong.musiclayout.ScoreFrameLayout;
 import com.xenoage.zong.musiclayout.continued.ContinuedElement;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 import com.xenoage.zong.musiclayout.stampings.Stamping;
 import com.xenoage.zong.musiclayout.stampings.StampingMock;
+import com.xenoage.zong.musiclayout.stampings.Stamping.Level;
 
 
 /**
@@ -32,30 +31,27 @@ public class ScoreFrameLayoutTest
     /* 0    5   10   15    20    | 0
      *                             
      *       ***********           2
-     *  +----*   [1]   *     
+     *  +----*   [0]   *     
      *  |    *         *~~~~~~~    4
-     *  |[2] ***********      |
-     *  +--------+       [3]  |    6
+     *  |[1] ***********      |
+     *  +--------+       [2]  |    6
      *     |                  |
      *     ~~~~~~~~~~~~~~~~~~~~    8
      */
   	Stamping[] stampings = new Stamping[3];
     
-    StampingMock s1 = new StampingMock(3);
-    s1.addBoundingShape(new Rectangle2f(6, 2, 10, 3));
+    StampingMock s1 = new StampingMock(Level.Music, new Rectangle2f(6, 2, 10, 3));
     stampings[0] = s1;
     
-    StampingMock s2 = new StampingMock(2);
-    s2.addBoundingShape(new Rectangle2f(1, 3, 9, 3));
+    StampingMock s2 = new StampingMock(Level.Staff, new Rectangle2f(1, 3, 9, 3));
     stampings[1] = s2;
     
-    StampingMock s3 = new StampingMock(1);
-    s3.addBoundingShape(new Rectangle2f(4, 4, 19, 4));
+    StampingMock s3 = new StampingMock(Level.EmptySpace, new Rectangle2f(4, 4, 19, 4));
     stampings[2] = s3;
     
     ScoreFrameLayout layout = new ScoreFrameLayout(null,
-    	new LinkedList<StaffStamping>(), Arrays.asList(stampings),
-    	new LinkedList<ContinuedElement>());
+    	new PVector<StaffStamping>(), pvec(stampings),
+    	new PVector<ContinuedElement>());
     
     //no hit (but empty space)
     assertTrue(isNot(layout.getStampingAt(new Point2f(0, 0)), s1, s2, s3));

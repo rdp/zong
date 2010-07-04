@@ -21,6 +21,9 @@ import javax.media.opengl.GL;
 public class WarningSymbol
 	implements Symbol
 {
+	
+	public static final WarningSymbol instance = new WarningSymbol();
+	
 
   /**
    * Gets the ID of the symbol.

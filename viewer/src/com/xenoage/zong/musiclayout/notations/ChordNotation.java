@@ -94,7 +94,7 @@ public final class ChordNotation
   }
   
   
-  public ChordNotation copy(StemAlignment stemAlignment)
+  public ChordNotation withStemAlignment(StemAlignment stemAlignment)
   {
   	return new ChordNotation(element, width, notesAlignment, stemDirection,
   		stemAlignment, accidentalsAlignment, articulationsAlignment);

@@ -49,6 +49,23 @@ public class FractionTest
     assertFalse(f1.equals(f2));
     assertTrue(f1.compareTo(f2) < 0);
   }
+  
+  
+  /**
+   * Tests the fromString method.
+   */
+  @Test public void testFromString()
+  {
+  	assertEquals(fr(5), Fraction.fromString("5"));
+  	assertEquals(fr(-2), Fraction.fromString("-2"));
+  	assertEquals(fr(3, 4), Fraction.fromString("3/4"));
+  	assertEquals(fr(-3, 4), Fraction.fromString("-3/4"));
+  	assertEquals(fr(-3, 4), Fraction.fromString("3/-4"));
+  	assertEquals(fr(3, 4), Fraction.fromString("-3/-4"));
+  	assertEquals(fr(20, 8), Fraction.fromString("2+4/8"));
+  	assertEquals(fr(12, 8), Fraction.fromString("2+-4/8"));
+  	assertEquals(fr(12, 8), Fraction.fromString("2+4/-8"));
+  }
 
   
   /**

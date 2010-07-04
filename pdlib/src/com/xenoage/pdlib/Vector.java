@@ -51,5 +51,7 @@ public interface Vector<T>
 	
 	
 	@Deprecated @Override public T set(int index, T element);
-
+	
+	
+	@Override public Vector<T> subList(int fromIndex, int toIndex);
 }

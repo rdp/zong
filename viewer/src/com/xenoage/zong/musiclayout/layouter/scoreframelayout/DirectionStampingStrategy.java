@@ -1,13 +1,13 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.util.NullTools.notNull;
 import static com.xenoage.util.math.Fraction.fr;
 import static com.xenoage.zong.core.music.format.SP.sp;
 
 import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.font.FontInfo;
 import com.xenoage.util.font.FontStyle;
 import com.xenoage.util.math.Fraction;
@@ -61,15 +61,15 @@ public class DirectionStampingStrategy
 	 * Creates the {@link StaffTextStamping}s for the {@link Direction}s of
 	 * the given {@link Chord} and its {@link ChordStampings}.
 	 */
-	public List<StaffTextStamping> createForChord(Chord chord, ChordStampings chordStampings,
+	public PVector<StaffTextStamping> createForChord(Chord chord, ChordStampings chordStampings,
 		Globals globals)
 	{
-		List<StaffTextStamping> ret = new LinkedList<StaffTextStamping>();
+		PVector<StaffTextStamping> ret = pvec();
 		for (Attachable attachable : globals.getAttachments().get(chord))
 		{
 			if (attachable instanceof Dynamics)
 			{
-				ret.add(createDynamics((Dynamics) attachable, chord, chordStampings));
+				ret = ret.plus(createDynamics((Dynamics) attachable, chord, chordStampings));
 			}
 		}
 		return ret;
@@ -210,41 +210,12 @@ public class DirectionStampingStrategy
 	
 	
 	/**
-	 * Computes the position for the given {@link Direction}
-	 * at the given {@link MP} within the given {@link StaffStamping}.
-	 */
-	public SP computePosition(Direction direction, MP mp,
-		StaffStamping staffStamping)
-	{
-		Position customPos = direction.getPosition();
-		
-		//horizontal position
-		float x;
-		if (customPos != null && customPos.x != null)
-			x = customPos.x;
-		else
-			x = notNull(staffStamping.getXMmAt(mp), 0f) + staffStamping.getPosition().x;
-		x += Position.getRelativeX(customPos);
-		
-		//vertical position: 2 IS above the top staff line
-		float lp;
-		if (customPos != null && customPos.y != null)
-			lp = customPos.y;
-		else
-			lp = (staffStamping.getLinesCount() - 1) * 2 + 2 * 2;
-		lp += Position.getRelativeY(customPos);
-		
-		return sp(x, lp);
-	}
-	
-	
-	/**
 	 * Creates a {@link WedgeStamping} for the given {@link Wedge} on the given staff.
 	 * The start and end measure of the wedge may be outside the staff, then the
 	 * wedge is clipped to the staff.
 	 */
-	public WedgeStamping createWedgeStamping(Globals globals,
-		Wedge wedge, StaffStamping staffStamping)
+	public WedgeStamping createWedgeStamping(Wedge wedge, StaffStamping staffStamping,
+		Globals globals)
 	{
 		//musical positions of wedge
 		MusicElement anchorStart = globals.getAttachments().getAnchor(wedge);
@@ -290,7 +261,6 @@ public class DirectionStampingStrategy
 		
 		//custom horizontal position
 		Position customPos = wedge.getPosition();
-		float x;
 		float length = x2Mm - x1Mm;
 		if (customPos != null && customPos.x != null)
 			x1Mm = customPos.x;
@@ -308,6 +278,34 @@ public class DirectionStampingStrategy
 		return new WedgeStamping(wedge, lp, x1Mm, x2Mm, d1Is, d2Is, staffStamping);
 	}
 	
+	
+	/**
+	 * Computes the position for the given {@link Direction}
+	 * at the given {@link MP} within the given {@link StaffStamping}.
+	 */
+	private SP computePosition(Direction direction, MP mp,
+		StaffStamping staffStamping)
+	{
+		Position customPos = direction.getPosition();
+		
+		//horizontal position
+		float x;
+		if (customPos != null && customPos.x != null)
+			x = customPos.x;
+		else
+			x = notNull(staffStamping.getXMmAt(mp), 0f) + staffStamping.getPosition().x;
+		x += Position.getRelativeX(customPos);
+		
+		//vertical position: 2 IS above the top staff line
+		float lp;
+		if (customPos != null && customPos.y != null)
+			lp = customPos.y;
+		else
+			lp = (staffStamping.getLinesCount() - 1) * 2 + 2 * 2;
+		lp += Position.getRelativeY(customPos);
+		
+		return sp(x, lp);
+	}
 	
 
 }

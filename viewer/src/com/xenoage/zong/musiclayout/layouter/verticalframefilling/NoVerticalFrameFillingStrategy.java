@@ -5,9 +5,8 @@ import com.xenoage.zong.musiclayout.FrameArrangement;
 
 
 /**
- * This vertical frame filling strategy
- * changes nothing. It simply returns
- * the given frame arrangement.
+ * This vertical frame filling strategy changes nothing.
+ * It simply returns the given frame arrangement.
  * 
  * @author Andreas Wenger
  */

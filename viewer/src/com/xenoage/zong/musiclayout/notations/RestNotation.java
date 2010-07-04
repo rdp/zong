@@ -10,12 +10,12 @@ import com.xenoage.zong.musiclayout.spacing.horizontal.ElementWidth;
  *
  * @author Andreas Wenger
  */
-public class RestNotation
+public final class RestNotation
   implements Notation
 {
   
-  private Rest element;
-  private ElementWidth width;
+  private final Rest element;
+  private final ElementWidth width;
   
   
   /**

@@ -102,14 +102,15 @@ public class Controller
 	
 	/**
    * Loads a score from the given {@link ScorePartwise} document.
-   * @param doc the provided document
-   * @throws InvalidFormatException This exception is thrown so that the
-   * calling application can correctly handle this case
+   * @param doc           the provided document
+   * @param ignoreErrors  if true, try to ignore errors (like overfull measures) as long
+   *                      as a consistent state can be guaranteed, or false, to cancel
+   *                      loading as soon as something is wrong
    */
-  public void loadScore(MxlScorePartwise doc)
+  public void loadScore(MxlScorePartwise doc, boolean ignoreErrors)
   	throws InvalidFormatException
   {
-		Score score = new MusicXMLScoreFileInput().read(doc, null);
+		Score score = new MusicXMLScoreFileInput().read(doc, null, ignoreErrors);
 
 		if (score != null)
 		{

@@ -1,9 +1,9 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout.util;
 
 import java.util.LinkedList;
-import java.util.List;
 
-import com.xenoage.zong.musiclayout.layouter.cache.util.BeamedStemStampings.OpenBeamMiddleStem;
+import com.xenoage.pdlib.PVector;
+import com.xenoage.zong.musiclayout.layouter.cache.util.OpenBeamMiddleStem;
 import com.xenoage.zong.musiclayout.stampings.AccidentalStamping;
 import com.xenoage.zong.musiclayout.stampings.ArticulationStamping;
 import com.xenoage.zong.musiclayout.stampings.FlagsStamping;
@@ -21,36 +21,44 @@ import com.xenoage.zong.musiclayout.stampings.StemStamping;
  * 
  * @author Andreas Wenger
  */
-public class ChordStampings
+public final class ChordStampings
 {
 	
-	//TIDY
 	public final float positionX;
 	public final StaffStamping staffStamping;
 	
-	public LinkedList<NoteheadStamping> noteheads = new LinkedList<NoteheadStamping>();
-	public LinkedList<LegerLineStamping> legerLines = new LinkedList<LegerLineStamping>();
-	public LinkedList<ProlongationDotStamping> dots = new LinkedList<ProlongationDotStamping>();
-	public LinkedList<AccidentalStamping> accidentals = new LinkedList<AccidentalStamping>();
-	public LinkedList<ArticulationStamping> articulations = new LinkedList<ArticulationStamping>();
-	public FlagsStamping flags = null;
+	public final PVector<NoteheadStamping> noteheads;
+	public final PVector<LegerLineStamping> legerLines;
+	public final PVector<ProlongationDotStamping> dots;
+	public final PVector<AccidentalStamping> accidentals;
+	public final PVector<ArticulationStamping> articulations;
+	public final FlagsStamping flags;
 	
 	//stamped or open stem
-	public StemStamping stem = null;
-	public OpenBeamMiddleStem openStem = null;
+	public final StemStamping stem;
+	public final OpenBeamMiddleStem openStem;
 	
 	
-	public ChordStampings(float positionX, StaffStamping staffStamping)
+	public ChordStampings(float positionX, StaffStamping staffStamping,
+		PVector<NoteheadStamping> noteheads, PVector<LegerLineStamping> legerLines,
+		PVector<ProlongationDotStamping> dots, PVector<AccidentalStamping> accidentals,
+		PVector<ArticulationStamping> articulations, FlagsStamping flags,
+		StemStamping stem, OpenBeamMiddleStem openStem)
 	{
 		this.positionX = positionX;
 		this.staffStamping = staffStamping;
+		this.noteheads = noteheads;
+		this.legerLines = legerLines;
+		this.dots = dots;
+		this.accidentals = accidentals;
+		this.articulations = articulations;
+		this.flags = flags;
+		this.stem = stem;
+		this.openStem = openStem;
 	}
 	
 	
-	/**
-	 * //LAYOUT-PERFORMANCE (needed 1 of 60 seconds)
-	 */
-	public void addAllTo(List<Stamping> list)
+	public void addAllTo(LinkedList<Stamping> list)
 	{
 		list.addAll(noteheads);
 		list.addAll(legerLines);

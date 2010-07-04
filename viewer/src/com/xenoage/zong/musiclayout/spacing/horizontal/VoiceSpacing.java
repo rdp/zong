@@ -1,5 +1,6 @@
 package com.xenoage.zong.musiclayout.spacing.horizontal;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.zong.core.music.Voice;
 
 
@@ -15,14 +16,14 @@ public final class VoiceSpacing
   
 	private final Voice voice;
 	private final float interlineSpace;
-  private final SpacingElement[] spacingElements;
+  private final PVector<SpacingElement> spacingElements;
   
   
   /**
    * Creates a {@link MeasurevoiceSpacing} for the given {@link Voice},
    * using the given {@link SpacingElement}s.
    */
-  public VoiceSpacing(Voice voice, float interlineSpace, SpacingElement[] spacingElements)
+  public VoiceSpacing(Voice voice, float interlineSpace, PVector<SpacingElement> spacingElements)
   {
   	this.voice = voice;
   	this.interlineSpace = interlineSpace;
@@ -39,6 +40,9 @@ public final class VoiceSpacing
   }
   
   
+  /**
+   * Gets the interline space in mm of this voice.
+   */
   public float getInterlineSpace()
   {
   	return interlineSpace;
@@ -47,10 +51,8 @@ public final class VoiceSpacing
   
   /**
    * Gets the {@link SpacingElement}s of this voice.
-   * 
-   * TIDY: don't return array, return a element by given index
    */
-  public SpacingElement[] getSpacingElements()
+  public PVector<SpacingElement> getSpacingElements()
   {
     return spacingElements;
   }

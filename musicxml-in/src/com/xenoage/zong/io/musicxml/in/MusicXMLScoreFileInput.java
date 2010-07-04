@@ -90,17 +90,20 @@ public class MusicXMLScoreFileInput
   		throw new IOException(ex);
   	}
   	
-  	return read(score, err);
+  	return read(score, err, true);
   }
   
   
   /**
    * Builds a {@link Score} entity from a {@link MxlScorePartwise} document.
-   * @param doc  the provided ScorePartwise document
-   * @param err  the error handler, which is used for logging warnings,
-   *             but it may also be null
+   * @param doc           the provided ScorePartwise document
+   * @param err           the error handler, which is used for logging warnings,
+   *                      but it may also be null
+   * @param ignoreErrors  if true, try to ignore errors (like overfull measures) as long
+   *                      as a consistent state can be guaranteed, or false, to cancel
+   *                      loading as soon as something is wrong
    */
-  public Score read(MxlScorePartwise mxlScore, ErrorProcessing err)
+  public Score read(MxlScorePartwise mxlScore, ErrorProcessing err, boolean ignoreErrors)
   	throws InvalidFormatException
   {
 		//create new score
@@ -119,7 +122,7 @@ public class MusicXMLScoreFileInput
 		score = score.withStavesList(stavesListValue.stavesList);
 
 		//read the musical contents
-		score = MusicReader.read(mxlScore, score, err);
+		score = MusicReader.read(mxlScore, score, err, ignoreErrors);
 
 		//remember the XML document for further application-dependend processing
 		score = score.plusMetaData("mxldoc", mxlScore);

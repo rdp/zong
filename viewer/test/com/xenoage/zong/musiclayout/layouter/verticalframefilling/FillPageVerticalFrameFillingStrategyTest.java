@@ -1,6 +1,7 @@
 package com.xenoage.zong.musiclayout.layouter.verticalframefilling;
 
-import static org.junit.Assert.*;
+import static com.xenoage.pdlib.PVector.pvec;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -41,8 +42,8 @@ public class FillPageVerticalFrameFillingStrategyTest
 		SystemArrangement system3 = SystemArrangementTry.createSystem(
 			stavesCount, staffHeight, staffDistance, offset3);
 		
-		FrameArrangement frame = new FrameArrangement(new SystemArrangement[]{
-			system1, system2, system3}, new Size2f(10, usableHeight));
+		FrameArrangement frame = new FrameArrangement(pvec(
+			system1, system2, system3), new Size2f(10, usableHeight));
 		
 		//apply strategy
 		FillPageVerticalFrameFillingStrategy strategy = FillPageVerticalFrameFillingStrategy.getInstance();
@@ -54,8 +55,8 @@ public class FillPageVerticalFrameFillingStrategyTest
 		//the last two systems are moved down, each remainingSpace/2
 		float additionalSpace = remainingSpace / 2;
 		//compare new offsets
-		assertEquals(offset2 + 1 * additionalSpace, frame.getSystem(1).getOffsetY(), Delta.DELTA_FLOAT);
-		assertEquals(offset3 + 2 * additionalSpace, frame.getSystem(2).getOffsetY(), Delta.DELTA_FLOAT);
+		assertEquals(offset2 + 1 * additionalSpace, frame.getSystems().get(1).getOffsetY(), Delta.DELTA_FLOAT);
+		assertEquals(offset3 + 2 * additionalSpace, frame.getSystems().get(2).getOffsetY(), Delta.DELTA_FLOAT);
 		
 	}
 

@@ -2,6 +2,7 @@ package com.xenoage.zong.musiclayout;
 
 import static com.xenoage.util.ArrayTools.containsNull;
 
+import com.xenoage.pdlib.PVector;
 import com.xenoage.util.math.Size2f;
 
 
@@ -14,7 +15,7 @@ import com.xenoage.util.math.Size2f;
 public final class FrameArrangement
 {
 
-  private final SystemArrangement[] systems;
+  private final PVector<SystemArrangement> systems;
   private final Size2f usableSize;
   
   
@@ -22,7 +23,7 @@ public final class FrameArrangement
    * Creates a new FrameArrangement, containing
    * the given systems.
    */
-  public FrameArrangement(SystemArrangement[] systems, Size2f usableSize)
+  public FrameArrangement(PVector<SystemArrangement> systems, Size2f usableSize)
   {
   	//null values are not allowed
   	if (containsNull(systems) || usableSize == null)
@@ -33,20 +34,11 @@ public final class FrameArrangement
   
   
   /**
-   * Gets the number of systems on this frame.
+   * Gets the systems.
    */
-  public int getSystemsCount()
+  public PVector<SystemArrangement> getSystems()
   {
-    return systems.length;
-  }
-  
-  
-  /**
-   * Gets the system with the given index.
-   */
-  public SystemArrangement getSystem(int index)
-  {
-    return systems[index];
+    return systems;
   }
 
 
@@ -61,35 +53,21 @@ public final class FrameArrangement
   
   /**
    * Returns a copy of this object, but with the given
-   * SystemArrangement at the given position.
+   * {@link SystemArrangement} at the given position.
    */
-  public FrameArrangement changeSystem(SystemArrangement system, int systemIndex)
+  public FrameArrangement withSystem(SystemArrangement system, int systemIndex)
   {
-  	SystemArrangement[] newSystems = new SystemArrangement[systems.length];
-  	for (int i = 0; i < systems.length; i++)
-  	{
-  		if (i == systemIndex)
-  			newSystems[i] = system;
-  		else
-  			newSystems[i] = systems[i];
-  	}
-  	return new FrameArrangement(newSystems, usableSize);
+  	return new FrameArrangement(systems.with(systemIndex, system), usableSize);
   }
   
   
   /**
    * Returns a copy of this object, but with the given
-   * SystemArrangement added.
+   * {@link SystemArrangement} added.
    */
-  public FrameArrangement addSystem(SystemArrangement system)
+  public FrameArrangement plusSystem(SystemArrangement system)
   {
-  	SystemArrangement[] newSystems = new SystemArrangement[systems.length + 1];
-  	for (int i = 0; i < systems.length; i++)
-  	{
-  		newSystems[i] = systems[i];
-  	}
-  	newSystems[systems.length] = system;
-  	return new FrameArrangement(newSystems, usableSize);
+  	return new FrameArrangement(systems.plus(system), usableSize);
   }
   
   
@@ -98,10 +76,10 @@ public final class FrameArrangement
    */
   public int getStartMeasureIndex()
   {
-  	if (systems.length == 0)
+  	if (systems.size() == 0)
   		return -1;
   	else
-  		return systems[0].getStartMeasureIndex();
+  		return systems.getFirst().getStartMeasureIndex();
   }
   
   
@@ -110,10 +88,10 @@ public final class FrameArrangement
    */
   public int getEndMeasureIndex()
   {
-  	if (systems.length == 0)
+  	if (systems.size() == 0)
   		return -1;
   	else
-  		return systems[systems.length - 1].getEndMeasureIndex();
+  		return systems.getLast().getEndMeasureIndex();
   }
   
   

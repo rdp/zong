@@ -12,12 +12,12 @@ import com.xenoage.util.math.Point2f;
  * 
  * @author Andreas Wenger
  */
-public class ScoreLayoutPosition
+public final class ScoreLayoutPosition
 {
   
-  private int frameIndex;
-  private float x;
-  private float y;
+  private final int frameIndex;
+  private final float x;
+  private final float y;
   
   
   public ScoreLayoutPosition(int frameIndex, float x, float y)

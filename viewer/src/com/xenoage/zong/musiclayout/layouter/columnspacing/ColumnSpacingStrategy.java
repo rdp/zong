@@ -1,5 +1,6 @@
-package com.xenoage.zong.musiclayout.layouter.measurecolumnspacing;
+package com.xenoage.zong.musiclayout.layouter.columnspacing;
 
+import static com.xenoage.pdlib.PVector.pvec;
 import static com.xenoage.util.Range.range;
 import static com.xenoage.zong.core.music.MP.atMeasure;
 import static com.xenoage.zong.core.music.MP.mp;
@@ -18,25 +19,25 @@ import com.xenoage.zong.core.music.MusicContext;
 import com.xenoage.zong.core.music.Voice;
 import com.xenoage.zong.core.music.util.Column;
 import com.xenoage.zong.io.score.ScoreController;
+import com.xenoage.zong.musiclayout.BeatOffset;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
 import com.xenoage.zong.musiclayout.layouter.cache.VoiceSpacingsCache;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
-import com.xenoage.zong.musiclayout.spacing.horizontal.BeatOffset;
-import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureLeadingSpacing;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
+import com.xenoage.zong.musiclayout.spacing.horizontal.LeadingSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.MeasureSpacing;
 import com.xenoage.zong.musiclayout.spacing.horizontal.VoiceSpacing;
 
 
 /**
- * A {@link MeasureColumnSpacingStrategy}
- * computes a single {@link MeasureColumnSpacing} from
+ * A {@link ColumnSpacingStrategy}
+ * computes a single {@link ColumnSpacing} from
  * the given measure column.
  * 
  * @author Andreas Wenger
  */
-public class MeasureColumnSpacingStrategy
+public class ColumnSpacingStrategy
 	implements ScoreLayouterStrategy
 {
 	
@@ -45,17 +46,17 @@ public class MeasureColumnSpacingStrategy
 	private final BeatOffsetsStrategy beatOffsetsStrategy;
 	private final BarlinesBeatOffsetsStrategy barlinesBeatOffsetsStrategy;
 	private final BeatOffsetBasedVoiceSpacingStrategy beatBasedVoiceSpacingStrategy;
-	private final MeasureLeadingSpacingStrategy measureLeadingSpacingStrategy;
+	private final LeadingSpacingStrategy measureLeadingSpacingStrategy;
 	
 	
 	/**
-	 * Creates a new {@link MeasureColumnSpacingStrategy}.
+	 * Creates a new {@link ColumnSpacingStrategy}.
 	 */
-	public MeasureColumnSpacingStrategy(SeparateVoiceSpacingStrategy separateVoiceSpacingStrategy,
+	public ColumnSpacingStrategy(SeparateVoiceSpacingStrategy separateVoiceSpacingStrategy,
 		BeatOffsetsStrategy beatOffsetsStrategy,
 		BarlinesBeatOffsetsStrategy barlinesBeatOffsetsStrategy,
 		BeatOffsetBasedVoiceSpacingStrategy beatBasedVoiceSpacingStrategy,
-		MeasureLeadingSpacingStrategy measureLeadingSpacingStrategy)
+		LeadingSpacingStrategy measureLeadingSpacingStrategy)
 	{
 		this.separateVoiceSpacingStrategy = separateVoiceSpacingStrategy;
 		this.beatOffsetsStrategy = beatOffsetsStrategy;
@@ -78,7 +79,7 @@ public class MeasureColumnSpacingStrategy
    *                        since these can be reused later) and the notations of the
    *                        leading spacing, if created, otherwise null
    */
-	public Tuple3<MeasureColumnSpacing, VoiceSpacingsCache, NotationsCache> computeMeasureColumnSpacing(
+	public Tuple3<ColumnSpacing, VoiceSpacingsCache, NotationsCache> computeMeasureColumnSpacing(
 		int measureIndex, Column column, boolean createLeading, NotationsCache notations,
 		ColumnHeader columnHeader, ScoreLayouterContext lc)
 	{
@@ -93,7 +94,7 @@ public class MeasureColumnSpacingStrategy
     	for (Voice voice : measure.getVoices())
     	{
     		optimalVoiceSpacings.set(separateVoiceSpacingStrategy.computeVoiceSpacing(
-    			voice, ScoreController.getInterlineSpace(lc.getScore(), MP.atStaff(iStaff)),
+    			voice, measure, ScoreController.getInterlineSpace(lc.getScore(), MP.atStaff(iStaff)),
     			createLeading, notations, measureBeats), voice);
     	}
     }
@@ -121,53 +122,44 @@ public class MeasureColumnSpacingStrategy
     }
     
     //compute spacings for each measure
-    NotationsCache leadingNotations = (createLeading ? new NotationsCache() : null);
-    MeasureSpacing[] measureSpacings = new MeasureSpacing[column.size()];
+    NotationsCache leadingNotations = (createLeading ? NotationsCache.empty : null);
+    PVector<MeasureSpacing> measureSpacings = pvec();
     It<Measure> measures = new It<Measure>(column);
     for (Measure measure : measures)
     {
     	//create leading spacing, if needed
-    	MeasureLeadingSpacing leadingSpacing = null;
+    	LeadingSpacing leadingSpacing = null;
       if (createLeading)
       {
       	MusicContext mc = ScoreController.getMusicContext(lc.getScore(),
-      		mp(measures.getIndex(), measureIndex, 0, Fraction._0), At);
-      	Tuple2<MeasureLeadingSpacing, NotationsCache> ls =
+      		mp(measures.getIndex(), measureIndex, 0, Fraction._0), At, null);
+      	Tuple2<LeadingSpacing, NotationsCache> ls =
       		measureLeadingSpacingStrategy.computeLeadingSpacing(mc);
       	leadingSpacing = ls.get1();
-      	leadingNotations.setAll(ls.get2());
+      	leadingNotations = leadingNotations.merge(ls.get2());
       }
       //create measure spacing
-      measureSpacings[measures.getIndex()] = new MeasureSpacing(
+      measureSpacings = measureSpacings.plus(new MeasureSpacing(
       	atMeasure(measures.getIndex(), measureIndex),
-      	getVoiceSpacingsArray(measure, alignedVoiceSpacings), leadingSpacing);
+      	getVoiceSpacingsArray(measure, alignedVoiceSpacings), leadingSpacing));
     }
     
-    //create arrays for beat offsets
-    BeatOffset[] beatOffsetsArray = new BeatOffset[beatOffsets.size()];
-    beatOffsets.toArray(beatOffsetsArray);
-    BeatOffset[] barlineOffsetsArray = new BeatOffset[barlineOffsets.size()];
-    barlineOffsets.toArray(barlineOffsetsArray);
-    
-    return new Tuple3<MeasureColumnSpacing, VoiceSpacingsCache, NotationsCache>(
-    	new MeasureColumnSpacing(lc.getScore(), measureSpacings, beatOffsetsArray,
-    		barlineOffsetsArray), optimalVoiceSpacings, leadingNotations);
+    return new Tuple3<ColumnSpacing, VoiceSpacingsCache, NotationsCache>(
+    	new ColumnSpacing(lc.getScore(), measureSpacings, beatOffsets,
+    		barlineOffsets), optimalVoiceSpacings, leadingNotations);
 	}
 	
 	
 	/**
-	 * Gets the {@link VoiceSpacing}s of the given {@link Measure} as an
-	 * array, using the given {@link VoiceSpacingsCache}.
-	 * 
-	 * //LAYOUT-PERFORMANCE (needed 2 of 60 seconds)
+	 * Gets the {@link VoiceSpacing}s of the given {@link Measure},
+	 * using the given {@link VoiceSpacingsCache}.
 	 */
-	private VoiceSpacing[] getVoiceSpacingsArray(Measure measure, VoiceSpacingsCache voiceSpacings)
+	private PVector<VoiceSpacing> getVoiceSpacingsArray(Measure measure, VoiceSpacingsCache voiceSpacings)
 	{
-		VoiceSpacing[] ret = new VoiceSpacing[measure.getVoices().size()];
-		It<Voice> voices = new It<Voice>(measure.getVoices());
-    for (Voice voice : voices)
+		PVector<VoiceSpacing> ret = pvec();
+    for (Voice voice : measure.getVoices())
     {
-    	ret[voices.getIndex()] = voiceSpacings.get(voice);
+    	ret = ret.plus(voiceSpacings.get(voice));
     }
     return ret;
 	}

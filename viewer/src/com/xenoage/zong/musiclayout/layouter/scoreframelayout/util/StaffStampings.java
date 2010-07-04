@@ -1,9 +1,14 @@
 package com.xenoage.zong.musiclayout.layouter.scoreframelayout.util;
 
+import static com.xenoage.pdlib.IVector.ivec;
+import static com.xenoage.util.CollectionUtils.alist;
+import static com.xenoage.util.CollectionUtils.alistInit;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
+import com.xenoage.pdlib.Vector;
 import com.xenoage.zong.musiclayout.ScoreFrameLayout;
 import com.xenoage.zong.musiclayout.stampings.StaffStamping;
 
@@ -17,26 +22,35 @@ public class StaffStampings
 {
 	
 	//lists of staves, if we are interested in a certain score staff: staves[globalstaffindex][systemindex]
-	private List<List<StaffStamping>> stavesByStaff;
+	private ArrayList<ArrayList<StaffStamping>> stavesByStaff;
 	//lists of staves, if we are interested in a certain system: staves[systemindex][globalstaffindex]
-	private List<List<StaffStamping>> stavesBySystem;
+	private ArrayList<ArrayList<StaffStamping>> stavesBySystem;
 	
 	
 	/**
 	 * Creates a new list of staff stampings for the given number of
-	 * systems and staves per system.
+	 * systems and staves per system. The given staves can be in any order.
 	 */
-	public StaffStampings(int systemsCount, int stavesCount)
+	public StaffStampings(List<StaffStamping> allStaves, int systemsCount, int stavesCount)
 	{
-		stavesByStaff = new ArrayList<List<StaffStamping>>(stavesCount);
+		//init arrays
+		stavesByStaff = alist(stavesCount);
 		for (int i = 0; i < stavesCount; i++)
 		{
-			stavesByStaff.add(Arrays.asList(new StaffStamping[systemsCount]));
+			stavesByStaff.add(alistInit((StaffStamping) null, systemsCount));
 		}
-		stavesBySystem = new ArrayList<List<StaffStamping>>(systemsCount);
+		stavesBySystem = alist(systemsCount);
 		for (int i = 0; i < systemsCount; i++)
 		{
-			stavesBySystem.add(Arrays.asList(new StaffStamping[stavesCount]));
+			stavesBySystem.add(alistInit((StaffStamping) null, stavesCount));
+		}
+		//fill with staves
+		for (StaffStamping s : allStaves)
+		{
+			int staffIndex = s.getStaffIndex();
+			int systemIndex = s.getSystemIndex();
+			stavesByStaff.get(staffIndex).set(systemIndex, s);
+			stavesBySystem.get(systemIndex).set(staffIndex, s);
 		}
 	}
 	
@@ -52,38 +66,27 @@ public class StaffStampings
 	
 	
 	/**
-	 * Sets the staff stamping for the given global staff index and
-	 * system index.
-	 */
-	public void set(int system, int staff, StaffStamping staffStamping)
-	{
-		stavesByStaff.get(staff).set(system, staffStamping);
-		stavesBySystem.get(system).set(staff, staffStamping);
-	}
-	
-	
-	/**
 	 * Gets the staves of the given global staff index (one per system).
 	 */
-	public List<StaffStamping> getAllOfStaff(int staff)
+	public Vector<StaffStamping> getAllOfStaff(int staff)
 	{
-		return stavesByStaff.get(staff);
+		return ivec(stavesByStaff.get(staff), false);
 	}
 	
 	
 	/**
 	 * Gets the staves of the given system.
 	 */
-	public List<StaffStamping> getAllOfSystem(int system)
+	public Vector<StaffStamping> getAllOfSystem(int system)
 	{
-		return stavesBySystem.get(system);
+		return ivec(stavesBySystem.get(system), false);
 	}
-	
-	
+
+
 	/**
 	 * Adds all staves to the given list, system after system.
 	 */
-	public void addAllTo(List<StaffStamping> list)
+	public void addAllTo(LinkedList<StaffStamping> list)
 	{
 		for (int i = 0; i < stavesBySystem.size(); i++)
 			list.addAll(stavesBySystem.get(i));

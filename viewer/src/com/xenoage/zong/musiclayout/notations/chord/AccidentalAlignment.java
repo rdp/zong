@@ -10,7 +10,7 @@ import com.xenoage.zong.core.music.chord.Accidental;
  *
  * @author Andreas Wenger
  */
-public class AccidentalAlignment
+public final class AccidentalAlignment
 {
   
   private final int linePosition;
@@ -22,7 +22,7 @@ public class AccidentalAlignment
    * Creates a new AccidentalAlignment.
    * @param linePosition  vertical position: 0 = bottom line,
    *                      3 = between 2nd and 3rd line, ...
-   * @param offset        horizontal offset in spaces
+   * @param offset        horizontal offset in interline spaces
    * @param type          flat, natural, sharp, ...
    */
   public AccidentalAlignment(int linePosition, float offset,
@@ -50,7 +50,7 @@ public class AccidentalAlignment
   
   
   /**
-   * Gets the horizontal offset of the accidental in spaces.
+   * Gets the horizontal offset of the accidental in interline spaces.
    */
   public float getOffset()
   {

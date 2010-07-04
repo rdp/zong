@@ -36,7 +36,7 @@ public class EmptyStavesHorizontalSystemFillingStrategy
   public SystemArrangement computeSystemArrangement(SystemArrangement systemArrangement,
   	float usableWidth)
   {
-  	return systemArrangement.changeSystemWidth(usableWidth);
+  	return systemArrangement.withSystemWidth(usableWidth);
   }
   
 

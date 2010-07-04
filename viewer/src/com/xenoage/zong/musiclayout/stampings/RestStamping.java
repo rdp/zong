@@ -2,11 +2,12 @@ package com.xenoage.zong.musiclayout.stampings;
 
 import static com.xenoage.zong.core.music.format.SP.sp;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import com.xenoage.zong.app.App;
 import com.xenoage.zong.app.symbols.Symbol;
 import com.xenoage.zong.app.symbols.SymbolPool;
+import com.xenoage.zong.app.symbols.WarningSymbol;
 import com.xenoage.zong.app.symbols.common.CommonSymbol;
 import com.xenoage.zong.core.music.rest.Rest;
 import com.xenoage.zong.core.music.util.DurationInfo;
@@ -22,14 +23,12 @@ import com.xenoage.zong.core.music.util.DurationInfo;
  *
  * @author Andreas Wenger
  */
-public class RestStamping
+public final class RestStamping
   extends StaffSymbolStamping
 {
   
-  private DurationInfo.Type duration;
-  
-  private static Hashtable<DurationInfo.Type, CommonSymbol> durationSymbolMapping =
-  	new Hashtable<DurationInfo.Type, CommonSymbol>();
+  private static HashMap<DurationInfo.Type, CommonSymbol> durationSymbolMapping =
+  	new HashMap<DurationInfo.Type, CommonSymbol>();
   
   static
   {
@@ -58,20 +57,9 @@ public class RestStamping
   public RestStamping(Rest restElement, DurationInfo.Type duration,
     StaffStamping parentStaff, float positionX, float scaling)
   {
-    super(parentStaff, restElement, null,
+    super(parentStaff, restElement, getSymbol(duration), null,
       sp(positionX, getLinePosition(parentStaff, duration)),
       scaling, false);
-    this.duration = duration;
-    updateBoundingShape();
-  }
-  
-  
-  /**
-   * Gets the symbol.
-   */
-  @Override protected Symbol getSymbol()
-  {
-  	return getSymbol(duration);
   }
   
   
@@ -82,7 +70,7 @@ public class RestStamping
     if (cs != null)
     	return pool.getSymbol(cs);
     else
-    	return pool.getSymbol(CommonSymbol.Rest256th); //TODO: Warning
+    	return WarningSymbol.instance;
   }
   
   

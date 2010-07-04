@@ -6,12 +6,10 @@ import com.xenoage.zong.musiclayout.Constants;
 /**
  * This class represents the alignment
  * of the notes and the dots of a chord.
- * 
- * TIDY
  *
  * @author Andreas Wenger
  */
-public class NotesAlignment
+public final class NotesAlignment
 {
 	
   private final float width;
@@ -24,6 +22,7 @@ public class NotesAlignment
   private final int[] dotPositions;
   
   private final float stemOffset;
+  private final boolean leftSuspendedNotes;
   
   
   /**
@@ -40,6 +39,18 @@ public class NotesAlignment
   	this.dotsPerNoteCount = dotsPerNoteCount;
   	this.dotPositions = dotPositions;
   	this.stemOffset = stemOffset;
+  	//are there left-suspended notes?
+  	boolean leftSuspendedNotes = false;
+  	for (NoteAlignment note : notes)
+    {
+      if (note.getSuspension() == NoteSuspension.Left)
+      {
+        //yes, there is at least one left-suspended note
+      	leftSuspendedNotes = true;
+      	break;
+      }
+    }
+    this.leftSuspendedNotes = leftSuspendedNotes;
   }
   
   
@@ -119,21 +130,20 @@ public class NotesAlignment
   
   
   /**
-   * Gets the width of the left-suspended note(s)
-   * or 0, if not available.
+   * Gets the width of a notehead.
    */
-  public float getLeftSuspendedWidth()
+  public float getNoteheadWidth()
   {
-    for (NoteAlignment note : notes)
-    {
-      if (note.getSuspension() == NoteSuspension.Left)
-      {
-        //yes, there is at least one left-suspended note
-        return noteheadWidth;
-      }
-    }
-    //no, there is no left-suspended note
-    return 0;
+  	return noteheadWidth;
+  }
+  
+  
+  /**
+   * Returns true, if there are left-suspended notes, otherwise null.
+   */
+  public boolean hasLeftSuspendedNotes()
+  {
+    return leftSuspendedNotes;
   }
   
   
@@ -154,8 +164,6 @@ public class NotesAlignment
    * Gets the list of note alignments.
    * The notes are sorted upwards, that means, the
    * lowest note has index 0.
-   * 
-   * TIDY: naming
    */
   public NoteAlignment[] getNoteAlignments()
   {

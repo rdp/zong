@@ -1,8 +1,9 @@
 package com.xenoage.zong.musiclayout;
 
 
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
-import com.xenoage.zong.util.ArrayTools;
+import com.xenoage.pdlib.PVector;
+import com.xenoage.util.ArrayTools;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 
 
 /**
@@ -29,7 +30,7 @@ public final class SystemArrangement
 	//this will often contain references to the measure column spacings
 	//that were computed before, but it can also store new measure column spacings
 	//that were created because for example a leading spacing was added
-	private final MeasureColumnSpacing[] measureColumnSpacings;
+	private final PVector<ColumnSpacing> columnSpacings;
 	
 	//left and right margin of the system in mm
 	private final float marginLeft;
@@ -50,18 +51,18 @@ public final class SystemArrangement
 
 	/**
 	 * Creates a SystemArrangement.
-	 * @param startMeasureIndex      index of the first measure in this system, or -1 if none
-	 * @param endMeasureIndex        index of the last measure in this system, or -1 if none
-	 * @param measureColumnSpacings  list of the layouts of the measure columns in this system
-	 * @param marginLeft             left margin of the system in mm
-	 * @param marginRight            right margin of the system in mm
-	 * @param systemWidth            width of the system in mm (may be longer than the used width) without left margin
-	 * @param staffHeights           the heights of each staff in mm
-	 * @param staffDistances         the distances of the staves in mm (one less then the number of staves)
-	 * @param offsetY                vertical offset of the system in mm
+	 * @param startMeasureIndex  index of the first measure in this system, or -1 if none
+	 * @param endMeasureIndex    index of the last measure in this system, or -1 if none
+	 * @param columnSpacings     list of the layouts of the measure columns in this system
+	 * @param marginLeft         left margin of the system in mm
+	 * @param marginRight        right margin of the system in mm
+	 * @param systemWidth        width of the system in mm (may be longer than the used width) without left margin
+	 * @param staffHeights       the heights of each staff in mm
+	 * @param staffDistances     the distances of the staves in mm (one less then the number of staves)
+	 * @param offsetY            vertical offset of the system in mm
 	 */
 	public SystemArrangement(int startMeasureIndex, int endMeasureIndex,
-		MeasureColumnSpacing[] measureColumnSpacings, float marginLeft, float marginRight, float systemWidth,
+		PVector<ColumnSpacing> columnSpacings, float marginLeft, float marginRight, float systemWidth,
 		float[] staffHeights, float[] staffDistances, float offsetY)
 	{
 		if (staffHeights.length != staffDistances.length + 1)
@@ -70,12 +71,12 @@ public final class SystemArrangement
 		}
 		this.startMeasureIndex = startMeasureIndex;
 		this.endMeasureIndex = endMeasureIndex;
-		this.measureColumnSpacings = measureColumnSpacings;
+		this.columnSpacings = columnSpacings;
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
 		this.systemWidth = systemWidth;
-		this.staffHeights = staffHeights;
-		this.staffDistances = staffDistances;
+		this.staffHeights = ArrayTools.copy(staffHeights); //defensive copy
+		this.staffDistances = ArrayTools.copy(staffDistances); //defensive copy
 		this.totalHeight = ArrayTools.sum(staffHeights) + ArrayTools.sum(staffDistances);
 		this.offsetY = offsetY;
 	}
@@ -161,9 +162,9 @@ public final class SystemArrangement
 	public float getUsedWidth()
 	{
 		float ret = 0;
-		for (int i = 0; i < measureColumnSpacings.length; i++)
+		for (ColumnSpacing mcs : columnSpacings)
 		{
-			ret += measureColumnSpacings[i].getWidth();
+			ret += mcs.getWidth();
 		}
 		return ret;
 	}
@@ -172,12 +173,10 @@ public final class SystemArrangement
 	/**
 	 * Gets the list of the layouts of the measure columns
 	 * in this system.
-	 * 
-	 * TIDY: not return array, but element by given index
 	 */
-	public MeasureColumnSpacing[] getMeasureColumnSpacings()
+	public PVector<ColumnSpacing> getColumnSpacings()
 	{
-		return measureColumnSpacings;
+		return columnSpacings;
 	}
 	
 	
@@ -195,9 +194,9 @@ public final class SystemArrangement
    * Sets the width of the system in mm and returns
    * the changed system arrangement.
    */
-  public SystemArrangement changeSystemWidth(float systemWidth)
+  public SystemArrangement withSystemWidth(float systemWidth)
   {
-    return new SystemArrangement(startMeasureIndex, endMeasureIndex, measureColumnSpacings,
+    return new SystemArrangement(startMeasureIndex, endMeasureIndex, columnSpacings,
     	marginLeft, marginRight, systemWidth, staffHeights, staffDistances, offsetY);
   }
   
@@ -206,9 +205,9 @@ public final class SystemArrangement
    * Sets the vertical offset of the system in mm and returns
    * the changed system arrangement.
    */
-  public SystemArrangement changeOffsetY(float offsetY)
+  public SystemArrangement withOffsetY(float offsetY)
   {
-    return new SystemArrangement(startMeasureIndex, endMeasureIndex, measureColumnSpacings,
+    return new SystemArrangement(startMeasureIndex, endMeasureIndex, columnSpacings,
     	marginLeft, marginRight, systemWidth, staffHeights, staffDistances, offsetY);
   }
   
@@ -217,7 +216,8 @@ public final class SystemArrangement
    * Sets the measure column spacings and width of the system in mm and returns
    * the changed system arrangement.
    */
-  public SystemArrangement changeSpacings(MeasureColumnSpacing[] measureColumnSpacings, float systemWidth)
+  public SystemArrangement withSpacings(PVector<ColumnSpacing> measureColumnSpacings,
+  	float systemWidth)
   {
     return new SystemArrangement(startMeasureIndex, endMeasureIndex, measureColumnSpacings,
     	marginLeft, marginRight, systemWidth, staffHeights, staffDistances, offsetY);

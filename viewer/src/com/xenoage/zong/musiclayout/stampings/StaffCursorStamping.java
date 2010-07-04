@@ -10,12 +10,12 @@ import com.xenoage.zong.renderer.stampings.StaffCursorStampingRenderer;
  *
  * @author Andreas Wenger
  */
-public class StaffCursorStamping
+public final class StaffCursorStamping
   extends Stamping
 {
 
-  private float positionX;
-  private float offsetSpaces;
+  private final float positionX;
+  private final float offsetSpaces;
   
   
   /**
@@ -26,7 +26,7 @@ public class StaffCursorStamping
    */
   public StaffCursorStamping(StaffStamping parentStaff, float positionX, float offsetSpaces)
   {
-    super(parentStaff, LEVEL_EMPTYSPACE, null);
+    super(parentStaff, Level.EmptySpace, null, null);
     this.positionX = positionX;
     this.offsetSpaces = offsetSpaces;
   }

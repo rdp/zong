@@ -302,7 +302,7 @@ public final class StavesListReader
   private static int getFirstStaffIndex(int partIndex, Vector<Part> parts)
   {
     int ret = 0;
-    for (int i : range(partIndex - 1))
+    for (int i : range(partIndex))
       ret += parts.get(i).getStavesCount();
     return ret;
   }

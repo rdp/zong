@@ -64,7 +64,7 @@ public final class Staff
   {
   	ArrayList<Measure> measures = new ArrayList<Measure>(measuresCount);
   	for (int i = 0; i < measuresCount; i++)
-  		measures.add(Measure.createMinimal());
+  		measures.add(Measure.minimal);
   	this.measures = pvec(measures);
     this.linesCount = linesCount;
     this.interlineSpace = interlineSpace;
@@ -89,7 +89,7 @@ public final class Staff
   	PVector<Measure> measures = this.measures;
     for (int i = 0; i < measuresCount; i++)
     {
-    	measures = measures.plus(Measure.createMinimal());
+    	measures = measures.plus(Measure.minimal);
     }
     return new Staff(measures, linesCount, interlineSpace);
   }
@@ -200,7 +200,7 @@ public final class Staff
 		PVector<Measure> measures = this.measures;
 		while (measures.size() < index + 1)
 		{
-			measures = measures.plus(Measure.createMinimal());
+			measures = measures.plus(Measure.minimal);
 		}
 		return new Staff(measures.with(index, measure), linesCount, interlineSpace);
 	}

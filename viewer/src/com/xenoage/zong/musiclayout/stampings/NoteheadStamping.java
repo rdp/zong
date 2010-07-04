@@ -18,7 +18,7 @@ import com.xenoage.zong.core.music.format.SP;
  *
  * @author Andreas Wenger
  */
-public class NoteheadStamping
+public final class NoteheadStamping
   extends StaffSymbolStamping
 {
   
@@ -30,8 +30,6 @@ public class NoteheadStamping
   public static final int SIDE_LEFT = 0;
   public static final int SIDE_CENTER = 1;
   public static final int SIDE_RIGHT = 2;
-  
-  private int notehead;
   
   
   /**
@@ -49,20 +47,9 @@ public class NoteheadStamping
   public NoteheadStamping(Chord chord, int notehead, Color color,
     StaffStamping parentStaff, SP position , int side, float scaling)
   {
-    super(parentStaff, chord, color,
+    super(parentStaff, chord, getSymbol(notehead), color,
       sp(computePositionX(position.xMm, notehead, side, parentStaff), position.yLp),
       scaling, false);
-    this.notehead = notehead;
-    updateBoundingShape();
-  }
-  
-  
-  /**
-   * Gets the symbol.
-   */
-  @Override protected Symbol getSymbol()
-  {
-  	return getSymbol(notehead);
   }
   
   

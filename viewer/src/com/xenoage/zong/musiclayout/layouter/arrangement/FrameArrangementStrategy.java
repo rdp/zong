@@ -1,9 +1,11 @@
 package com.xenoage.zong.musiclayout.layouter.arrangement;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import static com.xenoage.pdlib.PVector.pvec;
+import static com.xenoage.util.lang.Tuple2.t;
 
-
+import com.xenoage.pdlib.PVector;
+import com.xenoage.pdlib.Vector;
+import com.xenoage.util.lang.Tuple2;
 import com.xenoage.util.math.Size2f;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.format.ScoreFormat;
@@ -14,8 +16,7 @@ import com.xenoage.zong.musiclayout.SystemArrangement;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterContext;
 import com.xenoage.zong.musiclayout.layouter.ScoreLayouterStrategy;
 import com.xenoage.zong.musiclayout.layouter.cache.NotationsCache;
-import com.xenoage.zong.musiclayout.spacing.MeasureColumnSpacing;
-import com.xenoage.zong.util.ArrayTools;
+import com.xenoage.zong.musiclayout.spacing.ColumnSpacing;
 
 
 /**
@@ -49,10 +50,11 @@ public class FrameArrangementStrategy
 	
 	/**
 	 * Arranges the given measure column spacings beginning at the
-	 * given index to a {@link FrameArrangement}.
+	 * given index to a {@link FrameArrangement}. Returns the frame arrangements
+	 * and a list of created notations for the leading notations.
 	 */
-	public FrameArrangement computeFrameArrangement(int startMeasure,
-		int startSystem, Size2f usableSize, ArrayList<MeasureColumnSpacing> measureColumnSpacings,
+	public Tuple2<FrameArrangement, NotationsCache> computeFrameArrangement(int startMeasure,
+		int startSystem, Size2f usableSize, Vector<ColumnSpacing> columnSpacings,
   	NotationsCache notations, ScoreLayouterContext lc)
 	{
 		Score score = lc.getScore();
@@ -67,18 +69,23 @@ public class FrameArrangementStrategy
     float offsetY = getTopSystemDistance(systemIndex, scoreFormat, scoreHeader);
 
     //append systems to the frame
-    LinkedList<SystemArrangement> systems = new LinkedList<SystemArrangement>();
+    PVector<SystemArrangement> systems = pvec();
+    NotationsCache retLeadingNotations = NotationsCache.empty;
     while (measureIndex < measuresCount)
     {
       //try to create system on this frame
-      SystemArrangement system = systemArrangementStrategy.computeSystemArrangement(
-      	measureIndex, usableSize, offsetY, systemIndex, measureColumnSpacings, notations, lc);
+      Tuple2<SystemArrangement, NotationsCache> t =
+      	systemArrangementStrategy.computeSystemArrangement(measureIndex,
+      		usableSize, offsetY, systemIndex, columnSpacings, notations, lc);
+      SystemArrangement system = (t != null ? t.get1() : null);
+      NotationsCache leadingNotations = (t != null ? t.get2() : null);
 
       //was there enough place for this system?
       if (system != null)
       {
-      	//yes, there is enough place
-      	systems.add(system);
+      	//yes, there is enough place. add system and remember notations
+      	systems = systems.plus(system);
+      	retLeadingNotations = retLeadingNotations.merge(leadingNotations);
       	//update offset and start measure index for next system
       	//add height of this system
       	offsetY += system.getHeight();  
@@ -94,7 +101,7 @@ public class FrameArrangementStrategy
       }
     }
     
-    return new FrameArrangement(ArrayTools.toSystemArrangementArray(systems), usableSize);
+    return t(new FrameArrangement(systems, usableSize), retLeadingNotations);
 	}
 	
 	

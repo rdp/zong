@@ -118,7 +118,7 @@ public class ScoreRevolutionary
     cursor = cursor.write(cresc);
     cursor = cursor.openBeam();
 		cursor = cursor.write(firstSlurC = chord(fr(3, 16), accent, pi(A, -1, 4),
-			pi(E, -1, 5), pi(F, 0, 5), pi(A, -1, 5)));
+			pi(E, -1, 5), pi(F, 5), pi(A, -1, 5)));
 		cursor = cursor.write(lastSlurC = chord(f16, pi(G, 4), pi(G, 5)));
 		cursor = cursor.closeBeam();
 		cursor = cursor.write(cresc.getWedgeEnd());

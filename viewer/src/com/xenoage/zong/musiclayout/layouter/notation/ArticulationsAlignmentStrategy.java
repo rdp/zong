@@ -30,7 +30,7 @@ public class ArticulationsAlignmentStrategy
 	 * and returns it. If there are no articulations, null is returned.
 	 */
 	public ArticulationsAlignment computeArticulationsAlignment(Chord chord,
-		StemDirection stemDirection, NotesAlignment notesAlignment, int staffLinesCount)
+		StemDirection stemDirection, NotesAlignment notesAlignment, int linesCount)
 	{
 		//depending on the stem direction, place the articulation on the other side.
 		//if there is no stem direction, always place at the top
@@ -40,7 +40,7 @@ public class ArticulationsAlignmentStrategy
 			notesAlignment.getBottomNoteAlignment());
 		//compute alignment of articulations
 		return computeArticulationsAlignment(chord.getArticulations(),
-			outerNote, side, staffLinesCount);
+			outerNote, side, linesCount);
 	}
 	
 	
