@@ -27,7 +27,7 @@ import com.xenoage.zong.core.music.direction.DynamicsType;
 public final class MidiVelocityConverter
 {
 
-	private static final int defaultvalue = 90;
+	private static final int defaultvalue = 64;
 
 
 	public static int getNumberOfVoicesInStaff(Staff staff)

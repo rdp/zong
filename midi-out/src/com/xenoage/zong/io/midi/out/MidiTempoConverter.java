@@ -12,6 +12,7 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 
+import com.xenoage.pdlib.Vector;
 import com.xenoage.util.error.ErrorLevel;
 import com.xenoage.util.error.ErrorProcessing;
 import com.xenoage.util.lang.Tuple2;
@@ -24,6 +25,9 @@ import com.xenoage.zong.core.music.Measure;
 import com.xenoage.zong.core.music.Voice;
 import com.xenoage.zong.core.music.VoiceElement;
 import com.xenoage.zong.core.music.direction.Tempo;
+import com.xenoage.zong.core.music.util.BeatE;
+import com.xenoage.zong.core.music.util.BeatEList;
+import com.xenoage.zong.io.score.ScoreController;
 
 
 /**
@@ -39,8 +43,8 @@ public class MidiTempoConverter
 
 	/*public static ArrayList<MidiElement> getTempo(Score score,
 		ArrayList<Tuple2<MP, MP>> playList, int resolution)*/
-	public static void getTempoTrack(Score score,
-		ArrayList<Tuple2<MP, MP>> playList, int resolution, Track track)
+	public static void getTempoTrack(Score score, ArrayList<Tuple2<MP, MP>> playList,
+		int resolution, Track track)
 	{
 		//ArrayList<MidiElement> messages = new ArrayList<MidiElement>();
 		//score.getScoreHeader() //TODO
@@ -73,27 +77,41 @@ public class MidiTempoConverter
 					//TODO: no... we _must_ save tempo changes in the column headers...
 					Globals globals = score.getGlobals();
 					Measure measure = score.getMeasure(atMeasure(iStaff, iMeasure));
-					for (Voice voice : measure.getVoices())
+
+					BeatEList<Tempo> tempos = score.getScoreHeader().getColumnHeader(iMeasure)
+						.getTempos();
+					if (tempos != null)
 					{
-						for (VoiceElement element : voice.getElements())
+						for (BeatE<Tempo> beatE : tempos)
 						{
-							Fraction elementBeat = globals.getMP(element).getBeat();
-							if (elementBeat.compareTo(start) > -1 && elementBeat.compareTo(end) < 1)
-							{
-								for (Attachable attachment : globals.getAttachments().get(element))
-								{
-									if (attachment instanceof Tempo)
-									{
-										Tempo tempo = (Tempo) attachment;
-										MetaMessage message = createMetaMessage(tempo);
-										MidiEvent event = new MidiEvent(message, measurestarttick +
-											calculateTickFromFraction(elementBeat.sub(start), resolution));
-										track.add(event);
-									}
-								}
-							}
+							MetaMessage message = createMetaMessage(beatE.getElement());
+							MidiEvent event = new MidiEvent(message, measurestarttick
+								+ calculateTickFromFraction(beatE.getBeat().sub(start), resolution));
+							track.add(event);
 						}
 					}
+					/*					
+										for (Voice voice : measure.getVoices())
+										{
+											for (VoiceElement element : voice.getElements())
+											{
+												Fraction elementBeat = globals.getMP(element).getBeat();
+												if (elementBeat.compareTo(start) > -1 && elementBeat.compareTo(end) < 1)
+												{
+													for (Attachable attachment : globals.getAttachments().get(element))
+													{
+														if (attachment instanceof Tempo)
+														{
+															Tempo tempo = (Tempo) attachment;
+															MetaMessage message = createMetaMessage(tempo);
+															MidiEvent event = new MidiEvent(message, measurestarttick +
+																calculateTickFromFraction(elementBeat.sub(start), resolution));
+															track.add(event);
+														}
+													}
+												}
+											}
+										}*/
 					Fraction measureDuration = end.sub(start);
 					measurestarttick += MidiConverter.calculateTickFromFraction(measureDuration,
 						resolution);

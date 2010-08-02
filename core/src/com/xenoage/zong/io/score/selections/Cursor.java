@@ -86,6 +86,8 @@ public final class Cursor
 	private Cursor(Score score, MP mp, boolean moving, PVector<BeamWaypoint> openBeamWaypoints,
 		PVector<CurvedLineWaypoint> openCurvedLineWaypoints, CurvedLine.Type openCurvedLinesType)
 	{
+		if (mp.getBeat().getNumerator() < 0)
+			throw new IllegalArgumentException("Beat may not be negative");
 		this.score = score;
 		this.mp = mp;
 		this.moving = moving;

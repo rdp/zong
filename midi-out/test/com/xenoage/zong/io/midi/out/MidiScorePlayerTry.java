@@ -2,6 +2,7 @@ package com.xenoage.zong.io.midi.out;
 
 import javax.sound.midi.MidiUnavailableException;
 
+import com.xenoage.util.io.IO;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.util.demo.ScoreRevolutionary;
@@ -20,6 +21,7 @@ public class MidiScorePlayerTry
 	public static void main(String args[])
 		throws MidiUnavailableException
 	{
+		IO.initTest();
 		Score score = ScoreRevolutionary.createScore();
 		SynthManager.init(false);
 		MidiScorePlayer player = new MidiScorePlayer();

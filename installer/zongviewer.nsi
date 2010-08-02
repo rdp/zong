@@ -51,6 +51,7 @@ InstallDir $PROGRAMFILES\Zong
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "${SOURCEPATH}\viewer\gpl.txt"
 !insertmacro MUI_PAGE_COMPONENTS
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE "CheckBadDirectory"
 !insertmacro MUI_PAGE_DIRECTORY
 
 ;Start Menu Folder Page Configuration
@@ -86,7 +87,6 @@ Function .onInit
   StrCpy $run 0
   
 FunctionEnd
-
 
 !macro Both
   ${If} $run == 0
@@ -181,6 +181,9 @@ LangString DESC_player ${LANG_ENGLISH} "Player to play MusicXML files."
 LangString DESC_viewer ${LANG_GERMAN} "Programm zum betrachten und abspielen von MusicXML-Dateien."
 LangString DESC_player ${LANG_GERMAN} "Programm zum abspielen von MusicXML-Dateien."
 
+LangString ErrorSymbol ${LANG_ENGLISH} 'Error: The Installaton directory contains a "!".$\nPlease remove it to make Zong! work properly.'
+LangString ErrorSymbol ${LANG_GERMAN} 'Fehler: Der Installationspfad enthält ein "!".$\nBitte entfernen Sie dieses, damit Zong! einwandfrei funktioniert.'
+
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${viewer} $(DESC_viewer)
   !insertmacro MUI_DESCRIPTION_TEXT ${player} $(DESC_player)
@@ -208,3 +211,46 @@ Section "Uninstall"
   DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}"
   
 SectionEnd
+
+
+
+; On the basis of http://nsis.sourceforge.net/Check_for_spaces_in_a_directory_path
+Function CheckBadDirectory
+ 
+  # Call the CheckForSpaces function.
+  Push $INSTDIR # Input string (install path).
+   Call CheckForBadSymbols
+  Pop $R0 # The function returns the number of spaces found in the input string.
+ 
+  # Check if any spaces exist in $INSTDIR.
+  StrCmp $R0 0 NoBadSymbols
+  
+    # Show message box then take the user back to the Directory page.
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(ErrorSymbol)
+    Abort
+ 
+  NoBadSymbols:
+ 
+FunctionEnd
+
+Function CheckForBadSymbols
+ Exch $R0
+ Push $R1
+ Push $R2
+ Push $R3
+ StrCpy $R1 -1
+ StrCpy $R3 $R0
+ StrCpy $R0 0
+ loop:
+   StrCpy $R2 $R3 1 $R1
+   IntOp $R1 $R1 - 1
+   StrCmp $R2 "" done
+   StrCmp $R2 "!" 0 loop
+   IntOp $R0 $R0 + 1
+ Goto loop
+ done:
+ Pop $R3
+ Pop $R2
+ Pop $R1
+ Exch $R0
+FunctionEnd

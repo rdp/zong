@@ -137,7 +137,7 @@ public final class Parse
 		try
 		{
 			String value = attribute(e, attrName);
-			return value != null ? Integer.parseInt(value) : null;
+			return value != null ? parseInt(value) : null;
 		}
 		catch (NumberFormatException ex)
 		{
@@ -200,11 +200,33 @@ public final class Parse
 	{
 		try
 		{
-			return Integer.parseInt(text(e));
+			return parseInt(text(e));
 		}
 		catch (NumberFormatException ex)
 		{
 			throw invalid(e);
+		}
+	}
+	
+	
+	/**
+	 * Parses an integer from a string. Also values with ".0", ".00" and so
+	 * on are allowed.
+	 */
+	private static int parseInt(String value)
+	{
+		try
+		{
+			return Integer.parseInt(value);
+		}
+		catch (NumberFormatException ex)
+		{
+			//also allow .0 values
+			float v = Float.parseFloat(value);
+			if (v == (int) v)
+				return (int) v;
+			else
+				throw new NumberFormatException("No integer");
 		}
 	}
 	

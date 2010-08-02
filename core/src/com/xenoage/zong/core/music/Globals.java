@@ -5,11 +5,14 @@ import static com.xenoage.util.Range.range;
 import com.xenoage.pdlib.PMap;
 import com.xenoage.util.math.Fraction;
 import com.xenoage.zong.core.music.beam.Beam;
+import com.xenoage.zong.core.music.beam.BeamWaypoint;
 import com.xenoage.zong.core.music.beam.Beams;
 import com.xenoage.zong.core.music.chord.Chord;
 import com.xenoage.zong.core.music.curvedline.CurvedLine;
+import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
 import com.xenoage.zong.core.music.tuplet.Tuplet;
 import com.xenoage.zong.core.music.tuplet.Tuplets;
+import com.xenoage.zong.core.util.InconsistentScoreException;
 import com.xenoage.zong.util.exceptions.IllegalMPException;
 
 
@@ -99,9 +102,19 @@ public class Globals
 	
 	/**
 	 * Adds a beam to the score.
+	 * This is only possible, when all connected chords were registered here
+	 * before.
 	 */
 	public Globals plusBeam(Beam beam)
 	{
+		for (BeamWaypoint wp : beam.getWaypoints())
+		{
+			if (getMP(wp.getChord()) == null)
+			{
+				throw new InconsistentScoreException("Illegal beam, since not all chords were " +
+					"registered here before");
+			}
+		}
 		Beams beams = this.beams.plus(beam);
 		return new Globals(tuplets, beams, curvedLines, attachments, mps);
 	}
@@ -118,9 +131,19 @@ public class Globals
 	
 	/**
 	 * Adds a curved line to the score.
+	 * This is only possible, when all connected chords were registered here
+	 * before.
 	 */
 	public Globals plusCurvedLine(CurvedLine curvedLine)
 	{
+		for (CurvedLineWaypoint wp : curvedLine.getWaypoints())
+		{
+			if (getMP(wp.getChord()) == null)
+			{
+				throw new InconsistentScoreException("Illegal curved line, since not all chords were " +
+					"registered here before");
+			}
+		}
 		CurvedLines curvedLines = this.curvedLines.plus(curvedLine);
 		return new Globals(tuplets, beams, curvedLines, attachments, mps);
 	}

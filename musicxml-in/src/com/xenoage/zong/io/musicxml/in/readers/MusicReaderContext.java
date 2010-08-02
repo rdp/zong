@@ -30,6 +30,7 @@ import com.xenoage.zong.core.music.curvedline.CurvedLineWaypoint;
 import com.xenoage.zong.core.music.curvedline.CurvedLine.Type;
 import com.xenoage.zong.core.music.direction.Wedge;
 import com.xenoage.zong.core.music.util.BeatInterval;
+import com.xenoage.zong.core.util.InconsistentScoreException;
 import com.xenoage.zong.io.musicxml.in.util.MusicReaderException;
 import com.xenoage.zong.io.musicxml.in.util.OpenCurvedLine;
 import com.xenoage.zong.io.musicxml.in.util.OpenElements;
@@ -121,7 +122,20 @@ public final class MusicReaderContext
 	public MusicReaderContext moveCurrentBeat(Fraction beat)
 	{
 		MP mp = this.cursor.getMP();
-		Cursor cursor = this.cursor.withMP(mp.withBeat(mp.getBeat().add(beat)));
+		MP newMP = mp.withBeat(mp.getBeat().add(beat));
+		//never step back behind 0
+		if (newMP.getBeat().getNumerator() < 0)
+		{
+			if (settings.ignoreErrors)
+			{
+				newMP = newMP.withBeat(_0);
+			}
+			else
+			{
+				throw new MusicReaderException("Step back behind beat 0", this);
+			}
+		}
+		Cursor cursor = this.cursor.withMP(newMP);
 		return new MusicReaderContext(cursor, divisions, systemIndex, pageIndex,
   		voiceMappings, openElements, settings);
 	}
@@ -313,7 +327,10 @@ public final class MusicReaderContext
   	}
   	//this point must not already be set
   	if ((start && openCL.start != null) || (stop && openCL.stop != null))
-  		throw new MusicReaderException(wpType + " waypoint already set for " + type + " " + number, this);
+  	{
+  		if (!settings.ignoreErrors)
+  			throw new MusicReaderException(wpType + " waypoint already set for " + type + " " + number, this);
+  	}
   	OpenCurvedLine.Waypoint wp = new OpenCurvedLine.Waypoint();
   	wp.wp = clwp;
   	wp.side = side;
@@ -381,6 +398,13 @@ public final class MusicReaderContext
   	PMap<Pitch, OpenCurvedLine> openUnnumberedTies =
   		openElements.getOpenUnnumberedTies();
   	OpenCurvedLine openCL = openUnnumberedTies.get(pitch);
+  	if (openCL == null)
+  	{
+  		if (settings.ignoreErrors)
+  			return this;
+  		else
+  			throw new InconsistentScoreException("No tie open with pitch " + pitch);
+  	}
   	openUnnumberedTies = openUnnumberedTies.minus(pitch);
   	openCL.stop = new OpenCurvedLine.Waypoint();
   	openCL.stop.wp = stopWP;
@@ -540,7 +564,17 @@ public final class MusicReaderContext
    */
   public MusicReaderContext writeBeam(PVector<Chord> chords)
   {
-  	return withScore(ScoreController.writeBeam(getScore(), beam(chords)));
+  	try
+  	{
+  		return withScore(ScoreController.writeBeam(getScore(), beam(chords)));
+  	}
+  	catch (InconsistentScoreException ex)
+  	{
+  		if (!settings.ignoreErrors)
+  			throw new MusicReaderException(ex, this);
+  		else
+  			return this; //when ignoring errors, ignore beam
+  	}
   }
   
   
@@ -549,7 +583,17 @@ public final class MusicReaderContext
    */
   public MusicReaderContext writeCurvedLine(CurvedLine cl)
   {
-  	return withScore(ScoreController.writeCurvedLine(getScore(), cl));
+  	try
+  	{
+  		return withScore(ScoreController.writeCurvedLine(getScore(), cl));
+  	}
+  	catch (InconsistentScoreException ex)
+  	{
+  		if (!settings.ignoreErrors)
+  			throw new MusicReaderException(ex, this);
+  		else
+  			return this; //when ignoring errors, ignore curved line
+  	}
   }
   
   
@@ -571,20 +615,18 @@ public final class MusicReaderContext
    */
   public MusicReaderContext replaceChord(Chord oldChord, Chord newChord)
   {
-  	return withScore(ScoreController.replaceChord(getScore(), oldChord, newChord));
+  	try
+  	{
+  		return withScore(ScoreController.replaceChord(getScore(), oldChord, newChord));
+  	}
+  	catch (InconsistentScoreException ex)
+  	{
+  		if (settings.ignoreErrors)
+  			return this;
+  		else
+  			throw ex;
+  	}
   }
-	
-	
-  /**
-	 * Replaces the chord at the given position by the given chord.
-	 * It must have the same duration like the chord which was already there.
-	 * If the old chord had a beam, slur, directions or lyrics, they will be used
-	 * again.
-	 */
-	public MusicReaderContext replaceChord(MP mp, Chord chord)
-	{
-		return withScore(ScoreController.replaceChord(getScore(), mp, chord));
-	}
 	
 	
 	public MusicReaderSettings getSettings()

@@ -8,10 +8,8 @@ import static com.xenoage.zong.core.music.barline.Barline.createBackwardRepeatBa
 import static com.xenoage.zong.core.music.barline.Barline.createForwardRepeatBarline;
 import static com.xenoage.zong.core.music.chord.ChordFactory.chord;
 
-import com.xenoage.util.Range;
 import com.xenoage.zong.core.Score;
 import com.xenoage.zong.core.music.ColumnElement;
-import com.xenoage.zong.core.music.MP;
 import com.xenoage.zong.core.music.Part;
 import com.xenoage.zong.core.music.barline.BarlineStyle;
 import com.xenoage.zong.core.music.clef.Clef;

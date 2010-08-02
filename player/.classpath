@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JUnit"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/proxymusic"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/midi-out"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util"/>

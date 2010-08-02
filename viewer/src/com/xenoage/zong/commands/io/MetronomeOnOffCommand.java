@@ -5,6 +5,7 @@ import javax.sound.midi.MidiUnavailableException;
 import com.xenoage.zong.commands.Command;
 import com.xenoage.zong.commands.input.KeyboardScoreInputCommand;
 import com.xenoage.zong.io.midi.out.MIDIOutput;
+import com.xenoage.zong.io.midi.out.MidiScorePlayer;
 import com.xenoage.zong.util.exceptions.PropertyAlreadySetException;
 
 

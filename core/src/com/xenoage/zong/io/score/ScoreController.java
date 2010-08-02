@@ -57,6 +57,7 @@ import com.xenoage.zong.core.music.util.BeatE;
 import com.xenoage.zong.core.music.util.BeatInterval;
 import com.xenoage.zong.core.music.util.MPE;
 import com.xenoage.zong.core.music.volta.Volta;
+import com.xenoage.zong.core.util.InconsistentScoreException;
 import com.xenoage.zong.util.exceptions.IllegalMPException;
 import com.xenoage.zong.util.exceptions.MeasureFullException;
 
@@ -729,7 +730,7 @@ public class ScoreController
 		MP mp = score.getGlobals().getMP(oldChord);
 		if (mp == null)
 		{
-			throw new IllegalArgumentException("Unknown chord");
+			throw new InconsistentScoreException("Unknown chord");
 		}
 		return replaceChord(score, mp, newChord);
 	}
