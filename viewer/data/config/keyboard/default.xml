@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<keyboardconfig commandinterface="input.KeyboardScoreInputCommand">
+	<!-- keycode = Java VK_-constants. or use: key = a, b, c, ... -->
+	<key command="io.MidiPlaybackCommand" keycode="80" ctrl="true"/>	
+	<key command="io.MetronomeOnOffCommand" keycode="77" ctrl="true"/>
+</keyboardconfig>

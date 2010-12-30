@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.javaApplet">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/player/src/com/xenoage/zong/player/gui/PlayerApplet.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="36"/>
+<stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
+<mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="files" value="Album.mxl;SomeOpus.xml;SomeOpus2.xml;BrahWiMeSample.mxl;BeetAnGeSample.xml;Binchois.xml;BrahWiMeSample.xml;Chant.xml;DebuMandSample.xml;Dichterliebe01.xml;FaurReveSample.xml;MahlFaGe4Sample.xml;MozaChloSample.xml;MozaVeilSample.xml;MozartPianoSonata.xml;MozartTrio.xml;Saltarello.xml;SchbAvMaSample.xml;Telemann.xml"/>
+<mapEntry key="path" value="../files"/>
+</mapAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="384"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.xenoage.zong.player.gui.PlayerApplet"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="player"/>
+</launchConfiguration>

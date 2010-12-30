@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Ant script to create the distribution packages for Zong!.
+No JUnit tests are run. Please use the Eclipse projects for such tasks.
+
+@author Andreas Wenger
+@author Uli Teschemacher
+-->
+<project basedir="." default="build" name="Zong!">
+
+	<!-- Build Xenoage Build first -->
+	<ant dir="build" antfile="build.xml" target="build"/>
+
+	<!-- Xenoage Build Ant Task -->
+	<taskdef name="xenoagebuild" classname="com.xenoage.build.ZongBuild">
+		<classpath>
+			<pathelement location="build/dist/xenoagebuild.jar"/>
+			<pathelement location="build/lib/ant.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- Builds all projects -->
+	<target name="build">
+		<xenoagebuild/>
+	</target>
+
+	<!-- NSIS Ant Task -->
+	<taskdef name="nsis" classname="net.sf.nsisant.Task">
+		<classpath location="installer/nsisant-1.2.jar"/>
+	</taskdef>
+
+	<!-- Creates an installer for Windows -->
+	<target name="installer">
+		<nsis script="installer/zongviewer.nsi" verbosity="2">
+			<define name="VERSION" value="${zong-version}"/>
+			<define name="OUTFILE" value="../dist/packages/zongviewer_setup.exe"/>
+		</nsis>
+	</target>
+	
+</project>

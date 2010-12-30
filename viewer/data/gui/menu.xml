@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menubar>
+  <menu voc="Document">
+    <menuitem voc="Open_" icon="fileopen.png" command="dialogs.OpenDocumentDialogCommand"/>
+    <menuitem voc="SaveAs_" icon="filesaveas.png" command="dialogs.SaveDocumentDialogViewerCommand"/>
+    <menuitem voc="Print_" icon="fileprint.png" command="document.PrintCommand"/>
+    <separator/>
+    <menuitem id="recentfiles"/>
+    <menuitem voc="Exit" command="app.ExitCommand"/>
+  </menu>
+  <menu voc="Playback">
+    <menuitem voc="Play" command="io.StartMidiPlaybackCommand"/>
+    <menuitem voc="Stop" command="io.StopMidiPlaybackCommand"/>
+  </menu>
+  <menu voc="Settings">
+    <menu voc="Language" id="language"/>
+    <menuitem voc="Audio_" command="dialogs.AudioSettingsDialogCommand"/>
+  </menu>
+  <menu voc="Help">
+    <menuitem voc="Readme_" command="help.ReadmeCommand"/>
+    <menuitem voc="Website_" command="help.WebsiteCommand"/>
+    <menuitem voc="Blog_" command="help.BlogCommand"/>
+    <separator/>
+    <menuitem voc="About_" command="dialogs.AboutDialogCommand"/>
+  </menu>
+  <menu voc="Beta">
+    <menuitem voc="ErrorReportOrFeatureRequest_" command="beta.ErrorReportDialogCommand"/>
+  </menu>
+</menubar>

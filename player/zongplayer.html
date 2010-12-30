@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+   <title>Zong! Player - Demo</title>
+
+   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+   <meta http-equiv="Content-Style-Type" content="text/css">
+
+   <style type="text/css">
+      <!--
+      body          { margin: 16px; font-family:Verdana,Arial,Geneva; }
+      a:link        { color: #808080; text-decoration:none; }
+      a:visited     { color: #606060; text-decoration:none; }
+      a:active      { text-decoration:none; }
+      a:hover       { text-decoration:underline; }
+      *.title       { font-size:12pt; font-family:Verdana,Arial,Geneva;}
+      *.normal      { font-size:10pt; font-family:Verdana,Arial,Geneva;}
+      *.small       { font-size:8pt; }
+      //-->
+   </style>
+
+</head>
+
+
+<body bgcolor="#FFFFFF" text="#000000">
+<div class="normal">
+
+
+<div style="font-size:18pt; font-family:Verdana,Arial,Geneva;">Zong! Player - Demo</div>
+<hr width="100%">
+<BR><BR><BR>
+
+<div class="title"><b>Sample Page</b></div><BR><BR>
+
+Here is an example of the Zong! Player applet. All files <!-- except brandenburg5.xml, which should not be added to the website because of its size... --> are from the "set of musical examples", (c) by Recordare LLC, <a href="http://www.musicxml.org">www.musicxml.org</a>.<BR><BR>
+
+<applet code="com/xenoage/zong/player/gui/PlayerApplet.class"
+  archive="lib/core.jar,lib/gervill.jar,lib/midi-out.jar,lib/musicxml.jar,lib/musicxml-in.jar,lib/pdlib.jar,lib/player.jar,lib/playerdata.jar,lib/skin.jar,lib/util.jar" width="384" height="36">
+   <param name="bgcolor" value="FFFFFF">
+   <param name="path" value="files">
+   <param name="files" value="Album.mxl;SomeOpus.xml;SomeOpus2.xml;BrahWiMeSample.mxl;BeetAnGeSample.xml;Binchois.xml;BrahWiMeSample.xml;Chant.xml;DebuMandSample.xml;Dichterliebe01.xml;FaurReveSample.xml;MahlFaGe4Sample.xml;MozaChloSample.xml;MozaVeilSample.xml;MozartPianoSonata.xml;MozartTrio.xml;Saltarello.xml;SchbAvMaSample.xml;Telemann.xml"> 
+   <param name="start" value="BeetAnGeSample.xml"/>
+</applet>
+
+
+
+</div>
+</body>
+</html>

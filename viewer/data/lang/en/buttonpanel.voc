@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="ButtonPanel">
+	<voc key="DownloadDocument" value="Download document"/>
+	<voc key="OpenDocument" value="Open document"/>
+	<voc key="Playback" value="Playback"/>
+	<voc key="PrintDocument" value="Print document"/>
+	<voc key="SaveDocumentAs" value="Save document as..."/>
+</vocabulary>

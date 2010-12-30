@@ -1,0 +1,39 @@
+Zong! Player - License
+**********************
+
+Copyright © 2009 by Andreas Wenger, Uli Teschemacher, Xenoage Software
+
+This program is distributed under the GNU General Public License version 2 only.
+We can not use version 3 (yet), because the used library Gervill enforces
+version 2.
+
+Most sample files in the files folder are under Copyright © by Recordare LLC.
+See the XML content for details. Thanks for the permission to use them here.
+
+Some of Zong!'s musical symbols are based on the shapes used in
+LilyPond: http://www.lilypond.org
+
+For the licenses of the used libraries, please have look into
+the lib subfolder.
+
+For the licenses of the used fonts, please have look into
+the data/fonts subfolder.
+
+Some icons are taken from the Nuvola library (LPGL license),
+see http://www.icon-king.com/projects/nuvola/ 
+
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 only, as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+version 2 for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/.
+
+
+See gpl.txt

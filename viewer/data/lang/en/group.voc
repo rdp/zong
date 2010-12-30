@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="InstrumentGroup">
+  <voc key="woodwind" value="Woodwind"/>
+  <voc key="keyboard" value="Keyboard"/>
+  <voc key="percussion" value="Percussion"/>
+  <voc key="strings" value="Strings"/>
+</vocabulary>

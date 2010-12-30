@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Feedback">
+	<voc key="AttachFile" value="Noten-Dokument anhängen ({1})"/>
+	<voc key="AttachLog" value="Protokoll anhängen"/>
+	<voc key="Cancel" value="Abbrechen"/>
+	<voc key="Description" value="Haben Sie einen Fehler entdeckt oder eine Idee für eine neue Funktion? Schreiben Sie uns."/>
+	<voc key="ExperiencedUsers" value="Erfahrene Benutzer sollten dazu aber unseren Bugtracker benutzen."/>
+	<voc key="HeadlineTextarea" value="Beschreibung des Problems oder der Idee:"/>
+	<voc key="LabelMail" value="Ihre E-Mail-Adresse für Rückfragen:"/>
+	<voc key="Send" value="Absenden"/>
+	<voc key="SendFailed" value="Das Formular konnte nicht übermittelt werden.\nEntweder ist der Server nicht erreichbar oder Sie haben keine Verbindung zum Internet."/>
+	<voc key="SendOK" value="Das Formular wurde abgeschickt.\nVielen Dank für Ihre Mithilfe."/>
+	<voc key="Title" value="Rückmeldung"/>
+</vocabulary>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Label">
+	<voc key="CleanMemory" value="Speicher aufräumen"/>
+	<voc key="CloseDocument" value="Dokument schließen"/>
+	<voc key="CurrentMemoryUsage" value="Aktuelle Speicherbelegung"/>
+	<voc key="MaximumMemory" value="Maximaler Speicher"/>
+	<voc key="RemoveInstrument" value="Instrument entfernen"/>
+	<voc key="SaveInstrumentation" value="Besetzung speichern"/>
+	<voc key="SelectColor" value="Farbe auswählen"/>
+	<voc key="SelectDocument" value="Bitte wählen Sie ein Dokument aus:"/>
+	<voc key="used" value="verwendet"/>
+</vocabulary>

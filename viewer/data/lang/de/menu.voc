@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Menu">
+  <voc key="Edit" value="Bearbeiten"/>
+  <voc key="Edit_Redo" value="Wiederherstellen"/>
+  <voc key="Edit_Undo" value="Rückgängig"/>
+</vocabulary>

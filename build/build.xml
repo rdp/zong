@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Build Xenoage Build.
+xenoagebuild.jar is placed in the dist subdirectory.
+
+@author Andreas Wenger
+-->
+<project basedir="." default="build" name="Xenoage Build Builder">
+
+	<target name="build">
+		<delete dir="bin"/>
+		<delete dir="dist"/>
+		<mkdir dir="bin"/>
+		<javac debug="true" destdir="bin" source="1.6" target="1.6" encoding="UTF-8">
+			<src path="src"/>
+			<classpath>
+				<pathelement location="lib/ant.jar"/>
+			</classpath>
+		</javac>
+		<mkdir dir="dist"/>
+		<jar destfile="dist/xenoagebuild.jar">
+			<fileset dir="bin"/>
+		</jar>
+	</target>
+	
+</project>

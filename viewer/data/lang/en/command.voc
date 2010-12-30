@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Command">
+	<voc key="CommandList" value="Command list"/>
+	<voc key="app.LanguageChangeCommand" value="Select language"/>
+	<voc key="dialogs.EmptyStavesDocumentDialogCommand" value="Create empty sheet of music"/>
+	<voc key="dialogs.InstrumentationDialogCommand" value="Select instrumentation"/>
+	<voc key="dialogs.MemoryUsageDialogCommand" value="Show memory usage"/>
+	<voc key="dialogs.OpenDocumentDialogCommand" value="Open document"/>
+	<voc key="dialogs.PageFormatDialogCommand" value="Change page format"/>
+	<voc key="dialogs.SaveDocumentDialogCommand" value="Save document"/>
+	<voc key="dialogs.ShowClefSelectionPopupCommand" value="Select clef"/>
+	<voc key="dialogs.ShowKeyInsertPopupCommand" value="Select key signature"/>
+	<voc key="dialogs.ShowTimeSelectionPopupCommand" value="Select time signature"/>
+	<voc key="dialogs.TextEditorDialogCommand" value="Edit text"/>
+	<voc key="document.PageFormatCommand" value="Change page format"/>
+	<voc key="document.PrintCommand" value="Print"/>
+	<voc key="input.ChangeClefCommand" value="Change clef"/>
+	<voc key="input.ChangeKeyCommand" value="Change key signature"/>
+	<voc key="input.ChangeTimeCommand" value="Change time signature"/>
+	<voc key="input.CursorCommand" value="Set cursor"/>
+	<voc key="input.DeleteChordBeforeCursorCommand" value="Delete note/chord"/>
+	<voc key="input.MoveCursorCommand" value="Move cursor"/>
+	<voc key="input.MoveNoteCommand" value="Move note"/>
+	<voc key="input.SetDurationCommand" value="Set duration"/>
+	<voc key="input.WritePitchCommand" value="Write note"/>
+	<voc key="input.WriteRestCommand" value="Write rest"/>
+	<voc key="io.MetronomeOnOffCommand" value="Metronome on/off"/>
+	<voc key="io.MidiPlaybackCommand" value="Play score"/>
+	<voc key="layout.FrameMoveCommand" value="Move frame"/>
+	<voc key="dialogs.FrameOptionsDialogCommand" value="Format frame"/>
+	<voc key="layout.FrameRemoveCommand" value="Remove frame"/>
+	<voc key="layout.FrameResizeCommand" value="Resize frame"/>
+	<voc key="layout.FrameRotateCommand" value="Rotate frame"/>
+	<voc key="layout.FrameSelectionCommand" value="Select frame"/>
+	<voc key="layout.ImageInsertByDialogCommand" value="Insert image"/>
+	<voc key="layout.InsertCommand" value="Insert frame"/>
+	<voc key="layout.LineBreakStyleCommand" value="Automatic line break"/>
+	<voc key="layout.ScoreFrameChainUpCommand" value="Connect score frames"/>
+	<voc key="layout.TemplateFrameInsertCommand" value="Insert frame"/>
+	<voc key="layout.TextFrameInsertCommand" value="Insert text frame"/>
+	<voc key="music.ScoreFrameHorizontalSystemFillingCommand" value="Horizontal alignment"/>
+	<voc key="music.ScoreFrameVerticalFrameFillingCommand" value="Vertical alignment"/>
+	<voc key="MessageCommand" value="Show message"/>
+</vocabulary>

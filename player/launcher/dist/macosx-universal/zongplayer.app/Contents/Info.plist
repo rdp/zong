@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>Zong! Player</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.xenoage.zong.player.Player</string>
+	<key>CFBundleVersion</key>
+	<string>p0.4.48 ALPHA</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.4.48</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaApplicationStub</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2009 by Andreas Wenger, Uli Teschemacher, Xenoage Software</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleIconFile</key>
+	<string>zong.icns</string>
+	<key>Java</key>
+	<dict>
+		<key>WorkingDirectory</key>
+		<string>$APP_PACKAGE/Contents/Resources/Java</string>
+		<key>MainClass</key>
+		<string>com.xenoage.zong.player.Player</string>
+		<key>JVMVersion</key>
+		<string>1.6+</string>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/lib/core.jar</string>
+			<string>$JAVAROOT/lib/gervill.jar</string>
+			<string>$JAVAROOT/lib/midi-out.jar</string>
+			<string>$JAVAROOT/lib/musicxml.jar</string>
+			<string>$JAVAROOT/lib/musicxml-in.jar</string>
+			<string>$JAVAROOT/lib/pdlib.jar</string>
+			<string>$JAVAROOT/lib/player.jar</string>
+			<string>$JAVAROOT/lib/util.jar</string>
+		</array>
+		<key>Properties</key>
+		<dict>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

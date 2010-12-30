@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Changed Mon Dec 14 09:47:35 CET 2009</comment>
+<entry key="margin-left">20.0</entry>
+<entry key="staff-height">6.3999996</entry>
+<entry key="staves-distance">10.0</entry>
+<entry key="margin-right">20.0</entry>
+<entry key="page-width">210.0</entry>
+<entry key="margin-bottom">20.0</entry>
+<entry key="margin-top">20.0</entry>
+<entry key="page-height">297.0</entry>
+</properties>

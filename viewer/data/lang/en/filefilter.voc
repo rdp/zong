@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="FileFilter">
+  <voc key="AllPictures" value="All pictures"/>
+</vocabulary>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Feedback">
+	<voc key="AttachFile" value="Attach the score document ({1})"/>
+	<voc key="AttachLog" value="Attach log file"/>
+	<voc key="Cancel" value="Cancel"/>
+	<voc key="Description" value="Did you find an error or do you miss a certain feature? Please tell us."/>
+	<voc key="ExperiencedUsers" value="Experienced users should use our bugtracker instead."/>
+	<voc key="HeadlineTextarea" value="Description of the problem/idea:"/>
+	<voc key="LabelMail" value="Your e-mail for further questions:"/>
+	<voc key="Send" value="Submit"/>
+	<voc key="SendFailed" value="The feedback form could not be submitted.\nEither the server is offline or you have no internet connection."/>
+	<voc key="SendOK" value="The feedback form was sent.\nThank you for your support."/>
+	<voc key="Title" value="Feedback"/>
+</vocabulary>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Message">
+	<voc key="Error" value="Please click on &quot;{voc:Buttons_ReportError}&quot; to inform the developer team about the error. This allows the developers to remove the error in future versions."/>
+	<voc key="FatalError" value="The program must be closed down. Please click on &quot;{voc:Buttons_ReportError}&quot; to inform the developer team about the error. This allows the developers to remove the error in future versions. Sorry for the inconvenience!"/>
+	<voc key="MinStaffHeight" value="The staves must be at least {1} mm high."/>
+	<voc key="NoDocumentsAvailable" value="There are no documents available."/>
+</vocabulary>

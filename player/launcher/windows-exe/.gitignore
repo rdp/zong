@@ -1,0 +1,7 @@
+*.exe
+*.h
+*.Manifest
+*.o
+*.rc
+*.res
+*.win

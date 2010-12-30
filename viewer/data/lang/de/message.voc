@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vocabulary package="Message">
+	<voc key="Error" value="Damit der Fehler möglichst schnell behoben werden kann, klicken Sie bitte auf &quot;{voc:Buttons_ReportError}&quot;."/>
+	<voc key="FatalError" value="Das Programm muss geschlossen werden. Damit der Fehler möglichst schnell behoben werden kann, klicken Sie bitte auf &quot;{voc:Buttons_ReportError}&quot;. Wir entschuldigen uns für die Unannehmlichkeiten!"/>
+	<voc key="MinStaffHeight" value="Die Notenzeilen müssen mindestens {1} mm hoch sein."/>
+	<voc key="NoDocumentsAvailable" value="Es sind keine Dokumente verfügbar."/>
+</vocabulary>
